@@ -337,7 +337,8 @@ export default function TaxManagersApp() {
           status: mergedStatus,
           chat_history: mergedChatHistory,
           parceiro_id: session.user.id,
-          linkedin_key: handle || null
+          linkedin_key: handle || null,
+          import_status: "active"
         };
 
         // Garantia de parceiro_id preenchido conforme requisito
@@ -1245,7 +1246,8 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
       telefone: newLeadPhone.trim() || null,
       campanha_id: newLeadCampaign === "none" ? null : newLeadCampaign,
       parceiro_id: partnerId,
-      status: "Pendente"
+      status: "Pendente",
+      import_status: "active"
     };
 
     const { data, error } = await supabase
