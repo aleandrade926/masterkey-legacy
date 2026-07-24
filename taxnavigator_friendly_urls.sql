@@ -6,6 +6,9 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='taxmanagers_leads' AND column_name='slug') THEN
     ALTER TABLE public.taxmanagers_leads ADD COLUMN slug TEXT;
   END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='taxmanagers_companies' AND column_name='slug') THEN
+    ALTER TABLE public.taxmanagers_companies ADD COLUMN slug TEXT;
+  END IF;
 END $$;
 
 -- 2. Garantir unicidade do slug por tabela (ignorando NULLs)
