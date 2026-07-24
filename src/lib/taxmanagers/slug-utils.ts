@@ -14,6 +14,8 @@ export const RESERVED_SLUGS = new Set([
   "entregas",
   "in",
   "company",
+  "p",
+  "c",
   "taxmanagers"
 ]);
 

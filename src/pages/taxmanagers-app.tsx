@@ -3849,12 +3849,12 @@ ${fonteDados}`;
                 <p className="text-xs text-slate-400">{selectedLead.cargo} na <strong>{selectedLead.empresa}</strong></p>
                 <div className="mt-1.5 flex items-center gap-2">
                   <a 
-                    href={selectedLead.slug ? `/in/${selectedLead.slug}` : `/taxmanagers/pessoas/${selectedLead.id}`} 
+                    href={selectedLead.slug ? `/p/${selectedLead.slug}` : `/taxmanagers/pessoas/${selectedLead.id}`} 
                     target="_blank" 
                     rel="noreferrer" 
                     className="inline-flex items-center gap-1.5 text-xs font-mono bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 border border-cyan-500/30 px-2.5 py-1 rounded transition-colors"
                   >
-                    <span>{selectedLead.slug ? `/in/${selectedLead.slug}` : `/taxmanagers/pessoas/${selectedLead.id.substring(0, 8)}...`}</span>
+                    <span>{selectedLead.slug ? `/p/${selectedLead.slug}` : `/taxmanagers/pessoas/${selectedLead.id.substring(0, 8)}...`}</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>

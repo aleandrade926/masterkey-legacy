@@ -90,9 +90,9 @@ export default function Empresas() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-800">Visão de Empresa</h1>
         {data?.slug && (
-          <Link href={`/company/${data.slug}`}>
+          <Link href={`/c/${data.slug}`}>
             <span className="text-xs font-mono bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full border border-blue-200 hover:underline cursor-pointer">
-              /company/{data.slug}
+              /c/{data.slug}
             </span>
           </Link>
         )}
@@ -126,7 +126,7 @@ export default function Empresas() {
             </p>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-400 font-mono">/company/</span>
+              <span className="text-xs text-slate-400 font-mono">/c/</span>
               <input
                 type="text"
                 value={slugInput}
@@ -145,7 +145,7 @@ export default function Empresas() {
 
             {slugInput && (
               <p className="text-xs text-slate-500">
-                Prévia: <span className="font-mono text-blue-600">/company/{normalizeSlug(slugInput)}</span>
+                Prévia: <span className="font-mono text-blue-600">/c/{normalizeSlug(slugInput)}</span>
               </p>
             )}
 

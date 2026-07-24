@@ -89,9 +89,9 @@ export default function Pessoas() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-800">Visão de Pessoa (Lead)</h1>
         {data?.slug && (
-          <Link href={`/in/${data.slug}`}>
+          <Link href={`/p/${data.slug}`}>
             <span className="text-xs font-mono bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full border border-blue-200 hover:underline cursor-pointer">
-              /in/{data.slug}
+              /p/{data.slug}
             </span>
           </Link>
         )}
@@ -124,7 +124,7 @@ export default function Pessoas() {
             </p>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-400 font-mono">/in/</span>
+              <span className="text-xs text-slate-400 font-mono">/p/</span>
               <input
                 type="text"
                 value={slugInput}
@@ -143,7 +143,7 @@ export default function Pessoas() {
 
             {slugInput && (
               <p className="text-xs text-slate-500">
-                Prévia: <span className="font-mono text-blue-600">/in/{normalizeSlug(slugInput)}</span>
+                Prévia: <span className="font-mono text-blue-600">/p/{normalizeSlug(slugInput)}</span>
               </p>
             )}
 

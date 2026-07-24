@@ -74,9 +74,9 @@ function App() {
   if (location.startsWith("/taxmanagers/oportunidades/")) return <Oportunidades />;
   if (location.startsWith("/taxmanagers/entregas/")) return <Entregas />;
 
-  // Rotas Amigáveis (Friendly URLs)
-  if (location.startsWith("/in/")) return <Pessoas />;
-  if (location.startsWith("/company/")) return <Empresas />;
+  // Rotas Amigáveis (Friendly URLs - /p/:slug e /c/:slug)
+  if (location.startsWith("/p/") || location.startsWith("/in/")) return <Pessoas />;
+  if (location.startsWith("/c/") || location.startsWith("/company/")) return <Empresas />;
 
   // Rota independente Tax Managers App Portal
   if (location === "/" || location.startsWith("/app") || location.startsWith("/taxmanagers/app")) {
