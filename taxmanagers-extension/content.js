@@ -61,7 +61,55 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
     else if (inst === '4') act = 'Respondeu Chat';
     else if (inst === '5') act = 'Aceitou Conexão (Outbound)';
     else if (inst === '6') act = 'Pediu Conexão (Inbound)';
-    else if (inst.includes('|')) {
+    
+    // Detect if the pasted input is actually a conversational chat message/history
+    const isChat = inst.length > 60 || 
+                   inst.includes('\n') || 
+                   /^(olá|ola|oi|bom dia|boa tarde|boa noite|tudo bem|tudo bom|gostaria|falar|conversar|você|voce|enviada|enviado)/i.test(inst) ||
+                   (inst.split(/\s+/).length > 6 && !inst.includes('|'));
+
+    if (isChat) {
+      act = 'Respondeu Chat';
+      let ch = inst;
+      if (autoChatHistory) ch = autoChatHistory.trim() + "\n\n" + ch;
+      if (ch.length > 10000) ch = ch.substring(ch.length - 10000);
+      
+      const targetOrigin = 'https://app.taxmanagers.com.br';
+      const iu = targetOrigin + '/taxmanagers/app/import'
+        + '?name='    + encodeURIComponent(name)
+        + '&role='    + encodeURIComponent(role)
+        + '&company=' + encodeURIComponent(company)
+        + '&url='     + encodeURIComponent(cleanUrl)
+        + '&action='  + encodeURIComponent(act);
+
+      console.log("[TaxManagers] Abrindo janela de importação...");
+      const popup = window.open(iu, '_blank', 'width=420,height=340');
+      if (!popup) {
+        alert('Popup bloqueado! Permita popups para o LinkedIn nas configurações do Chrome.');
+        window.__tmLastCapture = 0;
+        return;
+      }
+
+      window.addEventListener('message', function handler(event) {
+        if (event.source === popup && event.data === 'ready') {
+          popup.postMessage({
+            type:         'lead_data',
+            name:         name,
+            role:         role,
+            company:      company,
+            url:          cleanUrl,
+            action:       act,
+            email:        email,
+            phone:        phone,
+            birthday:     birthday,
+            chat_history: ch
+          }, targetOrigin);
+          window.removeEventListener('message', handler);
+          setTimeout(() => { window.__tmLastCapture = 0; }, 3000);
+        }
+      });
+      return;
+    } else if (inst.includes('|')) {
       const parts = inst.split('|').map(p => p.trim());
       if (parts[0] && parts[0].length > 0) {
         const roleComp = parts[0];

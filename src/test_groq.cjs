@@ -13,7 +13,7 @@ const options = {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer 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',
+    'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
     'Content-Length': data.length
   }
 };

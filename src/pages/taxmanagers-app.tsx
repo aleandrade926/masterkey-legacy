@@ -201,10 +201,10 @@ export default function TaxManagersApp() {
         if (handle) {
           const { data: byUrl } = await supabase
             .from("taxmanagers_leads")
-            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status")
-            .eq("parceiro_id", session.user.id)
-            .eq("import_status", "active")
+            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status, parceiro_id")
+            .or(`parceiro_id.eq.${session.user.id},parceiro_id.is.null`)
             .eq("linkedin_key", handle)
+            .order("created_at", { ascending: false })
             .limit(1);
           if (byUrl && byUrl.length > 0) existingLead = byUrl[0];
         }
@@ -213,10 +213,10 @@ export default function TaxManagersApp() {
         if (!existingLead && normalizedUrl) {
           const { data: byUrl } = await supabase
             .from("taxmanagers_leads")
-            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status")
-            .eq("parceiro_id", session.user.id)
-            .eq("import_status", "active")
+            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status, parceiro_id")
+            .or(`parceiro_id.eq.${session.user.id},parceiro_id.is.null`)
             .ilike("url", normalizedUrl + "%")
+            .order("created_at", { ascending: false })
             .limit(1);
           if (byUrl && byUrl.length > 0) existingLead = byUrl[0];
         }
@@ -225,11 +225,11 @@ export default function TaxManagersApp() {
         if (!existingLead && name && company) {
           const { data: byName } = await supabase
             .from("taxmanagers_leads")
-            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status")
-            .eq("parceiro_id", session.user.id)
-            .eq("import_status", "active")
+            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status, parceiro_id")
+            .or(`parceiro_id.eq.${session.user.id},parceiro_id.is.null`)
             .ilike("nome", name)
             .ilike("empresa", company)
+            .order("created_at", { ascending: false })
             .limit(1);
           if (byName && byName.length > 0) existingLead = byName[0];
         }
@@ -238,10 +238,10 @@ export default function TaxManagersApp() {
         if (!existingLead && name && !company) {
           const { data: byNameOnly } = await supabase
             .from("taxmanagers_leads")
-            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status")
-            .eq("parceiro_id", session.user.id)
-            .eq("import_status", "active")
+            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status, parceiro_id")
+            .or(`parceiro_id.eq.${session.user.id},parceiro_id.is.null`)
             .ilike("nome", name)
+            .order("created_at", { ascending: false })
             .limit(1);
           if (byNameOnly && byNameOnly.length > 0) existingLead = byNameOnly[0];
         }

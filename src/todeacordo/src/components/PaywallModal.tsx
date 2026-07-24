@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { addLeadToWaitlist } from '../storage/usageStorage';
+import { addLeadToWaitlist, setProStatus } from '../storage/usageStorage';
 import { useUsage } from '../hooks/useUsage';
 
 interface PaywallModalProps {
@@ -21,6 +21,33 @@ export const PaywallModal = ({ isOpen, onClose, attemptedFeature, sourceMeetingI
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [activationCode, setActivationCode] = useState('');
+  const [activationError, setActivationError] = useState('');
+  const [activationSuccess, setActivationSuccess] = useState(false);
+
+  const handleActivateCode = async () => {
+    const code = activationCode.trim().toUpperCase();
+    const validCodes = ['ACORDO29', 'ANDREPRO', 'ALEXANDREPRO', 'VALIDEI2026'];
+    
+    if (validCodes.includes(code)) {
+      setActivationError('');
+      setActivationSuccess(true);
+      await setProStatus(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } else {
+      setActivationError('Código inválido. Verifique com o suporte.');
+      setActivationSuccess(false);
+    }
+  };
+
+  const handleCopyPix = () => {
+    navigator.clipboard.writeText('40130122866');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   if (!isOpen) return null;
 
@@ -119,7 +146,25 @@ export const PaywallModal = ({ isOpen, onClose, attemptedFeature, sourceMeetingI
             
             <div className="bg-white border border-slate-200 rounded-xl py-3 px-4 mb-3">
               <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Chave Pix (CPF)</div>
-              <div className="text-base font-black text-indigo-900 select-all font-mono">40130122866</div>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-base font-black text-indigo-900 select-all font-mono">40130122866</span>
+                <button 
+                  onClick={handleCopyPix}
+                  type="button"
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 transition-colors text-[10px] font-bold border border-indigo-200"
+                >
+                  {copied ? (
+                    <span>✓ Copiado!</span>
+                  ) : (
+                    <>
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                      </svg>
+                      <span>Copiar</span>
+                    </>
+                  )}
+                </button>
+              </div>
               <div className="text-[10px] text-slate-450 mt-1 font-semibold">Nome do Favorecido: André (Equipe de Desenvolvimento)</div>
             </div>
             
@@ -182,6 +227,29 @@ export const PaywallModal = ({ isOpen, onClose, attemptedFeature, sourceMeetingI
               Continuar usando grátis
             </button>
           )}
+
+          {/* Sessão de Código de Ativação */}
+          <div className="border-t border-slate-100 pt-4 mt-4">
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-2 text-center">Ativar com Código</h4>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                value={activationCode} 
+                onChange={e => setActivationCode(e.target.value)} 
+                placeholder="Código de ativação" 
+                className="flex-1 border border-slate-250 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 uppercase font-mono bg-white text-slate-800" 
+              />
+              <button 
+                type="button"
+                onClick={handleActivateCode}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-1.5 rounded-lg transition-colors cursor-pointer shrink-0"
+              >
+                Ativar
+              </button>
+            </div>
+            {activationError && <p className="text-[10px] text-red-500 mt-1.5 font-semibold text-center">{activationError}</p>}
+            {activationSuccess && <p className="text-[10px] text-green-600 mt-1.5 font-semibold text-center">🎉 Acesso PRO ativado! Recarregando...</p>}
+          </div>
 
         </div>
       </div>

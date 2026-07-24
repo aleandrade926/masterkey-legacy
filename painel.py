@@ -21,7 +21,7 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
 
 # Chave de API do Groq
-GROQ_API_KEY = "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"
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
 # Configure stdout to use UTF-8 on Windows
 if sys.stdout.encoding != 'utf-8':

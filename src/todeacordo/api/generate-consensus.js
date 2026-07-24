@@ -1,4 +1,9 @@
 import { SYSTEM_PROMPT, buildPrompt, buildConsensusRecord } from './_lib/consensusCore.js';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || '';
+const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
 // No edge runtime here because we're using Node APIs like fetch and standard environment variables.
 // Default to Node.js serverless function.
@@ -139,6 +144,22 @@ export default async function handler(req, res) {
       parsedData,
       { provider: providerUsed, model: modelUsed }
     );
+
+    if (supabase) {
+      try {
+        const { error } = await supabase
+          .from('consensus')
+          .upsert({
+            id: consensusRecord.id,
+            meeting_id: consensusRecord.meeting_id,
+            data: consensusRecord,
+            updated_at: new Date().toISOString()
+          });
+        if (error) console.error('Erro ao salvar no Supabase:', error);
+      } catch (err) {
+        console.error('Falha ao salvar no Supabase:', err);
+      }
+    }
 
     res.status(200).json(consensusRecord);
   } catch (error) {

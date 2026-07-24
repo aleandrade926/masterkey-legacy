@@ -4,7 +4,7 @@ import {
   type EmploymentResolutionOutcome,
   type EmploymentRecencyStatus,
   type CurrentEmploymentStatus
-} from "./company-resolution";
+} from "./company-resolution.ts";
 
 export type CompanyResolutionSource = "company_id" | "candidate_company_id" | "legacy_text" | "missing";
 export type CompanyResolutionStatus = "confirmed" | "candidate" | "unresolved" | "missing";

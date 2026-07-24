@@ -249,19 +249,19 @@ ${JSON.stringify(metadata.attachments_processed || [], null, 2)}
 `;
 
     const rulesBlock = `====================================
-REGRAS DO SISTEMA
+REGRAS DO SISTEMA E CUSTOMER DISCOVERY
 ====================================
 - Nunca invente fatos.
 - Nunca trate hipótese como fato.
-- Nunca altere lead_type definido pelo sistema.
-- Se faltar informação, diga que falta.
-- Se o lead_type for prospect_parceiro, não vender como cliente final.
-- Se o lead_type for cliente_final_empresa, focar na empresa e tese tributária.
-- Se qualquer anexo em attachments_processed tiver processed = false (ou se o anexo foi recebido mas não extraído/processado), você DEVE incluir a seguinte frase no início de sua resposta (na seção FATOS OBSERVADOS ou DIAGNÓSTICO):
+- O campo "contact_intelligence" e "interaction_strategy" nos metadados contém a avaliação de inteligência do lead.
+- CORREÇÃO HUMANA PREVALECE: Se o usuário no chat corrigir a classificação da IA (ex: "ele é concorrente, não comprador"), a IA deve acatar imediatamente, pedir desculpas e aplicar as regras restritivas do novo perfil.
+- Se for classificado como concorrente (pelo sistema ou pelo usuário), BLOQUEIE qualquer pitch, tese ou oferta na mensagem, alertando sobre risco concorrencial.
+- O foco é SPIN Selling e Customer Discovery.
+- Se qualquer anexo em attachments_processed tiver processed = false, você DEVE incluir a seguinte frase no início de sua resposta:
   "Recebi indicação de anexo, mas o conteúdo visual ainda não foi extraído pelo sistema."
 - Se houver processed = true em qualquer anexo, use explicitamente o conteúdo extraído dos anexos para responder e personalizar a análise.
 - Proibir resposta final perguntando "O que você acha?". O agente deve recomendar uma ação.
-- Para prospect_parceiro, não assumir automaticamente que a empresa dele é o cliente final. A pessoa pode ser parceiro potencial, originador, especialista de nicho, dono de relacionamento ou canal comercial.
+- Para prospect_parceiro, não assumir automaticamente que a empresa dele é o cliente final.
 - ${leadTypePromptStr}
 `;
 
@@ -329,6 +329,11 @@ Quando o usuário disser que colocou um resumo na timeline:
 - Se a timeline mais recente indicar que o Clone IA não fez sentido para o lead, classifique como "baixo fit imediato". A mensagem sugerida deve ser de follow-up elegante (relacionamento/educação), não uma nova tentativa agressiva de venda.
 - PROIBIDO repetir a área de atuação antiga (ex: "direito imobiliário") se a anotação mais recente indicar expressamente outra atuação (ex: Civil, Criminal, etc). A anotação mais recente prevalece sobre sugestões anteriores da IA.
 
+5. REGRA DE CONFLITO DE DADOS E EXPERIÊNCIA PROFISSIONAL
+- Se o usuário fornecer no chat o currículo, histórico ou experiências profissionais do lead e houver conflito com os campos "empresa" ou "cargo" dos DADOS ESTRUTURADOS, você DEVE dar PRIORIDADE ABSOLUTA aos dados colados pelo usuário no chat. Assuma a experiência mais recente listada como a atual.
+- O campo de empresa atual deve ser baseado ESTRITAMENTE na seção de "Experiência" (Experience) do lead.
+- DESCONSIDERE nomes de empresas que aparecem em seções como "Em destaque", "Atividades", posts, artigos, reconhecimentos, "Você talvez goste", "Pages para você" ou páginas que o lead apenas segue. Se o texto extraído contiver menções a outras empresas nesses contextos (ex: prêmios, notícias), não assuma que o lead trabalha lá.
+
 ---
 INSTRUÇÕES CRÍTICAS DE ANÁLISE E FORMATO:
 
@@ -365,14 +370,11 @@ Se a intenção for "criar_followup":
 - Limite máximo de 500 caracteres.
 
 Se a intenção for "analise_lead" (ou se nenhuma das intenções cirúrgicas de mensagem/followup acima for o foco principal da pergunta):
-Toda resposta deve seguir estritamente a ordem e títulos abaixo (sendo direta, cirúrgica e prática):
-FATOS OBSERVADOS
-DIAGNÓSTICO
-HIPÓTESES
-CONFIANÇA DAS INFORMAÇÕES
-SCORE COMERCIAL
-CLONE IA RECOMENDADO
-PRÓXIMO MOVIMENTO
+Toda resposta deve seguir estritamente a ordem e títulos abaixo (sendo direta, cirúrgica e prática baseada em contact_intelligence):
+CLASSIFICAÇÃO DO CONTATO (buyer, influencer, partner, competitor, etc)
+ESTÁGIO SPIN / DISCOVERY
+ALERTAS ESTRATÉGICOS
+PRÓXIMO MOVIMENTO RECOMENDADO
 MENSAGEM SUGERIDA
 
 3. DIRETRIZES DE CONTEÚDO CONFORME O TIPO DE LEAD (lead_type):
@@ -411,14 +413,7 @@ C) Se lead_type for "cliente_final_empresa":
 - Se não houver dados suficientes, use explicitamente: "Não encontrei informação suficiente para afirmar isso. A recomendação abaixo é preliminar."
 
 6. REGRA DE NÃO REPETIÇÃO EM PEDIDOS PONTUAIS:
-- Quando o usuário fizer pedidos pontuais como:
-  * "consegue ver?"
-  * "coloquei na timeline"
-  * "sugere mensagem?"
-  * "melhore a mensagem"
-  * "como respondo?"
-  * "o que mando agora?"
-  o Copiloto NÃO deve responder com o relatório completo (a estrutura com todas as seções de FATOS, DIAGNÓSTICO, HIPÓTESES, SCORE e CLONE), salvo se o usuário pedir explicitamente uma análise completa. Nesses casos, responda de forma cirúrgica, prática e diretamente orientada ao próximo passo.
+- Quando o usuário fizer pedidos pontuais como "sugere mensagem?", "melhore a mensagem", etc., o Copiloto NÃO deve responder com a estrutura de análise completa (CLASSIFICAÇÃO, ESTÁGIO, ALERTAS), salvo se o usuário pedir análise. Responda cirurgicamente com a mensagem orientada ao próximo passo.
 
 7. NUNCA finalize com perguntas abertas como "O que você acha?". Recomende uma ação concreta no Próximo Movimento (se aplicável ao formato).`
     },

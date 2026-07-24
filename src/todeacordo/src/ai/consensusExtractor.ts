@@ -130,9 +130,9 @@ export async function generateConsensusFromTranscript(options: ConsensusGenerati
     });
     
     // Anexa dados base
-    consensus.id = crypto.randomUUID();
+    consensus.id = consensus.id || crypto.randomUUID();
     consensus.meeting_id = meetingId;
-    consensus.created_at = Date.now();
+    consensus.created_at = consensus.created_at || Date.now();
     consensus.transcript_segments = cleanSegments;
     consensus.provider = 'llama-local';
 

@@ -8,19 +8,54 @@ const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || "";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function deepMerge(target, source) {
+  if (typeof target !== 'object' || target === null) return source;
+  if (typeof source !== 'object' || source === null) return source;
+  const output = { ...target };
+  Object.keys(source).forEach(key => {
+    if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
+      output[key] = deepMerge(target[key], source[key]);
+    } else {
+      output[key] = source[key];
+    }
+  });
+  return output;
+}
+
 function fallbackResponse(lead, reason) {
   const nome = lead?.nome || "este lead";
   const empresa = lead?.empresa || "a empresa";
   const cargo = lead?.cargo || "decisor";
 
+  const classification = reason === "schema_validation_failed" ? "schema_validation_failed" : "ai_generation_failed";
+  const reasonText = reason === "schema_validation_failed" ? "JSON gerado é incompatível com o esquema." : "Falha técnica na geração da IA.";
+
   return {
     error: true,
     reason,
-    short_note: `Olá ${nome}, vi sua atuação como ${cargo} em ${empresa}. Tenho uma hipótese tributária objetiva para avaliar oportunidade fiscal sem pedir documentos sensíveis neste primeiro contato.`,
-    long_email: `Olá ${nome}, tudo bem?\n\nMapeei uma hipótese inicial para ${empresa}: avaliar oportunidades fiscais e pontos de saneamento tributário que podem gerar caixa, reduzir risco ou melhorar a preparação para a transição IBS/CBS.\n\nA ideia é começar por uma leitura executiva, sem pedido de SPED ou arquivo sensível no primeiro contato.\n\nSe fizer sentido, posso te mostrar um diagnóstico inicial em poucos minutos.`,
-    article_pitch: `Para ${empresa}, eu começaria por um mapa rápido de riscos e oportunidades fiscais: créditos, classificação, transição da reforma e pontos de caixa oculto.`,
-    strategy_summary: `Fallback estruturado gerado sem IA externa. Lead: ${nome}. Empresa: ${empresa}. Cargo: ${cargo}.`,
-    next_step: "Revisar manualmente e enviar como abordagem inicial."
+    short_note: `Olá ${nome}, vi sua atuação como ${cargo} em ${empresa}. Aceita conectar?`,
+    long_email: `Olá ${nome}, tudo bem?\n\nQueria entender como a ${empresa} acompanha os desafios fiscais do setor.\n\nFaria sentido uma conversa rápida?`,
+    article_pitch: `Para ${empresa}, recomendo acompanharmos os impactos da reforma tributária.`,
+    strategy_summary: `Fallback de segurança (motivo: ${reason}). Nenhum pitch gerado. Revise manualmente.`,
+    next_step: "Revisar manualmente a classificação do lead.",
+    updated_metadata: deepMerge(lead?.metadata || {}, {
+      contact_intelligence: {
+        lead_classification: classification,
+        classification_confidence: "low",
+        decision_power: "unknown",
+        competition_risk: "unknown",
+        relationship_stage: "unknown",
+        classification_reason: reasonText,
+        missing_information: ["Análise técnica falhou"],
+        strategic_alerts: ["Revisar manualmente. Não envie mensagens geradas por fallback sem revisar."]
+      },
+      interaction_strategy: {
+        strategic_objective: "Revisão humana necessária.",
+        spin_stage: "unknown",
+        should_contact: false,
+        should_pitch: false
+      }
+    })
   };
 }
 
@@ -51,7 +86,7 @@ async function processVisionImage(base64Image, type) {
 
   try {
     const promptText = isProfile 
-      ? "Extraia todo o texto visível deste print de perfil (LinkedIn), incluindo formação, cargo, descrição, empresa e histórico de carreira. Retorne o texto extraído em formato de OCR limpo e um resumo visual."
+      ? "Extraia todo o texto visível deste print de perfil (LinkedIn), incluindo formação, cargo, descrição e histórico de carreira. ATENÇÃO MÁXIMA PARA A EMPRESA E O CARGO: Leia EXCLUSIVAMENTE a seção 'Experiência'. Localize a experiência mais recente (a primeira da lista). CUIDADO: No LinkedIn, quando há apenas um cargo na empresa, a primeira linha em negrito é o CARGO (ex: 'Gerente') e a linha logo abaixo é a EMPRESA. Não coloque o cargo no lugar da empresa! Extraia corretamente o Nome da Empresa e o Cargo. Inclua obrigatoriamente as datas de início e término que aparecem na mesma seção (ex: 'jan de 2024 - o momento' ou 'mar de 2020 - fev de 2023'). Se a data final não for 'o momento'/'presente', deixe claro no resumo que a pessoa já encerrou essa experiência. NUNCA extraia nomes de empresas das seções 'Sugestões', 'Publicações' ou 'Você talvez goste'. Retorne o texto extraído em formato de OCR limpo e um resumo visual focado nessa última experiência profissional detalhando Cargo, Empresa e Duração."
       : "Extraia todo o texto visível deste print de contato, incluindo e-mails, telefones, aniversários ou redes sociais. Retorne o texto extraído em formato de OCR limpo e um resumo visual.";
 
     const response = await fetch(GROQ_URL, {
@@ -194,84 +229,104 @@ ${JSON.stringify(metadata.attachments_processed || [], null, 2)}
 `;
 
   // Segment instructions based on the leadType
-  let roleContextInstruction = "";
-  if (leadType === "prospect_parceiro") {
-    roleContextInstruction = `
-O lead é classificado como **prospect_parceiro** (um advogado, contador ou consultor que queremos atrair para o ecossistema).
-Portanto, o Clone IA sendo personalizado representa a **demonstração do próprio Clone IA comercial-tributário desse parceiro**.
-Suas mensagens geradas ("short_note", "long_email", "article_pitch") devem ser escritas *da perspectiva do clone do prospect parceiro* direcionadas a potenciais *clientes finais* (empresas operacionais, diretores financeiros, CFOs).
-Por exemplo:
-- "short_note": Mensagem rápida no LinkedIn escrita por ${lead?.nome || "este profissional"} para um decisor de indústria/varejo, sugerindo avaliar oportunidades de saneamento fiscal sem pedir documentos sensíveis.
-- "long_email": E-mail estruturado escrito por ${lead?.nome || "este profissional"} para o CFO de uma empresa operacional apresentando teses de transição da Reforma Tributária ou recuperação tributária focada em gerar caixa.
-- "article_pitch": Uma provocação rápida ou tese sobre créditos fiscais que o clone dele enviaria.
-- "strategy_summary": Explicação técnica do posicionamento de mercado que o Clone IA de ${lead?.nome || "este profissional"} adotará.
-- "next_step": Próxima ação recomendada para o operador master (Alexandre) apresentar esse clone em modo demo para o prospect e fechar a adesão.`;
-  } else if (leadType === "cliente_final_empresa") {
-    roleContextInstruction = `
-O lead é classificado como **cliente_final_empresa** (uma indústria, varejo, agro, etc.).
-Portanto, o Clone IA sendo personalizado representa o clone comercial de um parceiro ativo (ou da TaxManagers) prospectando essa empresa.
-Suas mensagens geradas devem abordar diretamente esta empresa (${lead?.empresa || "empresa alvo"}) com foco nas teses fiscais mais adequadas para o segmento dela.`;
-  } else {
-    roleContextInstruction = `
-O papel do lead é indefinido. Estruture abordagens sugerindo a hipótese provável.`;
-  }
+  let roleContextInstruction = `
+Você está analisando prioritariamente a pessoa e o relacionamento comercial. Não presuma que os dados disponíveis representam uma análise completa da empresa. Não atribua oportunidades tributárias, valores, regime tributário, riscos fiscais ou teses à empresa sem uma entidade empresarial estruturada e evidências próprias.
+O objetivo é atuar como Copiloto de Customer Discovery e SPIN Selling, identificando a fase correta do relacionamento.
+`;
 
   const rulesBlock = `====================================
-REGRAS
+REGRAS COMERCIAIS E DE DISCOVERY
 ====================================
-- Nunca invente fatos.
-- Nunca trate hipótese como fato.
+1. CLASSIFICAÇÃO DA PESSOA:
+- buyer: Executivo/profissional em empresa contratante (CFO, Controller, Diretor).
+- internal_influencer: Participa da análise ou opera o problema.
+- potential_partner: Contador, advogado, consultor parceiro.
+- potential_competitor: Concorrente, escritório tributário, consultoria concorrente, empresa de tecnologia fiscal, advogado tributário empresarial.
+- no_fit: Sem aderência.
+- insufficient_information: Falta dados.
+
+2. REGRAS OBRIGATÓRIAS PARA CONCORRENTES:
+- Se lead_classification for 'potential_competitor' ou competition_risk='high', VOCÊ DEVE OBRIGATORIAMENTE RETORNAR "should_contact": false e "should_pitch": false.
+- NÃO revele tese, diagnóstico, metodologia ou formato da oferta.
+- As strings em "messages" devem vir estritamente VAZIAS ("").
+- Preencha o strategic_alerts justificando o risco.
+
+3. CUSTOMER DISCOVERY E SPIN SELLING:
+- Seu objetivo NÃO É VENDER IMEDIATAMENTE. É descobrir.
+- SPIN Stages: situation, problem, implication, need_payoff, not_applicable, unknown.
+- Priorize perguntas sobre fatos (ex: "Como vocês acompanham isso hoje?").
+- Não ofereça diagnóstico, proposta ou reunião no primeiro contato a menos que haja sinal claro de interesse.
+- A mensagem deve conter no máximo UMA pergunta (sem interrogatório).
+
+4. RELATIONSHIP STAGE:
+- Valores permitidos: not_connected, invitation_available, invitation_sent, recent_connection, old_connection_no_conversation, conversation_started, discovery_in_progress, problem_confirmed, opportunity_identified, presentation_requested, proposal_authorized, no_interest, do_not_contact, unknown.
+- Para convites de conexão (not_connected), use no máximo 200 caracteres e sem pitch de venda.
+- Para conexão antiga (old_connection_no_conversation), reconheça a conexão antiga, sem fingir intimidade.
+- Se não houver dados claros de tempo, use unknown.
+
+5. DIRETRIZES DA PLATAFORMA (EVIDÊNCIAS):
+- A IA não pode inferir crescimento, regime tributário, tese, tributo, dificuldade operacional ou fato empresarial apenas pelo cargo, setor ou histórico da pessoa.
+- Quando faltarem dados, a pergunta de discovery deve ser neutra e exploratória.
 - Nunca altere lead_type definido pelo sistema.
-- Se faltar informação, diga que falta.
-- Se o lead_type for prospect_parceiro, não vender como cliente final.
-- Se o lead_type for cliente_final_empresa, focar na empresa e tese tributária.
-- Se qualquer anexo em attachments_processed tiver processed = false (ou se o anexo foi recebido mas não extraído/processado), você DEVE obrigatoriamente incluir a seguinte frase no início de strategy_summary:
-  "Recebi indicação de anexo, mas o conteúdo visual ainda não foi extraído pelo sistema."
-- Se houver processed = true em qualquer anexo, você DEVE usar de forma explícita e clara o conteúdo extraído dos anexos para personalizar:
-  - short_note
-  - long_email
-  - strategy_summary
-  - next_step
-- Não prometa recuperação garantida nas abordagens.
-- Não peça SPED/EFD no primeiro contato.
-- Importante: Se o histórico de conversas ou observações contiverem regras explícitas (ex: "ele trabalha com direito imobiliário", "não oferecer tese federal geral", "foco em parcerias comerciais", "não é cliente final"), você DEVE respeitar rigorosamente essas diretrizes na personalização das mensagens.
-- Use linguagem executiva, curta, concreta e persuasiva.
+- Se faltar informação, classifique como insufficient_information e detalhe em missing_information.
+- Se processed = false em anexos, inclua em strategy_summary: "Recebi indicação de anexo, mas o conteúdo visual ainda não foi extraído."
+- Se processed = true, utilize os dados dos prints na análise.
 - ${leadTypePromptStr}
 `;
 
   return `
-Você é o motor de personalização de Clones IA da TaxManagers.
-A TaxManagers não vende "CRM com IA". A TaxManagers cria Clones IA comerciais-tributários que operam antes da contratação do serviço de parceria. O CRM é apenas a interface. O produto é o Clone IA.
+Você é o Copiloto de Customer Discovery e SPIN Selling da TaxManagers.
 
 Instrução de Contexto para o Papel:
 ${roleContextInstruction}
 
 ${oficialDataBlock}
-
 ${cloneIaBlock}
-
 ${timelineBlock}
-
 ${chatHistoryBlock}
-
 ${attachmentsBlock}
-
 ${rulesBlock}
 
 ====================================
 TAREFA
 ====================================
-Gere a estratégia de abordagem do lead.
+Gere a estratégia de Customer Discovery para o lead.
 A observação adicional do operador é: ${contextExtra || "Nenhuma"}
 Retorne SOMENTE JSON válido, sem qualquer tipo de markdown ou texto externo.
 
 Formato obrigatório do JSON:
 {
-  "short_note": "...",
-  "long_email": "...",
-  "article_pitch": "...",
-  "strategy_summary": "...",
-  "next_step": "..."
+  "contact_intelligence": {
+    "lead_classification": "buyer | internal_influencer | potential_partner | potential_competitor | no_fit | insufficient_information",
+    "classification_confidence": "high | medium | low",
+    "decision_power": "high | medium | low | unknown",
+    "competition_risk": "high | medium | low | unknown",
+    "relationship_stage": "not_connected | invitation_available | invitation_sent | recent_connection | old_connection_no_conversation | conversation_started | discovery_in_progress | problem_confirmed | opportunity_identified | presentation_requested | proposal_authorized | no_interest | do_not_contact | unknown",
+    "classification_reason": "string",
+    "missing_information": ["array de strings (se houver)"],
+    "strategic_alerts": ["array de strings (se houver risco ou concorrente)"]
+  },
+  "interaction_strategy": {
+    "strategic_objective": "string",
+    "spin_stage": "situation | problem | implication | need_payoff | not_applicable | unknown",
+    "should_contact": true,
+    "should_pitch": false
+  },
+  "messages": {
+    "connection_note": "string (até 200 caracteres)",
+    "linkedin_message": "string",
+    "email_message": "string",
+    "content_share_message": "string"
+  },
+  "discovery": {
+    "current_question": "string (no max 1)",
+    "next_spin_question": "string",
+    "evidence_sought": "string"
+  },
+  "operator_guidance": {
+    "strategy_summary": "string",
+    "next_step": "string"
+  }
 }
 `;
 }
@@ -433,12 +488,12 @@ export default async function handler(req, res) {
 
   const metadata = lead.metadata || {};
 
-  // Determine lead role using metadata.lead_type
-  let leadType = metadata.lead_type || metadata.lead_role;
+  // Determine lead role using contact_intelligence (first priority) or legacy lead_type
+  let leadType = metadata.contact_intelligence?.lead_classification || metadata.lead_type || metadata.lead_role;
   let leadTypePromptStr = "";
 
   if (leadType) {
-    leadTypePromptStr = `Tipo do lead definido pelo sistema: ${leadType}. Não altere essa classificação sem solicitação explícita do usuário.`;
+    leadTypePromptStr = `Classificação atual do lead: ${leadType}. NUNCA altere essa classificação caso tenha sido definida pelo sistema ou corrigida por um humano. Mantenha essa mesma classificação.`;
   } else {
     // If not present, suggest classification as hypothesis
     const cargo = (lead?.cargo || "").toLowerCase();
@@ -480,19 +535,85 @@ export default async function handler(req, res) {
   for (const model of models) {
     try {
       const result = await callGroq(model, prompt);
+      
+      // Validação Básica do JSON (Fallback em caso de corrupção ou quebra severa da estrutura)
+      if (!result.contact_intelligence || !result.messages || !result.interaction_strategy) {
+        throw new Error("JSON_SCHEMA_ERROR: Estrutura principal inválida.");
+      }
+
+      const validClassifications = ["buyer", "internal_influencer", "potential_partner", "potential_competitor", "no_fit", "insufficient_information"];
+      if (result.contact_intelligence.lead_classification && !validClassifications.includes(result.contact_intelligence.lead_classification)) {
+        throw new Error("JSON_SCHEMA_ERROR: Enum de lead_classification inválido.");
+      }
+
+      // Tratamento de Concorrente no Backend (Regra 3 do usuário)
+      const isCompetitor = result.contact_intelligence?.lead_classification === "potential_competitor" 
+                           || result.contact_intelligence?.competition_risk === "high";
+
+      if (isCompetitor) {
+        result.interaction_strategy.should_contact = false;
+        result.interaction_strategy.should_pitch = false;
+        if (result.messages) {
+          result.messages.connection_note = "";
+          result.messages.linkedin_message = "";
+          result.messages.email_message = "";
+          result.messages.content_share_message = "";
+        }
+        
+        if (!result.contact_intelligence.strategic_alerts) {
+          result.contact_intelligence.strategic_alerts = [];
+        }
+        result.contact_intelligence.strategic_alerts.push("BLOQUEIO SISTÊMICO: Risco concorrencial detectado. Mensagens zeradas.");
+        
+        if (!result.operator_guidance) result.operator_guidance = {};
+        result.operator_guidance.next_step = "Revisão humana obrigatória. Risco concorrencial alto detectado.";
+      }
+
+      // Merge Profundo no Metadata
+      const newMetadata = deepMerge(lead.metadata || {}, {
+        contact_intelligence: result.contact_intelligence || {},
+        interaction_strategy: result.interaction_strategy || {},
+        discovery: result.discovery || {},
+        architecture_status: {
+          scope: "contact_level_only",
+          company_entity_required: true,
+          company_intelligence_available: false,
+          ai_schema_version: "contact_intelligence_v1",
+          generated_at: new Date().toISOString(),
+          model_used: model
+        }
+      });
+      
+      // Se houvesse linkedin_message válida gerada, nós a guardamos no metadata, mas o frontend 
+      // tem apenas 3 abas, mapeadas a seguir.
+      if (result.messages?.linkedin_message) {
+         newMetadata.contact_intelligence.messages = newMetadata.contact_intelligence.messages || {};
+         newMetadata.contact_intelligence.messages.linkedin_message = result.messages.linkedin_message;
+      }
+
+      // Adaptação de chaves para retrocompatibilidade do Frontend:
+      // messages.connection_note -> short_note (passo1_mensagem)
+      // messages.email_message -> long_email (passo2_mensagem)
+      // messages.content_share_message -> article_pitch (passo3_mensagem)
+      let shortNote = result.messages?.connection_note || "";
+      let longEmail = result.messages?.email_message || "";
+      let articlePitch = result.messages?.content_share_message || "";
 
       return res.status(200).json({
         error: false,
         model,
-        short_note: result.short_note || "",
-        long_email: result.long_email || "",
-        article_pitch: result.article_pitch || "",
-        strategy_summary: result.strategy_summary || "",
-        next_step: result.next_step || "",
-        updated_metadata: lead.metadata
+        short_note: shortNote,
+        long_email: longEmail,
+        article_pitch: articlePitch,
+        strategy_summary: result.operator_guidance?.strategy_summary || "",
+        next_step: result.operator_guidance?.next_step || "",
+        updated_metadata: newMetadata
       });
     } catch (err) {
       console.error("[personalize_agent]", model, err);
+      if (err.message.includes("JSON_SCHEMA_ERROR")) {
+        return res.status(200).json(fallbackResponse(lead, "schema_validation_failed"));
+      }
     }
   }
 

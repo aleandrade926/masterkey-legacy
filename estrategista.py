@@ -10,7 +10,7 @@ if sys.stdout.encoding != 'utf-8':
 
 
 # --- CONFIGURAÇÕES ---
-GROQ_API_KEY = "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"
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 client = Groq(api_key=GROQ_API_KEY)
 PASTA_OBSIDIAN = r"C:\Users\Alexandre\OneDrive\Documentos\Obsidian Vault\Prospecção_B2B"
 PASTA_ISCAS = os.path.join(PASTA_OBSIDIAN, "Iscas_de_Conteudo")

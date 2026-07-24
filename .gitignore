@@ -28,3 +28,6 @@ dist-ssr
 *.zip
 *.bat
 __pycache__/
+
+.vercel
+.env*

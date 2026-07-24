@@ -11,7 +11,7 @@
     "start:backend": "node backend/server.js",
     "watch:extension": "vite build --watch",
     "dev:todeacordo": "concurrently \"npm run watch:extension\" \"npm run start:backend\"",
-    "deploy:api": "cd ../../ && npx vercel --prod --yes"
+    "deploy:api": "npx vercel --prod --yes"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.0",

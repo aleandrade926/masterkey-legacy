@@ -164,3 +164,34 @@ export const getWaitlist = async (): Promise<WaitlistLead[]> => {
     }
   }
 };
+
+export const getProStatus = async (): Promise<boolean> => {
+  if (isExtension) {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(['todeacordo_is_pro'], (result: any) => {
+        resolve(result && result.todeacordo_is_pro === true);
+      });
+    });
+  } else {
+    try {
+      return localStorage.getItem('todeacordo_is_pro') === 'true';
+    } catch (e) {
+      console.error('Error reading pro status:', e);
+      return false;
+    }
+  }
+};
+
+export const setProStatus = async (isPro: boolean): Promise<void> => {
+  if (isExtension) {
+    return new Promise((resolve) => {
+      chrome.storage.local.set({ todeacordo_is_pro: isPro }, () => resolve());
+    });
+  } else {
+    try {
+      localStorage.setItem('todeacordo_is_pro', isPro ? 'true' : 'false');
+    } catch (e) {
+      console.error('Error writing pro status:', e);
+    }
+  }
+};

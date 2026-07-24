@@ -16,6 +16,12 @@ import InfraPage from "./pages/infra";
 import TaxManagers from "./pages/taxmanagers";
 import TaxManagersPrivacy from "./pages/taxmanagers-privacy";
 import TaxManagersApp from "./pages/taxmanagers-app";
+import FootInTheDoorLab from "./pages/foot-in-the-door-lab";
+import Empresas from "./pages/taxmanagers-navigator/Empresas";
+import Pessoas from "./pages/taxmanagers-navigator/Pessoas";
+import Negocios from "./pages/taxmanagers-navigator/Negocios";
+import Oportunidades from "./pages/taxmanagers-navigator/Oportunidades";
+import Entregas from "./pages/taxmanagers-navigator/Entregas";
 import Sidebar from "./components/sidebar";
 import { useIsMobile } from "./hooks/use-mobile";
 import { useState } from "react";
@@ -55,6 +61,18 @@ function App() {
   if (location === "/taxmanagers/politica-de-privacidade" || location === "/taxmanagers/privacidade") {
     return <TaxManagersPrivacy />;
   }
+
+  // Rota isolada Foot in the Door Lab (sem menu, sem Supabase, sem produção)
+  if (import.meta.env.DEV && location === "/taxmanagers/foot-in-the-door-lab") {
+    return <FootInTheDoorLab />;
+  }
+
+  // Rotas Tax Navigator (Entidades)
+  if (location.startsWith("/taxmanagers/empresas/")) return <Empresas />;
+  if (location.startsWith("/taxmanagers/pessoas/")) return <Pessoas />;
+  if (location.startsWith("/taxmanagers/negocios/")) return <Negocios />;
+  if (location.startsWith("/taxmanagers/oportunidades/")) return <Oportunidades />;
+  if (location.startsWith("/taxmanagers/entregas/")) return <Entregas />;
 
   // Rota independente Tax Managers App Portal
   if (location === "/" || location.startsWith("/app") || location.startsWith("/taxmanagers/app")) {

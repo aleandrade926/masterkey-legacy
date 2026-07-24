@@ -8,8 +8,7 @@ interface GenerationParams {
 }
 
 export async function generateConsensusViaLlama(params: GenerationParams): Promise<ConsensusObject> {
-  const API_BASE_URL = import.meta.env.VITE_TODEACORDO_CONSENSUS_API_BASE_URL
-    || (import.meta.env.DEV ? 'http://localhost:3000' : 'https://app.todeacordo.com.br');
+  const API_BASE_URL = import.meta.env.VITE_TODEACORDO_CONSENSUS_API_BASE_URL || 'https://app.todeacordo.com.br';
   const BACKEND_URL = `${API_BASE_URL}/api/generate-consensus`;
   
   const response = await fetch(BACKEND_URL, {
