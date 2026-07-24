@@ -43,9 +43,15 @@ function Router() {
 }
 
 function App() {
-  const [location] = useLocation();
+  const [wouterLocation] = useLocation();
+  const location = typeof window !== "undefined" ? window.location.pathname : wouterLocation;
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const isTaxManagersDomain = typeof window !== "undefined" && (
+    window.location.hostname.includes("taxmanagers") || 
+    window.location.hostname.includes("app.taxmanagers")
+  );
 
   // Rota independente da TailorSpace Infra
   if (location === "/infra") {
@@ -82,8 +88,6 @@ function App() {
   if (location.startsWith("/p/") || location.startsWith("/in/")) return <Pessoas />;
   if (location.startsWith("/c/") || location.startsWith("/company/")) return <Empresas />;
 
-  // Se estiver no domínio taxmanagers ou em rotas do portal
-  const isTaxManagersDomain = typeof window !== "undefined" && window.location.hostname.includes("taxmanagers");
   const isMestreDasTeclasRoute = ["/training", "/lessons", "/achievements", "/leaderboard", "/shortcuts", "/auth"].some(r => location.startsWith(r));
 
   // Rota independente Tax Managers App Portal
