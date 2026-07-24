@@ -62,17 +62,26 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
     else if (inst === '5') act = 'Aceitou Conexão (Outbound)';
     else if (inst === '6') act = 'Pediu Conexão (Inbound)';
     
-    // Detect if the pasted input is actually a conversational chat message/history
-    const isChat = inst.length > 60 || 
-                   inst.includes('\n') || 
-                   /^(olá|ola|oi|bom dia|boa tarde|boa noite|tudo bem|tudo bom|gostaria|falar|conversar|você|voce|enviada|enviado)/i.test(inst) ||
-                   (inst.split(/\s+/).length > 6 && !inst.includes('|'));
+    // Classifica se o texto colado/capturado é mensagem enviada (outbound) ou resposta do lead (inbound)
+    function classifyChatText(chatText, selectedAct, prospectName) {
+      const lower = (chatText || '').toLowerCase();
+      const isOutboundOnly = lower.includes('mensagem enviada') || lower.includes('enviado por você') || lower.includes('enviada por você') || lower.includes('você enviou') || /^você\s*[:\n]/i.test(chatText);
+      let hasReply = lower.includes('obrigad') || lower.includes('pode') || lower.includes('interesse') || lower.includes('como funciona') || lower.includes('me liga');
+      if (prospectName && prospectName.trim().length > 2) {
+        const firstName = prospectName.trim().split(' ')[0].toLowerCase();
+        if (lower.includes(firstName + ':')) hasReply = true;
+      }
+      if (isOutboundOnly && !hasReply) {
+        return 'Mensagem Enviada (Outbound)';
+      }
+      return (selectedAct && selectedAct !== 'Importado') ? selectedAct : 'Respondeu Chat';
+    }
 
     if (isChat) {
-      act = 'Respondeu Chat';
       let ch = inst;
       if (autoChatHistory) ch = autoChatHistory.trim() + "\n\n" + ch;
       if (ch.length > 10000) ch = ch.substring(ch.length - 10000);
+      act = classifyChatText(ch, act, name);
       
       const targetOrigin = 'https://app.taxmanagers.com.br';
       const iu = targetOrigin + '/taxmanagers/app/import'
@@ -147,10 +156,10 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
       }
       act = 'Importado';
     } else if (inst.length > 5) {
-      act = 'Respondeu Chat';
       let ch = inst;
       if (autoChatHistory) ch = autoChatHistory.trim() + "\n\n" + ch;
       if (ch.length > 10000) ch = ch.substring(ch.length - 10000);
+      act = classifyChatText(ch, act, name);
       
       const targetOrigin = 'https://app.taxmanagers.com.br';
       const iu = targetOrigin + '/taxmanagers/app/import'

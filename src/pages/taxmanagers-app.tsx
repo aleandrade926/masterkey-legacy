@@ -37,6 +37,7 @@ import {
   getSavedFrutaBaixaSubTab,
   syncNavigationStateToStorageAndUrl
 } from "../lib/taxmanagers/navigation-state";
+import { detectChatActionAndDirection } from "../lib/taxmanagers/chat-direction";
 
 // Flag de módulo — FORA do componente React, persiste entre re-renders e StrictMode.
 // Garante que apenas UM processo de gravação ocorra por abertura do popup de importação.
@@ -246,6 +247,11 @@ export default function TaxManagersApp() {
           if (byNameOnly && byNameOnly.length > 0) existingLead = byNameOnly[0];
         }
 
+        // Detecta ação e direção reais do chat/interação
+        const chatAnalysis = detectChatActionAndDirection(chatHistory, action, name);
+        const resolvedAction = chatAnalysis.action;
+        const resolvedDirection = chatAnalysis.direction;
+
         let targetLeadId = "";
         let isUpdate = false;
 
@@ -258,10 +264,21 @@ export default function TaxManagersApp() {
         let mergedChatHistory = chatHistory;
         let mergedStatus = "Pendente";
 
+        if (resolvedAction === "Mensagem Enviada (Outbound)") {
+          mergedStatus = "Abordado";
+        } else if (resolvedAction === "Respondeu Chat") {
+          mergedStatus = "Passo 1";
+        }
+
         if (existingLead) {
           targetLeadId = existingLead.id;
           isUpdate = true;
           mergedStatus = existingLead.status || "Pendente";
+          if (existingLead.status === "Pendente" && resolvedAction === "Mensagem Enviada (Outbound)") {
+            mergedStatus = "Abordado";
+          } else if (existingLead.status === "Pendente" && resolvedAction === "Respondeu Chat") {
+            mergedStatus = "Passo 1";
+          }
 
           // Mantém o e-mail anterior se o novo for vazio ou "Sem e-mail"
           if (!email || email === "Sem e-mail" || email.toLowerCase().includes("sem")) {
@@ -345,31 +362,35 @@ export default function TaxManagersApp() {
 
         // Cria a interação de importação na timeline
         let timelineMessage = isUpdate 
-          ? `Lead atualizado via importação do LinkedIn. Ação: ${action}.`
-          : `Lead importado via LinkedIn. Ação: ${action}.`;
+          ? `Lead atualizado via importação do LinkedIn. Ação: ${resolvedAction}.`
+          : `Lead importado via LinkedIn. Ação: ${resolvedAction}.`;
 
-        if (action === "Pediu Conexão (Inbound)") {
+        if (resolvedAction === "Pediu Conexão (Inbound)") {
           timelineMessage += "\n\nOrigem LinkedIn: pediu conexão comigo (inbound). Lead morno.";
-        } else if (action === "Aceitou Conexão (Outbound)") {
+        } else if (resolvedAction === "Aceitou Conexão (Outbound)") {
           timelineMessage += "\n\nOrigem LinkedIn: aceitou conexão que enviei (outbound). Lead frio.";
+        } else if (resolvedAction === "Mensagem Enviada (Outbound)") {
+          timelineMessage += "\n\nOrigem LinkedIn: mensagem enviada pelo SDR (outbound).";
+        } else if (resolvedAction === "Respondeu Chat") {
+          timelineMessage += "\n\nOrigem LinkedIn: lead respondeu ao chat (inbound).";
         }
 
         await supabase.from("taxmanagers_interactions").insert([{
           lead_id: targetLeadId,
           partner_id: session.user.id,
           type: "import",
-          direction: action === "Pediu Conexão (Inbound)" ? "inbound" : "internal",
+          direction: resolvedDirection === "inbound" ? "inbound" : "internal",
           content: timelineMessage,
           created_by: session.user.id
         }]);
 
-        // Se houver histórico de chat, salva como uma interação de LinkedIn na timeline
+        // Se houver histórico de chat, salva como uma interação de LinkedIn na timeline com a direção detectada
         if (chatHistory) {
           await supabase.from("taxmanagers_interactions").insert([{
             lead_id: targetLeadId,
             partner_id: session.user.id,
             type: "linkedin",
-            direction: "inbound",
+            direction: resolvedDirection,
             content: chatHistory,
             created_by: session.user.id
           }]);

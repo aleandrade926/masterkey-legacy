@@ -86,7 +86,7 @@ new_section = r"""        <!-- Bookmarklet Help Section -->
                   + 'else if(inputStr==="3")action="Assinou Newsletter";'
                   + 'else if(inputStr==="4")action="Respondeu Chat";'
                   + 'else if(inputStr==="5")action="Aceitou Conexao";'
-                  + 'else if(inputStr.length>5){action="Respondeu Chat";chatHistory=inputStr;if(chatHistory.length>10000){chatHistory=chatHistory.substring(chatHistory.length-10000);}}'
+                  + 'else if(inputStr.length>5){chatHistory=inputStr;if(chatHistory.length>10000){chatHistory=chatHistory.substring(chatHistory.length-10000);}var lower=chatHistory.toLowerCase();var isOutbound=(lower.indexOf("mensagem enviada")>-1||lower.indexOf("enviado por voce")>-1||lower.indexOf("voce enviou")>-1||lower.indexOf("voce:")===0);action=isOutbound?"Mensagem Enviada (Outbound)":"Respondeu Chat";}'
                   + 'var importUrl="' + ORIGIN + '/api/import_page?name="+encodeURIComponent(name)+"&role="+encodeURIComponent(role)+"&company="+encodeURIComponent(company)+"&url="+encodeURIComponent(url)+"&action="+encodeURIComponent(action)+"&email="+encodeURIComponent(email)+"&chat_history="+encodeURIComponent(chatHistory);'
                   + 'window.open(importUrl,"_blank","width=500,height=400");'
                   + '}catch(e){alert("Erro no bookmarklet: "+e);}})();';
