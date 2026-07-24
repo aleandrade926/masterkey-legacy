@@ -74,12 +74,20 @@ function App() {
   if (location.startsWith("/taxmanagers/oportunidades/")) return <Oportunidades />;
   if (location.startsWith("/taxmanagers/entregas/")) return <Entregas />;
 
-  // Rotas Amigáveis (Friendly URLs - /p/:slug e /c/:slug)
+  // Rotas Amigáveis no namespace exclusivo do Tax Managers (/taxmanagers/in/:slug e /taxmanagers/company/:slug)
+  if (location.startsWith("/taxmanagers/in/")) return <Pessoas />;
+  if (location.startsWith("/taxmanagers/company/")) return <Empresas />;
+
+  // Rotas Amigáveis de Retrocompatibilidade / Aliases (/in/:slug, /company/:slug, /p/:slug, /c/:slug)
   if (location.startsWith("/p/") || location.startsWith("/in/")) return <Pessoas />;
   if (location.startsWith("/c/") || location.startsWith("/company/")) return <Empresas />;
 
+  // Se estiver no domínio taxmanagers ou em rotas do portal
+  const isTaxManagersDomain = typeof window !== "undefined" && window.location.hostname.includes("taxmanagers");
+  const isMestreDasTeclasRoute = ["/training", "/lessons", "/achievements", "/leaderboard", "/shortcuts", "/auth"].some(r => location.startsWith(r));
+
   // Rota independente Tax Managers App Portal
-  if (location === "/" || location.startsWith("/app") || location.startsWith("/taxmanagers/app")) {
+  if (location === "/" || location.startsWith("/app") || location.startsWith("/taxmanagers") || (isTaxManagersDomain && !isMestreDasTeclasRoute)) {
     return <TaxManagersApp />;
   }
 
