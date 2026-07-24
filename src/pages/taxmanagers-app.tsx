@@ -579,9 +579,18 @@ export default function TaxManagersApp() {
 
   // Monitorar Sessão do Supabase
   useEffect(() => {
+    // Failsafe: destrava o carregamento em até 4s caso a conexão demore
+    const failsafeTimer = setTimeout(() => {
+      setAppLoading(false);
+    }, 4000);
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) fetchProfile(session.user.id, session.user.email);
+      if (session) {
+        fetchProfile(session.user.id, session.user.email);
+      } else {
+        setAppLoading(false);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -594,7 +603,10 @@ export default function TaxManagersApp() {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(failsafeTimer);
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Garante que existam as cadências padrão do portal para o parceiro
