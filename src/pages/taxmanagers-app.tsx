@@ -1266,39 +1266,13 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
   // A extensão encontra-se no diretório taxmanagers-extension/
 
   // Login Handler
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthLoading(true);
     setAuthError("");
-
-    const formData = new FormData(e.currentTarget);
-    const submittedEmail = (formData.get("email") as string || email || "").toLowerCase().trim();
-    const submittedPassword = (formData.get("password") as string || password || "");
-
-    if (submittedEmail === "alexandre.florio@hotmail.com" || submittedEmail.includes("alexandre")) {
-      const fallbackSession = {
-        user: { id: "0ecff155-c72d-4f40-a103-2a6dcec7dbfc", email: "alexandre.florio@hotmail.com" }
-      };
-      setSession(fallbackSession);
-      setProfile({
-        id: "0ecff155-c72d-4f40-a103-2a6dcec7dbfc",
-        nome: "Alexandre Florio",
-        faixa: "Preta",
-        saldo_comissao: 0,
-        is_admin: true
-      } as any);
-      setSelectedPartnerId("all");
-      setAuthLoading(false);
-      setAppLoading(false);
-      supabase.auth.signInWithPassword({ email: submittedEmail, password: submittedPassword }).catch(() => {});
-      return;
-    }
-
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email: submittedEmail, password: submittedPassword });
-      if (error) {
-        setAuthError("Credenciais inválidas. Verifique seu e-mail e senha.");
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) setAuthError("Credenciais inválidas. Verifique seu e-mail e senha.");
     } catch (err: any) {
       setAuthError(err.message || "Erro de conexão.");
     } finally {
