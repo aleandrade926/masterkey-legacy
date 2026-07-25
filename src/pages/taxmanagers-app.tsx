@@ -785,14 +785,14 @@ export default function TaxManagersApp() {
         if (!insertError) {
           setProfile(newProfile as any);
           setSelectedPartnerId(newProfile.is_admin ? "all" : newProfile.id);
-          await ensureDefaultCadences(newProfile.id);
+          ensureDefaultCadences(newProfile.id).catch(err => console.error(err));
         }
       } else {
         const isAdmin = email?.toLowerCase().trim() === "alexandre.florio@hotmail.com" || !!data.is_admin;
         const profileWithAdmin = { ...data, is_admin: isAdmin };
         setProfile(profileWithAdmin);
         setSelectedPartnerId(isAdmin ? "all" : profileWithAdmin.id);
-        await ensureDefaultCadences(data.id);
+        ensureDefaultCadences(data.id).catch(err => console.error(err));
       }
     } catch (e) {
       console.error(e);
