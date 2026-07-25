@@ -1,5 +1,5 @@
 {
-  "ignoreCommand": "node -e 'process.exit(process.env.VERCEL_PROJECT_ID === \"prj_5SfVB5PnEnshlreAch6K0TZtZFlv\" ? 0 : 1)'",
+  "ignoreCommand": "node -e 'process.exit([\"prj_5SfVB5PnEnshlreAch6K0TZtZFlv\", \"prj_3y4HardBcipUgNWlDBoYqTDo2dnq\"].includes(process.env.VERCEL_PROJECT_ID) ? 0 : 1)'",
   "rewrites": [
     { "source": "/((?!api/).*)" , "destination": "/index.html" }
   ],
