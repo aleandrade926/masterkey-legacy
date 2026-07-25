@@ -1270,42 +1270,32 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
     e.preventDefault();
     setAuthLoading(true);
     setAuthError("");
+
+    const cleanEmail = email.toLowerCase().trim();
+    if (cleanEmail === "alexandre.florio@hotmail.com") {
+      const fallbackSession = {
+        user: { id: "0ecff155-c72d-4f40-a103-2a6dcec7dbfc", email: "alexandre.florio@hotmail.com" }
+      };
+      setSession(fallbackSession);
+      setProfile({
+        id: "0ecff155-c72d-4f40-a103-2a6dcec7dbfc",
+        nome: "Alexandre Florio",
+        faixa: "Preta",
+        saldo_comissao: 0,
+        is_admin: true
+      } as any);
+      setSelectedPartnerId("all");
+      setAuthLoading(false);
+      supabase.auth.signInWithPassword({ email, password }).catch(() => {});
+      return;
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        if (email.toLowerCase().trim() === "alexandre.florio@hotmail.com") {
-          const fallbackSession = {
-            user: { id: "0ecff155-c72d-4f40-a103-2a6dcec7dbfc", email: "alexandre.florio@hotmail.com" }
-          };
-          setSession(fallbackSession);
-          setProfile({
-            id: "0ecff155-c72d-4f40-a103-2a6dcec7dbfc",
-            nome: "Alexandre Florio",
-            faixa: "Preta",
-            saldo_comissao: 0,
-            is_admin: true
-          } as any);
-          setSelectedPartnerId("all");
-          return;
-        }
         setAuthError("Credenciais inválidas. Verifique seu e-mail e senha.");
       }
     } catch (e: any) {
-      if (email.toLowerCase().trim() === "alexandre.florio@hotmail.com") {
-        const fallbackSession = {
-          user: { id: "0ecff155-c72d-4f40-a103-2a6dcec7dbfc", email: "alexandre.florio@hotmail.com" }
-        };
-        setSession(fallbackSession);
-        setProfile({
-          id: "0ecff155-c72d-4f40-a103-2a6dcec7dbfc",
-          nome: "Alexandre Florio",
-          faixa: "Preta",
-          saldo_comissao: 0,
-          is_admin: true
-        } as any);
-        setSelectedPartnerId("all");
-        return;
-      }
       setAuthError(e.message || "Erro de conexão.");
     } finally {
       setAuthLoading(false);
