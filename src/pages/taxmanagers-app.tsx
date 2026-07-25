@@ -127,9 +127,7 @@ export default function TaxManagersApp() {
 
   useEffect(() => {
     if (location !== "/taxmanagers/app/import") return;
-
-    // Reseta apenas o ref de renderização local. O flag global de módulo _importLock NÃO é resetado aqui
-    // para evitar que re-renders ou remounts de StrictMode/wouter permitam execuções duplicadas.
+    _importLock = false;
     leadSavedRef.current = false;
 
     let timeoutId: any = null;
@@ -481,6 +479,8 @@ export default function TaxManagersApp() {
     const handleMessage = (event: MessageEvent) => {
       if (event.data && event.data.type === "lead_data") {
         if (timeoutId) clearTimeout(timeoutId);
+        _importLock = false;
+        leadSavedRef.current = false;
         saveImportedLead(event.data);
       }
     };
