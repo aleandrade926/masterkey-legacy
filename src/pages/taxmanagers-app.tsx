@@ -648,7 +648,7 @@ export default function TaxManagersApp() {
     // Failsafe: destrava o carregamento em até 4s caso a conexão demore
     const failsafeTimer = setTimeout(() => {
       setAppLoading(false);
-    }, 4000);
+    }, 1000);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -1286,6 +1286,7 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
       } as any);
       setSelectedPartnerId("all");
       setAuthLoading(false);
+      setAppLoading(false);
       supabase.auth.signInWithPassword({ email, password }).catch(() => {});
       return;
     }
