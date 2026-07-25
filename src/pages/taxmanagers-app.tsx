@@ -464,6 +464,7 @@ export default function TaxManagersApp() {
         if (normalizedUrl) _inFlightUrls.delete(normalizedUrl);
 
         setImportStatus("success");
+        fetchDbCounts();
         setTimeout(() => {
           window.close();
         }, 2000);
@@ -825,6 +826,31 @@ export default function TaxManagersApp() {
     if (data) setCampaigns(data);
   };
 
+  // Trava anticoncorrência para chamadas de contagem em lote
+  const isFetchingDbCountsRef = useRef(false);
+
+  const fetchDbCounts = async () => {
+    if (!session || !profile?.is_admin || isFetchingDbCountsRef.current) return;
+    isFetchingDbCountsRef.current = true;
+    try {
+      const { count: total } = await supabase.from("taxmanagers_leads").select("*", { count: "exact", head: true });
+      const { count: active } = await supabase.from("taxmanagers_leads").select("*", { count: "exact", head: true }).eq("import_status", "active");
+      const { count: quarantine } = await supabase.from("taxmanagers_leads").select("*", { count: "exact", head: true }).eq("import_status", "quarantine");
+      const { count: other } = await supabase.from("taxmanagers_leads").select("*", { count: "exact", head: true }).not("import_status", "in", '("active","quarantine")');
+      const { count: statusNull } = await supabase.from("taxmanagers_leads").select("*", { count: "exact", head: true }).is("import_status", null);
+      setDbCounts({
+        total: total || 0,
+        active: active || 0,
+        quarantine: quarantine || 0,
+        other: (other || 0) + (statusNull || 0)
+      });
+    } catch (err) {
+      console.error("Erro no diagnostico de contagens:", err);
+    } finally {
+      isFetchingDbCountsRef.current = false;
+    }
+  };
+
   const fetchActiveLeads = async () => {
     if (!session) return;
     const targetPartner = profile?.is_admin ? selectedPartnerId : profile?.id;
@@ -864,26 +890,6 @@ export default function TaxManagersApp() {
     if (data) {
       setLeads(data);
       setActiveLeadsTotalCount(count || 0);
-    }
-
-    if (profile?.is_admin) {
-      (async () => {
-        try {
-          const { count: total } = await supabase.from("taxmanagers_leads").select("*", { count: "exact", head: true });
-          const { count: active } = await supabase.from("taxmanagers_leads").select("*", { count: "exact", head: true }).eq("import_status", "active");
-          const { count: quarantine } = await supabase.from("taxmanagers_leads").select("*", { count: "exact", head: true }).eq("import_status", "quarantine");
-          const { count: other } = await supabase.from("taxmanagers_leads").select("*", { count: "exact", head: true }).not("import_status", "in", '("active","quarantine")');
-          const { count: statusNull } = await supabase.from("taxmanagers_leads").select("*", { count: "exact", head: true }).is("import_status", null);
-          setDbCounts({
-            total: total || 0,
-            active: active || 0,
-            quarantine: quarantine || 0,
-            other: (other || 0) + (statusNull || 0)
-          });
-        } catch (err) {
-          console.error("Erro no diagnostico de contagens:", err);
-        }
-      })();
     }
   };
 
@@ -1194,6 +1200,13 @@ export default function TaxManagersApp() {
     }
   }, [session, profile, selectedPartnerId, debouncedSearch, quarantineLeadsLimit, activeTab, ataque50kMode]);
 
+  // Carrega as contagens gerais do banco APENAS ao alternar para a aba de leads como Admin
+  useEffect(() => {
+    if (activeTab === "leads" && profile?.is_admin) {
+      fetchDbCounts();
+    }
+  }, [activeTab, profile?.is_admin, session]);
+
 
   // Carrega arquivos da VPS e interações para o lead selecionado
   useEffect(() => {
@@ -1322,6 +1335,7 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
 
     if (!error && data) {
       fetchCurrentTabLeads();
+      fetchDbCounts();
       setNewLeadName("");
       setNewLeadCompany("");
       setNewLeadCargo("");
@@ -2197,6 +2211,7 @@ ${fonteDados}`;
       refreshCRMData();
       fetchActiveLeads();
       fetchQuarantineLeads();
+      fetchDbCounts();
     } catch (err: any) {
       console.error(err);
       alert("Erro ao ativar para sua operação: " + err.message);
@@ -2256,6 +2271,7 @@ ${fonteDados}`;
       refreshCRMData();
       fetchActiveLeads();
       fetchQuarantineLeads();
+      fetchDbCounts();
     } catch (err: any) {
       console.error(err);
       alert("Erro ao ativar para parceiro: " + err.message);
