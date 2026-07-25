@@ -14,7 +14,10 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
   let promptOpened = false;
   let willNavigate = false;
   
-  const cleanUrl = window.location.origin + window.location.pathname.replace(/\/$/, '');
+  let cleanUrl = window.location.origin + window.location.pathname.replace(/\/$/, '');
+  if (cleanUrl.includes('/overlay/contact-info')) {
+    cleanUrl = cleanUrl.replace('/overlay/contact-info', '');
+  }
 
   function openFinalPrompt() {
     if (promptOpened) return;
@@ -92,7 +95,11 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
         + '&action='  + encodeURIComponent(act);
 
       console.log("[TaxManagers] Abrindo janela de importação...");
-      const popup = window.open(iu, '_blank', 'width=420,height=340');
+      let popup = window.open(iu, '_blank', 'width=420,height=340');
+      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        console.warn("[TaxManagers] Popup em janela bloqueado. Abrindo em nova aba...");
+        popup = window.open(iu, '_blank');
+      }
       if (!popup) {
         alert('Popup bloqueado! Permita popups para o LinkedIn nas configurações do Chrome.');
         window.__tmLastCapture = 0;
@@ -170,7 +177,11 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
         + '&action='  + encodeURIComponent(act);
 
       console.log("[TaxManagers] Abrindo janela de importação...");
-      const popup = window.open(iu, '_blank', 'width=420,height=340');
+      let popup = window.open(iu, '_blank', 'width=420,height=340');
+      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        console.warn("[TaxManagers] Popup em janela bloqueado. Abrindo em nova aba...");
+        popup = window.open(iu, '_blank');
+      }
       if (!popup) {
         alert('Popup bloqueado! Permita popups para o LinkedIn nas configurações do Chrome.');
         window.__tmLastCapture = 0;
@@ -207,7 +218,11 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
       + '&action='  + encodeURIComponent(act);
 
     console.log("[TaxManagers] Abrindo janela de importação...");
-    const popup = window.open(iu, '_blank', 'width=420,height=340');
+    let popup = window.open(iu, '_blank', 'width=420,height=340');
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      console.warn("[TaxManagers] Popup em janela bloqueado. Abrindo em nova aba...");
+      popup = window.open(iu, '_blank');
+    }
     if (!popup) {
       alert('Popup bloqueado! Permita popups para o LinkedIn nas configurações do Chrome.');
       window.__tmLastCapture = 0;
