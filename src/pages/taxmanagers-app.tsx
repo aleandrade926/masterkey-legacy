@@ -464,7 +464,7 @@ export default function TaxManagersApp() {
         if (normalizedUrl) _inFlightUrls.delete(normalizedUrl);
 
         setImportStatus("success");
-        fetchDbCounts();
+        await fetchDbCounts();
         setTimeout(() => {
           window.close();
         }, 2000);
@@ -1335,7 +1335,7 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
 
     if (!error && data) {
       fetchCurrentTabLeads();
-      fetchDbCounts();
+      await fetchDbCounts();
       setNewLeadName("");
       setNewLeadCompany("");
       setNewLeadCargo("");
@@ -2211,7 +2211,7 @@ ${fonteDados}`;
       refreshCRMData();
       fetchActiveLeads();
       fetchQuarantineLeads();
-      fetchDbCounts();
+      await fetchDbCounts();
     } catch (err: any) {
       console.error(err);
       alert("Erro ao ativar para sua operação: " + err.message);
@@ -2271,7 +2271,7 @@ ${fonteDados}`;
       refreshCRMData();
       fetchActiveLeads();
       fetchQuarantineLeads();
-      fetchDbCounts();
+      await fetchDbCounts();
     } catch (err: any) {
       console.error(err);
       alert("Erro ao ativar para parceiro: " + err.message);
