@@ -126,8 +126,8 @@ export default function Empresas() {
                     <Building className="w-7 h-7" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-white tracking-tight">{data.razao_social || data.name || "Empresa Sem Nome"}</h1>
-                    <p className="text-sm text-cyan-400 font-medium mt-0.5">{data.nome_fantasia || "Nome fantasia não informado"}</p>
+                    <h1 className="text-2xl font-bold text-white tracking-tight">{data.display_name || data.legal_name || data.razao_social || data.name || "Empresa Sem Nome"}</h1>
+                    <p className="text-sm text-cyan-400 font-medium mt-0.5">{data.legal_name || data.nome_fantasia || "Razão social não informada"}</p>
                     <p className="text-xs text-slate-400 mt-1">
                       CNPJ: <span className="font-mono text-slate-300">{data.cnpj || "Não informado"}</span>
                     </p>
@@ -160,7 +160,22 @@ export default function Empresas() {
                   </div>
                   <div className="bg-[#111116] p-3.5 rounded-xl border border-white/5">
                     <span className="text-slate-500 block text-[10px] uppercase font-semibold">Setor / Mercado</span>
-                    <span className="text-cyan-400 font-bold">{data.setor || "Não informado"}</span>
+                    <span className="text-cyan-400 font-bold">{data.industry || data.setor || "Não informado"}</span>
+                  </div>
+                  <div className="bg-[#111116] p-3.5 rounded-xl border border-white/5">
+                    <span className="text-slate-500 block text-[10px] uppercase font-semibold">Website / Domínio</span>
+                    <span className="font-mono text-slate-300">{data.domain || "Não informado"}</span>
+                  </div>
+                  <div className="bg-[#111116] p-3.5 rounded-xl border border-white/5">
+                    <span className="text-slate-500 block text-[10px] uppercase font-semibold">Perfil LinkedIn</span>
+                    {data.linkedin_url ? (
+                      <a href={data.linkedin_url} target="_blank" rel="noreferrer" className="text-cyan-400 font-mono hover:underline flex items-center gap-1">
+                        <span>Ver Perfil</span>
+                        <ExternalLink className="w-3 h-3 inline" />
+                      </a>
+                    ) : (
+                      <span className="text-slate-500 font-mono">Não informado</span>
+                    )}
                   </div>
                 </div>
               </div>

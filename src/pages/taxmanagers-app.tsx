@@ -38,6 +38,7 @@ import {
   syncNavigationStateToStorageAndUrl
 } from "../lib/taxmanagers/navigation-state";
 import { detectChatActionAndDirection } from "../lib/taxmanagers/chat-direction";
+import { generateUniqueSlug } from "../lib/taxmanagers/slug-utils";
 
 // Flag de módulo — FORA do componente React, persiste entre re-renders e StrictMode.
 // Garante que apenas UM processo de gravação ocorra por abertura do popup de importação.
@@ -360,6 +361,70 @@ export default function TaxManagersApp() {
           return;
         }
         targetLeadId = upsertedLeads[0].id;
+
+        // Etapa posterior e isolada: tenta vincular/criar empresa sem bloquear ou afetar a captura do lead
+        if (mergedCompany && mergedCompany.trim().length > 1 && !mergedCompany.toLowerCase().includes("sem empresa")) {
+          (async () => {
+            try {
+              const cleanCompanyName = mergedCompany.trim();
+              let compId: string | null = null;
+
+              const { data: existingComp, error: searchErr } = await supabase
+                .from("taxmanagers_companies")
+                .select("id, slug, parceiro_id")
+                .eq("parceiro_id", session.user.id)
+                .or(`display_name.ilike.%${cleanCompanyName}%,legal_name.ilike.%${cleanCompanyName}%`)
+                .limit(1);
+
+              if (searchErr) {
+                console.warn("[Etapa Empresa] Erro na busca de empresa (lead preservado):", searchErr.message);
+              } else if (existingComp && existingComp.length > 0) {
+                compId = existingComp[0].id;
+                if (!existingComp[0].slug) {
+                  const compSlug = await generateUniqueSlug("taxmanagers_companies", cleanCompanyName, compId);
+                  await supabase
+                    .from("taxmanagers_companies")
+                    .update({ slug: compSlug })
+                    .eq("id", compId)
+                    .eq("parceiro_id", session.user.id);
+                }
+              } else {
+                const compSlug = await generateUniqueSlug("taxmanagers_companies", cleanCompanyName);
+                const { data: newComp, error: insertErr } = await supabase
+                  .from("taxmanagers_companies")
+                  .insert([{
+                    display_name: cleanCompanyName,
+                    legal_name: cleanCompanyName,
+                    normalized_name: cleanCompanyName.toLowerCase().trim(),
+                    parceiro_id: session.user.id,
+                    slug: compSlug,
+                    source: "import",
+                    status: "active",
+                    data_confidence: "unknown",
+                    review_status: "unreviewed",
+                    metadata: {}
+                  }])
+                  .select("id");
+
+                if (insertErr) {
+                  console.warn("[Etapa Empresa] Erro na criação de empresa (lead preservado):", insertErr.message);
+                } else if (newComp && newComp.length > 0) {
+                  compId = newComp[0].id;
+                }
+              }
+
+              if (compId) {
+                await supabase
+                  .from("taxmanagers_leads")
+                  .update({ company_id: compId })
+                  .eq("id", targetLeadId);
+                console.log("[Etapa Empresa] Lead vinculado com sucesso à company_id:", compId);
+              }
+            } catch (compErr: any) {
+              console.warn("[Etapa Empresa Isolada] Exceção capturada com sucesso (lead preservado):", compErr?.message || compErr);
+            }
+          })();
+        }
 
         // Cria a interação de importação na timeline
         let timelineMessage = isUpdate 
