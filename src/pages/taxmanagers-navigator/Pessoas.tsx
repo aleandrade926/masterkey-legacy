@@ -35,28 +35,6 @@ export default function Pessoas() {
 
     query.single().then(async ({ data: record, error }) => {
       if (error || !record) {
-        // Fallback: Se não encontrou por slug exato (ex: lead com slug NULL), busca pelo nome do lead
-        const cleanName = routeParam.replace(/-/g, " ");
-        const { data: fallbackRecords } = await supabase
-          .from("taxmanagers_leads")
-          .select("*")
-          .ilike("nome", `%${cleanName}%`)
-          .limit(1);
-
-        const fallbackRecord = fallbackRecords && fallbackRecords.length > 0 ? fallbackRecords[0] : null;
-
-        if (fallbackRecord) {
-          if (!fallbackRecord.slug) {
-            const targetSlug = routeParam.toLowerCase();
-            await supabase.from("taxmanagers_leads").update({ slug: targetSlug }).eq("id", fallbackRecord.id);
-            fallbackRecord.slug = targetSlug;
-          }
-          setData(fallbackRecord);
-          setSlugInput(fallbackRecord.slug);
-          setLoading(false);
-          return;
-        }
-
         setData(null);
         setLoading(false);
         return;

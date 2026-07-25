@@ -2636,17 +2636,32 @@ ${fonteDados}`;
     reader.readAsDataURL(file);
   };
 
-  // Iniciar Edição do Lead
-  const startEditLead = (lead: Lead) => {
-    setSelectedLead(lead);
-    setEditName(lead.nome || "");
-    setEditEmail(lead.email || "");
-    setEditPhone(lead.telefone || "");
-    setEditAnniversary(lead.aniversario || "");
-    setEditStatus(lead.status || "Pendente");
-    setEditCampaignId(lead.campanha_id || "none");
-    setEditCompany(lead.empresa || "");
-    setEditCargo(lead.cargo || "");
+  // Iniciar Edição do Lead e Abrir Dossiê (com verificação e geração autenticada de slug)
+  const startEditLead = async (lead: Lead) => {
+    let targetLead = lead;
+    if (!targetLead.slug) {
+      const generatedSlug = await generateUniqueSlug("taxmanagers_leads", targetLead.nome || "pessoa", targetLead.id);
+      const { data: updated, error } = await supabase
+        .from("taxmanagers_leads")
+        .update({ slug: generatedSlug })
+        .eq("id", targetLead.id)
+        .select("id, nome, parceiro_id, slug, created_at");
+
+      if (!error && updated && updated.length > 0) {
+        targetLead = { ...targetLead, slug: updated[0].slug };
+        console.log("UPDATE AUTENTICADO DE SLUG REALIZADO NO DOSSIÊ:", updated[0]);
+      }
+    }
+
+    setSelectedLead(targetLead);
+    setEditName(targetLead.nome || "");
+    setEditEmail(targetLead.email || "");
+    setEditPhone(targetLead.telefone || "");
+    setEditAnniversary(targetLead.aniversario || "");
+    setEditStatus(targetLead.status || "Pendente");
+    setEditCampaignId(targetLead.campanha_id || "none");
+    setEditCompany(targetLead.empresa || "");
+    setEditCargo(targetLead.cargo || "");
     setActiveLeadSubTab("outreach");
   };
 
