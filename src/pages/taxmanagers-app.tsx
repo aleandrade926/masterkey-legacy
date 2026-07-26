@@ -180,9 +180,17 @@ export default function TaxManagersApp() {
 
       _importLock = true;
       leadSavedRef.current = true;
+      let sessionObj: any = null;
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (currentSession?.user?.id) {
+          sessionObj = currentSession;
+          break;
+        }
+        await new Promise((res) => setTimeout(res, 200));
+      }
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session || !session.user?.id) {
+      if (!sessionObj || !sessionObj.user?.id) {
         console.error("Erro de autenticação: session ou session.user.id não encontrado. Abortando importação de lead.");
         setImportStatus("unauthenticated");
         _importLock = false;
@@ -190,6 +198,7 @@ export default function TaxManagersApp() {
         if (normalizedUrl) _inFlightUrls.delete(normalizedUrl);
         return;
       }
+      const session = sessionObj;
 
       try {
         setImportedLeadInfo({ name, role, company, action });
@@ -214,7 +223,7 @@ export default function TaxManagersApp() {
           const { data: byUrl } = await supabase
             .from("taxmanagers_leads")
             .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status, parceiro_id")
-            .or(`parceiro_id.eq.${session.user.id},parceiro_id.is.null`)
+            .or(`parceiro_id.eq.${session.user.id},parceiro_id.null`)
             .ilike("url", normalizedUrl + "%")
             .order("created_at", { ascending: false })
             .limit(1);
@@ -252,8 +261,7 @@ export default function TaxManagersApp() {
         const resolvedDirection = chatAnalysis.direction;
 
         let targetLeadId = "";
-        let isUpdate = false;
-
+        
         // Prepara dados mesclando com o lead existente para evitar perda de dados
         let mergedEmail = email;
         let mergedPhone = phone;
@@ -270,8 +278,6 @@ export default function TaxManagersApp() {
         }
 
         if (existingLead) {
-          targetLeadId = existingLead.id;
-          isUpdate = true;
           mergedStatus = existingLead.status || "Pendente";
           if (existingLead.status === "Pendente" && resolvedAction === "Mensagem Enviada (Outbound)") {
             mergedStatus = "Abordado";
@@ -279,44 +285,18 @@ export default function TaxManagersApp() {
             mergedStatus = "Passo 1";
           }
 
-          // Mantém o e-mail anterior se o novo for vazio ou "Sem e-mail"
-          if (!email || email === "Sem e-mail" || email.toLowerCase().includes("sem")) {
-            mergedEmail = existingLead.email || "Sem e-mail";
-          }
-          // Mantém o telefone anterior se o novo for vazio ou "Sem telefone"
-          if (!phone || phone === "Sem telefone" || phone.toLowerCase().includes("sem")) {
-            mergedPhone = existingLead.telefone || "Sem telefone";
-          }
-          // Mantém o cargo anterior se o novo for vazio
-          if (!role) {
-            mergedRole = existingLead.cargo || "";
-          }
-          // Mantém a empresa anterior se o novo for vazio
-          if (!company) {
-            mergedCompany = existingLead.empresa || "";
-          }
-          // Mantém o aniversário anterior se o novo for vazio
-          if (!anniversary) {
-            mergedAnniversary = existingLead.aniversario || "";
-          }
-          // Concatena o histórico do chat tratando formatos JSON vs texto puro
-          if (existingLead.chat_history) {
-            const existingRaw = existingLead.chat_history.trim();
-            const newText = (chatHistory || "").trim();
-            if (existingRaw.startsWith("[") && existingRaw.endsWith("]")) {
-              try {
-                const parsed = JSON.parse(existingRaw);
-                if (newText) {
-                  if (!existingRaw.includes(newText)) {
-                    parsed.push({ role: "user" as const, content: `[Nova Conversa Importada]:\n${newText}` });
-                  }
-                }
-                mergedChatHistory = JSON.stringify(parsed);
-              } catch (e) {
-                mergedChatHistory = existingLead.chat_history + "\n\n" + newText;
-              }
+          mergedEmail = email || existingLead.email || "";
+          mergedPhone = phone || existingLead.telefone || "";
+          mergedRole = role || existingLead.cargo || "";
+          mergedCompany = company || existingLead.empresa || "";
+          mergedAnniversary = anniversary || existingLead.aniversario || "";
+
+          if (chatHistory) {
+            if (!existingLead.chat_history) {
+              mergedChatHistory = chatHistory;
             } else {
-              if (newText && !existingRaw.includes(newText)) {
+              const newText = chatHistory.trim();
+              if (!existingLead.chat_history.includes(newText)) {
                 mergedChatHistory = existingLead.chat_history + "\n\n" + newText;
               } else {
                 mergedChatHistory = existingLead.chat_history;
@@ -345,10 +325,32 @@ export default function TaxManagersApp() {
           throw new Error("parceiro_id não pode ser nulo para importação.");
         }
 
-        const { data: upsertedLeads, error: leadError } = await supabase
-          .from("taxmanagers_leads")
-          .upsert(upsertPayload, { onConflict: "parceiro_id,linkedin_key" })
-          .select();
+        let upsertedLeads: any[] | null = null;
+        let leadError: any = null;
+
+        if (existingLead) {
+          const { data: updated, error: err } = await supabase
+            .from("taxmanagers_leads")
+            .update(upsertPayload)
+            .eq("id", existingLead.id)
+            .select();
+          upsertedLeads = updated;
+          leadError = err;
+        } else if (handle) {
+          const { data: upserted, error: err } = await supabase
+            .from("taxmanagers_leads")
+            .upsert(upsertPayload, { onConflict: "parceiro_id,linkedin_key" })
+            .select();
+          upsertedLeads = upserted;
+          leadError = err;
+        } else {
+          const { data: inserted, error: err } = await supabase
+            .from("taxmanagers_leads")
+            .insert([upsertPayload])
+            .select();
+          upsertedLeads = inserted;
+          leadError = err;
+        }
 
         if (leadError || !upsertedLeads || upsertedLeads.length === 0) {
           console.error("Erro ao importar/upsert lead:", leadError);
