@@ -92,12 +92,19 @@ export async function generateUniqueSlug(
   let counter = 1;
 
   while (true) {
-    const { available } = await checkSlugAvailability(table, uniqueSlug, currentId);
+    const { available, error } = await checkSlugAvailability(table, uniqueSlug, currentId);
+    if (error && !error.includes("já está em uso")) {
+      throw new Error(`Erro ao verificar slug: ${error}`);
+    }
     if (available) {
       return uniqueSlug;
     }
     counter++;
     uniqueSlug = `${candidate}-${counter}`;
+    
+    if (counter > 50) {
+      throw new Error("Falha ao gerar slug: máximo de tentativas alcançado.");
+    }
   }
 }
 
