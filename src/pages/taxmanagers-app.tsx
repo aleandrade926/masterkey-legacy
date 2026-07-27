@@ -440,6 +440,7 @@ export default function TaxManagersApp() {
         }
 
         // Cria a interação de importação na timeline
+        const isUpdate = Boolean(existingLead);
         let timelineMessage = isUpdate 
           ? `Lead atualizado via importação do LinkedIn. Ação: ${resolvedAction}.`
           : `Lead importado via LinkedIn. Ação: ${resolvedAction}.`;
