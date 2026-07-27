@@ -100,3 +100,64 @@ export async function generateUniqueSlug(
     uniqueSlug = `${candidate}-${counter}`;
   }
 }
+
+export async function ensureLeadSlug(
+  leadId: string, 
+  nome: string
+): Promise<{ slug: string | null; error?: string }> {
+  try {
+    const maxAttempts = 5;
+    let currentAttempt = 0;
+
+    while (currentAttempt < maxAttempts) {
+      currentAttempt++;
+      
+      // 1. Busca o estado mais recente para checar se já tem slug
+      const { data: lead, error: fetchError } = await supabase
+        .from("taxmanagers_leads")
+        .select("id, slug")
+        .eq("id", leadId)
+        .maybeSingle();
+
+      if (fetchError || !lead) {
+        return { slug: null, error: "Lead não encontrado ou acesso negado (RLS)." };
+      }
+
+      if (lead.slug) {
+        return { slug: lead.slug };
+      }
+
+      // 2. Gera um candidato a slug
+      const newSlug = await generateUniqueSlug("taxmanagers_leads", nome || "pessoa", leadId);
+
+      // 3. UPDATE Atômico e Seguro
+      const { data: updated, error: updateError } = await supabase
+        .from("taxmanagers_leads")
+        .update({ slug: newSlug })
+        .eq("id", leadId)
+        .is("slug", null)
+        .select("id, slug")
+        .maybeSingle();
+
+      if (updateError) {
+        // Se for violação de unicidade (ex: 23505 - unique_violation), tenta novamente gerando novo sufixo
+        if (updateError.code === "23505" || updateError.message.includes("unique")) {
+          continue;
+        }
+        return { slug: null, error: `Falha ao salvar o slug: ${updateError.message}` };
+      }
+
+      // 4. Sucesso: exigência de retorno de exato um registro
+      if (updated && updated.slug) {
+        return { slug: updated.slug };
+      }
+
+      // 5. Zero registros afetados (ex: corrida onde outra requisição setou o slug antes do UPDATE)
+      // Retornamos ao começo do loop para que o fetch inicial pegue e retorne o slug existente
+    }
+    
+    return { slug: null, error: "Número máximo de tentativas atingido na geração do slug." };
+  } catch (err: any) {
+    return { slug: null, error: `Erro inesperado: ${err?.message || err}` };
+  }
+}

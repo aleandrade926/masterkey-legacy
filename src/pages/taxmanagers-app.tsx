@@ -38,7 +38,7 @@ import {
   syncNavigationStateToStorageAndUrl
 } from "../lib/taxmanagers/navigation-state";
 import { detectChatActionAndDirection } from "../lib/taxmanagers/chat-direction";
-import { generateUniqueSlug } from "../lib/taxmanagers/slug-utils";
+import { generateUniqueSlug, ensureLeadSlug } from "../lib/taxmanagers/slug-utils";
 
 // Flag de módulo — FORA do componente React, persiste entre re-renders e StrictMode.
 // Garante que apenas UM processo de gravação ocorra por abertura do popup de importação.
@@ -361,6 +361,19 @@ export default function TaxManagersApp() {
           return;
         }
         targetLeadId = upsertedLeads[0].id;
+
+        // NOVO: Automação Segura de Slug (isolada e síncrona sem interromper fluxo principal)
+        try {
+          const slugResult = await ensureLeadSlug(targetLeadId, name);
+          if (slugResult.error) {
+            console.warn(
+              "[Etapa Slug Isolada] Falha ignorada; lead preservado:",
+              slugResult.error
+            );
+          }
+        } catch (e) {
+          console.warn("[Etapa Slug Isolada] Erro inesperado ignorado (lead preservado):", e);
+        }
 
         // Etapa posterior e isolada: tenta vincular/criar empresa sem bloquear ou afetar a captura do lead
         if (mergedCompany && mergedCompany.trim().length > 1 && !mergedCompany.toLowerCase().includes("sem empresa")) {
@@ -2723,16 +2736,15 @@ ${fonteDados}`;
   const startEditLead = async (lead: Lead) => {
     let targetLead = lead;
     if (!targetLead.slug) {
-      const generatedSlug = await generateUniqueSlug("taxmanagers_leads", targetLead.nome || "pessoa", targetLead.id);
-      const { data: updated, error } = await supabase
-        .from("taxmanagers_leads")
-        .update({ slug: generatedSlug })
-        .eq("id", targetLead.id)
-        .select("id, nome, parceiro_id, slug, created_at");
-
-      if (!error && updated && updated.length > 0) {
-        targetLead = { ...targetLead, slug: updated[0].slug };
-        console.log("UPDATE AUTENTICADO DE SLUG REALIZADO NO DOSSIÊ:", updated[0]);
+      const slugResult = await ensureLeadSlug(targetLead.id, targetLead.nome || "pessoa");
+      
+      if (slugResult.slug) {
+        targetLead = { ...targetLead, slug: slugResult.slug };
+        console.log("UPDATE DE SLUG REALIZADO NO DOSSIÊ:", slugResult.slug);
+      }
+      
+      if (slugResult.error) {
+        console.warn("[Etapa Slug Dossiê] Erro ao tentar garantir slug (dossiê aberto normalmente):", slugResult.error);
       }
     }
 
