@@ -1,18 +1,20 @@
-import { useParams, Link, useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { normalizeSlug, validateSlugFormat, checkSlugAvailability, generateUniqueSlug } from "../../lib/taxmanagers/slug-utils";
-import { User, Building, ExternalLink, Sparkles, ArrowLeft, CheckCircle, AlertCircle, Link as LinkIcon } from "lucide-react";
+import { User, Building, ExternalLink, Sparkles, ArrowLeft, CheckCircle, AlertCircle, Link as LinkIcon, Activity, FileText, Phone, MessageCircle, Mail, Calendar, Clock } from "lucide-react";
 
 export default function Pessoas() {
   const [location] = useLocation();
-  const params = useParams();
   
   const pathParts = location.split("/").filter(Boolean);
-  const routeParam = params.id || params.slug || pathParts[pathParts.length - 1];
+  const routeParam = pathParts[pathParts.length - 1];
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [interactions, setInteractions] = useState<any[]>([]);
+  const [interactionsLoading, setInteractionsLoading] = useState(false);
+  const [interactionsError, setInteractionsError] = useState(false);
   const [slugInput, setSlugInput] = useState("");
   const [slugStatus, setSlugStatus] = useState<{ message: string; isError: boolean } | null>(null);
   const [savingSlug, setSavingSlug] = useState(false);
@@ -48,6 +50,27 @@ export default function Pessoas() {
         setSlugInput(suggested);
       }
       setLoading(false);
+
+      // Buscar Timeline (apenas leitura)
+      if (record.id) {
+        setInteractionsLoading(true);
+        setInteractionsError(false);
+        try {
+          const { data: ints, error: intsError } = await supabase
+            .from("taxmanagers_interactions")
+            .select("id, lead_id, type, content, created_at")
+            .eq("lead_id", record.id)
+            .order("created_at", { ascending: false });
+            
+          if (intsError) throw intsError;
+          if (ints) setInteractions(ints);
+        } catch (err) {
+          console.error("Erro ao buscar histórico:", err);
+          setInteractionsError(true);
+        } finally {
+          setInteractionsLoading(false);
+        }
+      }
     });
   }, [routeParam, location]);
 
@@ -126,10 +149,10 @@ export default function Pessoas() {
                   </div>
                   <div>
                     <h1 className="text-2xl font-bold text-white tracking-tight">{data.nome || "Lead Sem Nome"}</h1>
-                    <p className="text-sm text-cyan-400 font-medium mt-0.5">{data.cargo || "Cargo não informado"}</p>
+                    <p className="text-sm text-cyan-400 font-medium mt-0.5">{data.cargo || "Cargo atual não identificado"}</p>
                     <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
                       <Building className="w-3.5 h-3.5 text-slate-500" />
-                      <span>{data.empresa || "Empresa não informada"}</span>
+                      <span>{data.empresa || "Empresa atual não identificada"}</span>
                     </p>
                   </div>
                 </div>
@@ -164,11 +187,15 @@ export default function Pessoas() {
                   </div>
                   <div className="bg-[#111116] p-3.5 rounded-xl border border-white/5">
                     <span className="text-slate-500 block text-[10px] uppercase font-semibold">E-mail</span>
-                    <span className="text-slate-300 font-mono">{data.email || "Sem e-mail registrado"}</span>
+                    <span className="text-slate-300 font-mono">{data.email || "Não informado"}</span>
                   </div>
                   <div className="bg-[#111116] p-3.5 rounded-xl border border-white/5">
                     <span className="text-slate-500 block text-[10px] uppercase font-semibold">Telefone</span>
-                    <span className="text-slate-300 font-mono">{data.telefone || "Sem telefone registrado"}</span>
+                    <span className="text-slate-300 font-mono">{data.telefone || "Não informado"}</span>
+                  </div>
+                  <div className="bg-[#111116] p-3.5 rounded-xl border border-white/5">
+                    <span className="text-slate-500 block text-[10px] uppercase font-semibold">LinkedIn</span>
+                    <span className="text-slate-300 font-mono break-all">{data.url || "Não informado"}</span>
                   </div>
                 </div>
               </div>
@@ -219,6 +246,99 @@ export default function Pessoas() {
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* Histórico de Atividades (Timeline) */}
+            <div className="bg-[#0b0b0f] border border-white/5 rounded-2xl p-6 space-y-4 shadow-xl relative overflow-hidden">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <Activity className="w-4 h-4 text-cyan-400" /> Histórico de Atividades
+              </h3>
+              
+              {interactionsLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-cyan-400 mx-auto"></div>
+                  <p className="text-xs text-slate-500 mt-2">Carregando histórico...</p>
+                </div>
+              ) : interactionsError ? (
+                <div className="text-center py-8 text-rose-400 text-xs italic bg-rose-500/10 rounded-xl border border-rose-500/20">
+                  Não foi possível carregar o histórico
+                </div>
+              ) : interactions.length === 0 ? (
+                <div className="text-center py-8 text-slate-500 text-xs italic">
+                  Nenhuma atividade registrada
+                </div>
+              ) : (
+                <div className="relative border-l-2 border-white/5 pl-4 ml-2 space-y-6 mt-4">
+                  {interactions.map(evt => {
+                    let title = "Atividade";
+                    let iconColor = "text-slate-400 bg-slate-500/10 border border-slate-500/20";
+                    let IconComponent = Activity;
+                    
+                    if (evt.type === "import") {
+                      title = "Importação";
+                      iconColor = "text-cyan-400 bg-cyan-500/10 border border-cyan-500/20";
+                      IconComponent = FileText;
+                    } else if (evt.type === "linkedin") {
+                      title = "LinkedIn Outreach";
+                      iconColor = "text-blue-400 bg-blue-500/10 border border-blue-500/20";
+                      IconComponent = LinkIcon;
+                    } else if (evt.type === "phone") {
+                      title = "Ligação Telefônica";
+                      iconColor = "text-indigo-400 bg-indigo-500/10 border border-indigo-500/20";
+                      IconComponent = Phone;
+                    } else if (evt.type === "whatsapp") {
+                      title = "WhatsApp Outreach";
+                      iconColor = "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20";
+                      IconComponent = MessageCircle;
+                    } else if (evt.type === "email") {
+                      title = "E-mail";
+                      iconColor = "text-amber-400 bg-amber-500/10 border border-amber-500/20";
+                      IconComponent = Mail;
+                    } else if (evt.type === "status_change") {
+                      title = "Alteração de Status";
+                      iconColor = "text-rose-400 bg-rose-500/10 border border-rose-500/20";
+                      IconComponent = Activity;
+                    } else if (evt.type === "ai_suggestion") {
+                      title = "Sugestão da IA";
+                      iconColor = "text-purple-400 bg-purple-500/10 border border-purple-500/20";
+                      IconComponent = Sparkles;
+                    } else if (evt.type === "note") {
+                      title = "Anotação Interna";
+                      iconColor = "text-slate-300 bg-slate-500/10 border border-white/10";
+                      IconComponent = FileText;
+                    } else if (evt.type === "task_completed") {
+                      title = "Tarefa Concluída";
+                      iconColor = "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20";
+                      IconComponent = CheckCircle;
+                    }
+
+                    return (
+                      <div key={evt.id} className="relative">
+                        <div className={`absolute -left-[25px] w-6 h-6 rounded-full flex items-center justify-center ${iconColor} z-10 ring-4 ring-[#0b0b0f]`}>
+                          <IconComponent className="w-3 h-3" />
+                        </div>
+                        <div className="bg-[#111116] border border-white/5 rounded-xl p-4 ml-2">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className={`text-[10px] font-bold uppercase tracking-wider ${iconColor.split(' ')[0]}`}>{title}</span>
+                            <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-mono">
+                              <Calendar className="w-3 h-3" />
+                              {new Date(evt.created_at).toLocaleDateString('pt-BR')} 
+                              <Clock className="w-3 h-3 ml-1" />
+                              {new Date(evt.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                          </div>
+                          
+                          {evt.content && (
+                            <div className="text-xs text-slate-300 leading-relaxed whitespace-pre-wrap font-sans mt-1">
+                              {evt.content}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         ) : (
