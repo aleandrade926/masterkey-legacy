@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { normalizeSlug, validateSlugFormat, checkSlugAvailability, generateUniqueSlug } from "../../lib/taxmanagers/slug-utils";
-import { User, Building, ExternalLink, Sparkles, ArrowLeft, CheckCircle, AlertCircle, Link as LinkIcon, Activity, FileText, Phone, MessageCircle, Mail, Calendar, Clock } from "lucide-react";
+import { User, Building, ExternalLink, Sparkles, ArrowLeft, CheckCircle, AlertCircle, Link as LinkIcon, Activity, FileText, Phone, MessageCircle, Mail, Calendar, Clock, Clipboard } from "lucide-react";
 
 export default function Pessoas() {
   const [location] = useLocation();
@@ -244,6 +244,80 @@ export default function Pessoas() {
                       <span>{slugStatus.message}</span>
                     </div>
                   )}
+                </div>
+              </div>
+            </div>
+
+            {/* Abordagem IA (Somente Leitura) */}
+            <div className="bg-[#0b0b0f] border border-white/5 rounded-2xl p-6 space-y-4 shadow-xl">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-cyan-400" /> Abordagem IA
+              </h3>
+              
+              <div className="space-y-4">
+                {/* Passo 1 */}
+                <div className="bg-[#111116] border border-white/5 rounded-xl p-5">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider font-mono">Passo 1 (Conexão LinkedIn)</span>
+                    {data.passo1_mensagem && (
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => {
+                            navigator.clipboard.writeText(data.passo1_mensagem);
+                            if (data.url) window.open(data.url, "_blank");
+                          }}
+                          className="px-3 py-1 rounded bg-blue-600/10 border border-blue-500/20 text-blue-400 hover:bg-blue-600 hover:text-white hover:border-transparent transition-all text-xs font-semibold flex items-center gap-1"
+                        >
+                          <Clipboard className="w-3.5 h-3.5" /> Copiar e Abrir Perfil
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <textarea 
+                    readOnly 
+                    className="w-full bg-[#0a0a0e] border border-white/5 rounded-lg p-3 text-slate-300 text-sm h-24 font-sans focus:outline-none resize-none"
+                    value={data.passo1_mensagem || "Mensagem ainda não gerada."}
+                  ></textarea>
+                </div>
+
+                {/* Passo 2 */}
+                <div className="bg-[#111116] border border-white/5 rounded-xl p-5">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider font-mono">Passo 2 (Newsletter/InMail)</span>
+                    {data.passo2_mensagem && (
+                      <button 
+                        onClick={() => navigator.clipboard.writeText(data.passo2_mensagem)}
+                        className="px-3 py-1 rounded bg-[#111117] border border-white/10 hover:bg-white/5 text-slate-300 transition-all text-xs font-semibold flex items-center gap-1"
+                      >
+                        <Clipboard className="w-3.5 h-3.5" /> Copiar Texto
+                      </button>
+                    )}
+                  </div>
+                  <textarea 
+                    readOnly 
+                    className="w-full bg-[#0a0a0e] border border-white/5 rounded-lg p-3 text-slate-300 text-sm h-32 font-sans focus:outline-none resize-none"
+                    value={data.passo2_mensagem || "Mensagem ainda não gerada."}
+                  ></textarea>
+                </div>
+
+                {/* Passo 3 */}
+                <div className="bg-[#111116] border border-white/5 rounded-xl p-5">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-xs font-bold text-purple-400 uppercase tracking-wider font-mono">Passo 3 (Diagnóstico Inicial)</span>
+                    {data.passo3_mensagem && (
+                      <button 
+                        onClick={() => navigator.clipboard.writeText(data.passo3_mensagem)}
+                        className="px-3 py-1 rounded bg-[#111117] border border-white/10 hover:bg-white/5 text-slate-300 transition-all text-xs font-semibold flex items-center gap-1"
+                      >
+                        <Clipboard className="w-3.5 h-3.5" /> Copiar Texto
+                      </button>
+                    )}
+                  </div>
+                  <textarea 
+                    readOnly 
+                    className="w-full bg-[#0a0a0e] border border-white/5 rounded-lg p-3 text-slate-300 text-sm h-28 font-sans focus:outline-none resize-none"
+                    value={data.passo3_mensagem || "Mensagem ainda não gerada."}
+                  ></textarea>
                 </div>
               </div>
             </div>
