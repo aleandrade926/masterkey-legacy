@@ -42,6 +42,11 @@ import AdminOpportunities from './AdminOpportunities';
 // Protocolo
 import { ProtocolDoor, AutopsyDoor, DoctorDoor, BenchmarkDoor, IntelligenceDoor, ConsultantKitDoor, EmailSignatureDoor } from '../doors/CategoryDoors';
 
+// Market KSaaS
+import Marketplace from '../market/Marketplace';
+import MarketAffiliate from '../market/MarketAffiliate';
+import MarketCheckout from '../market/MarketCheckout';
+
 const DEMO_MEETINGS = [
   { id: 'demo-1', title: 'Combinado com cliente', started_at: Date.now() - 1000 * 60 * 60 * 24, ended_at: Date.now() - 1000 * 60 * 60 * 23, duration: '45 min', status: 'ended', participants: ['Você', 'Cliente'], isDemo: true, type: 'demo', consensusStatus: 'Confirmado' },
   { id: 'demo-2', title: 'Orçamento de reforma', started_at: Date.now() - 1000 * 60 * 60 * 48, ended_at: Date.now() - 1000 * 60 * 60 * 47, duration: '1h20', status: 'ended', participants: ['Você', 'Empreiteiro'], isDemo: true, type: 'demo', consensusStatus: 'Pendente' },
@@ -796,6 +801,14 @@ const DashboardApp = () => {
   if (window.location.hostname === 'app.todeacordo.com.br' && currentRoute === '/') {
     window.location.replace('/app');
     return null;
+  }
+
+  // === MARKET KSAAS ===
+  if (currentRoute === '/market') return <Marketplace />;
+  if (currentRoute === '/market/afiliado') return <MarketAffiliate />;
+  if (currentRoute.startsWith('/market/checkout/')) {
+    const productId = currentRoute.split('/checkout/')[1];
+    return <MarketCheckout productId={productId} />;
   }
 
   // === ROTAS ESSENCIAIS ===
