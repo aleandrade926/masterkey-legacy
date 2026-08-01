@@ -1,5 +1,4 @@
 {
-  "ignoreCommand": "node -e 'process.exit([\"prj_5SfVB5PnEnshlreAch6K0TZtZFlv\"].includes(process.env.VERCEL_PROJECT_ID) ? 0 : 1)'",
   "rewrites": [
     { "source": "/((?!api/).*)" , "destination": "/index.html" }
   ],
