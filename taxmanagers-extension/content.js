@@ -13,6 +13,7 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
   let autoChatHistory = '';
   let promptOpened = false;
   let willNavigate = false;
+  let isChat = window.location.href.includes('/messaging/');
   
   let cleanUrl = window.location.origin + window.location.pathname.replace(/\/$/, '');
   if (cleanUrl.includes('/overlay/contact-info')) {

@@ -27,6 +27,11 @@ import { useIsMobile } from "./hooks/use-mobile";
 import { useState } from "react";
 import NotFound from "./pages/not-found";
 
+// Rotas do ToDeAcordo Market MVP
+import Marketplace from "./pages/market/Marketplace";
+import MarketAffiliate from "./pages/market/MarketAffiliate";
+import MarketCheckout from "./pages/market/MarketCheckout";
+
 function Router() {
   return (
     <Switch>
@@ -62,6 +67,11 @@ function App() {
   if (location === "/taxmanagers") {
     return <TaxManagers />;
   }
+
+  // Rotas do ToDeAcordo Market MVP (Independente)
+  if (location.startsWith("/market/checkout")) return <MarketCheckout />;
+  if (location.startsWith("/market/afiliado")) return <MarketAffiliate />;
+  if (location === "/market" || location === "/market/") return <Marketplace />;
 
   // Rota independente Tax Managers Privacidade
   if (location === "/taxmanagers/politica-de-privacidade" || location === "/taxmanagers/privacidade") {
