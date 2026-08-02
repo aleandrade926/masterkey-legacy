@@ -62,9 +62,9 @@ function App() {
   const isTaxManagersDomain = hostname.includes("taxmanagers");
 
   // ==========================================
-  // 1. ISOLAMENTO TOTAL: ToDeAcordo & TáMarcado
+  // 1. ISOLAMENTO TOTAL: KSaaS & TáMarcado
   // ==========================================
-  if (isTodeAcordoDomain || location.startsWith("/market") || location.startsWith("/book") || location.startsWith("/tamarcado")) {
+  if (location.startsWith("/market") || location.startsWith("/book") || location.startsWith("/tamarcado")) {
     if (location.startsWith("/book/")) return (
       <QueryClientProvider client={queryClient}>
         <Toaster />
@@ -82,16 +82,17 @@ function App() {
     if (location.startsWith("/market/checkout")) return <MarketCheckout />;
     if (location.startsWith("/market/afiliado")) return <MarketAffiliate />;
     
-    // Se for especificamente todeacordo.com.br
-    if (hostname === "todeacordo.com.br" || hostname === "www.todeacordo.com.br") {
-      if (location === "/") {
-        return <Marketplace />;
-      }
+    // Rota explícita da vitrine KSaaS
+    if (location === "/market" || location === "/market/") {
+      return <Marketplace />;
     }
-    
-    // Qualquer outra rota no domínio todeacordo (como app.todeacordo.com.br) ou default fallback
-    return <Marketplace />;
   }
+
+  // ==========================================
+  // 2. ISOLAMENTO TOTAL: ToDeAcordo (MVP)
+  // ==========================================
+  // O app.todeacordo e todeacordo.com.br vão cair no fallback final (<Router />) que renderiza o <Dashboard /> (MVP)
+
 
   // ==========================================
   // 2. ROTA INDEPENDENTE: TailorSpace Infra
