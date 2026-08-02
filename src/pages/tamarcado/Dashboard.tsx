@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Calendar, Clock, Copy, Link as LinkIcon, Plus, Users, Globe } from "lucide-react";
 
 export default function TamarcadoDashboard() {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   
   const [profile, setProfile] = useState<any>(null);
@@ -28,8 +28,10 @@ export default function TamarcadoDashboard() {
   useEffect(() => {
     if (user) {
       loadData();
+    } else if (!authLoading) {
+      window.location.href = "/auth";
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   async function loadData() {
     setLoading(true);
