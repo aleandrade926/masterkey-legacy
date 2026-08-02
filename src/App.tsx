@@ -57,83 +57,84 @@ function App() {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const isTaxManagersDomain = typeof window !== "undefined" && (
-    window.location.hostname.includes("taxmanagers") || 
-    window.location.hostname.includes("app.taxmanagers")
-  );
+  const hostname = typeof window !== "undefined" ? window.location.hostname : "";
+  const isTodeAcordoDomain = hostname.includes("todeacordo");
+  const isTaxManagersDomain = hostname.includes("taxmanagers");
 
-  // Rota independente da TailorSpace Infra
+  // ==========================================
+  // 1. ISOLAMENTO TOTAL: ToDeAcordo & TáMarcado
+  // ==========================================
+  if (isTodeAcordoDomain || location.startsWith("/market") || location.startsWith("/book") || location.startsWith("/tamarcado")) {
+    if (location.startsWith("/book/")) return (
+      <QueryClientProvider client={queryClient}>
+        <Toaster />
+        <PublicBooking />
+      </QueryClientProvider>
+    );
+    if (location === "/market/tamarcado" || location === "/market/tamarcado/" || location === "/tamarcado" || location === "/tamarcado/") return (
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <Toaster />
+          <TamarcadoDashboard />
+        </AuthProvider>
+      </QueryClientProvider>
+    );
+    if (location.startsWith("/market/checkout")) return <MarketCheckout />;
+    if (location.startsWith("/market/afiliado")) return <MarketAffiliate />;
+    
+    // Qualquer outra rota no domínio todeacordo abre a vitrine do Marketplace
+    return <Marketplace />;
+  }
+
+  // ==========================================
+  // 2. ROTA INDEPENDENTE: TailorSpace Infra
+  // ==========================================
   if (location === "/infra") {
     return <InfraPage />;
   }
 
-  // Rota independente Tax Managers
+  // ==========================================
+  // 3. ISOLAMENTO TOTAL: Tax Managers Ecosystem
+  // ==========================================
   if (location === "/taxmanagers") {
     return <TaxManagers />;
   }
-
-  // Rotas do ToDeAcordo Market MVP (Independente)
-  if (location.startsWith("/market/checkout")) return <MarketCheckout />;
-  if (location.startsWith("/market/afiliado")) return <MarketAffiliate />;
-  if (location === "/market" || location === "/market/") return <Marketplace />;
-
-  // Rotas do TáMarcado (Calendly Clone MVP)
-  if (location.startsWith("/book/")) return (
-    <QueryClientProvider client={queryClient}>
-      <Toaster />
-      <PublicBooking />
-    </QueryClientProvider>
-  );
-  if (location === "/market/tamarcado" || location === "/market/tamarcado/") return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Toaster />
-        <TamarcadoDashboard />
-      </AuthProvider>
-    </QueryClientProvider>
-  );
-
-  // Rota independente Tax Managers Privacidade
   if (location === "/taxmanagers/politica-de-privacidade" || location === "/taxmanagers/privacidade") {
     return <TaxManagersPrivacy />;
   }
-
-  // Rota isolada Foot in the Door Lab (sem menu, sem Supabase, sem produção)
   if (import.meta.env.DEV && location === "/taxmanagers/foot-in-the-door-lab") {
     return <FootInTheDoorLab />;
   }
 
-  // Rotas Tax Navigator (Entidades)
-  if (location.startsWith("/taxmanagers/empresas/")) return <Empresas />;
-  if (location.startsWith("/taxmanagers/pessoas/")) return <Pessoas />;
-  if (location.startsWith("/taxmanagers/negocios/")) return <Negocios />;
-  if (location.startsWith("/taxmanagers/oportunidades/")) return <Oportunidades />;
-  if (location.startsWith("/taxmanagers/entregas/")) return <Entregas />;
+  // Rotas Tax Navigator (Entidades & Aliases)
+  if (
+    location.startsWith("/taxmanagers/empresas/") ||
+    location.startsWith("/taxmanagers/pessoas/") ||
+    location.startsWith("/taxmanagers/negocios/") ||
+    location.startsWith("/taxmanagers/oportunidades/") ||
+    location.startsWith("/taxmanagers/entregas/") ||
+    location.startsWith("/taxmanagers/in/") ||
+    location.startsWith("/taxmanagers/company/")
+  ) {
+    if (location.startsWith("/taxmanagers/empresas/") || location.startsWith("/taxmanagers/company/")) return <Empresas />;
+    if (location.startsWith("/taxmanagers/pessoas/") || location.startsWith("/taxmanagers/in/")) return <Pessoas />;
+    if (location.startsWith("/taxmanagers/negocios/")) return <Negocios />;
+    if (location.startsWith("/taxmanagers/oportunidades/")) return <Oportunidades />;
+    if (location.startsWith("/taxmanagers/entregas/")) return <Entregas />;
+  }
 
-  // Rotas Amigáveis no namespace exclusivo do Tax Managers (/taxmanagers/in/:slug e /taxmanagers/company/:slug)
-  if (location.startsWith("/taxmanagers/in/")) return <Pessoas />;
-  if (location.startsWith("/taxmanagers/company/")) return <Empresas />;
-
-  // Rotas Amigáveis de Retrocompatibilidade / Aliases (/in/:slug, /company/:slug, /p/:slug, /c/:slug)
+  // Rotas legadas de retrocompatibilidade Tax Managers
   if (location.startsWith("/p/") || location.startsWith("/in/")) return <Pessoas />;
   if (location.startsWith("/c/") || location.startsWith("/company/")) return <Empresas />;
 
-  const isTodeAcordoDomain = typeof window !== "undefined" && (
-    window.location.hostname.includes("todeacordo")
-  );
-
-  // Rota do ToDeAcordo no domínio todeacordo.com.br (para / e /app)
-  if (isTodeAcordoDomain && (location === "/" || location === "/app" || location === "/app/")) {
-    return <Marketplace />;
-  }
-
-  const isMestreDasTeclasRoute = ["/training", "/lessons", "/achievements", "/leaderboard", "/shortcuts", "/auth"].some(r => location.startsWith(r));
-
-  // Rota independente Tax Managers App Portal (apenas no domínio taxmanagers ou rotas explícitas /taxmanagers)
-  if (location.startsWith("/taxmanagers") || (isTaxManagersDomain && (location === "/" || location.startsWith("/app")))) {
+  // Rota independente Tax Managers App Portal
+  if (location === "/" || location.startsWith("/app") || location.startsWith("/taxmanagers") || isTaxManagersDomain) {
     return <TaxManagersApp />;
   }
 
+  // ==========================================
+  // 4. MESTRE DAS TECLAS (Plataforma de Treino)
+  // ==========================================
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
