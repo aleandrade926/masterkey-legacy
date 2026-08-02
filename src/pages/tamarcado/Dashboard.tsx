@@ -10,22 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Calendar, Clock, Copy, Link as LinkIcon, Plus, Users, Globe } from "lucide-react";
 
 export default function TamarcadoDashboard() {
-  const { user, isLoading: authLoading } = useAuth();
-  const { toast } = useToast();
-  
-  const [profile, setProfile] = useState<any>(null);
-  const [eventTypes, setEventTypes] = useState<any[]>([]);
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [availability, setAvailability] = useState<any>(null);
-  
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  
-  const [slug, setSlug] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const { loginMutation } = useAuth();
+  const { user, isLoading: authLoading, loginMutation, registerMutation } = useAuth();
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
@@ -163,6 +148,9 @@ export default function TamarcadoDashboard() {
     }
   }
 
+  const [authTab, setAuthTab] = useState<"login" | "register">("login");
+  const [registerUsername, setRegisterUsername] = useState("");
+
   if (loading || authLoading) return <div className="p-8 text-center">Carregando...</div>;
 
   if (!user) {
@@ -175,43 +163,120 @@ export default function TamarcadoDashboard() {
             </div>
             <CardTitle className="text-2xl font-bold text-slate-900">TáMarcado</CardTitle>
             <CardDescription className="text-slate-500">
-              Entre para gerenciar sua agenda e eventos de agendamento.
+              Gerencie sua agenda e receba agendamentos de forma simples.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="login-email">E-mail</Label>
-              <Input 
-                id="login-email" 
-                type="email" 
-                placeholder="seu@email.com" 
-                value={loginEmail} 
-                onChange={e => setLoginEmail(e.target.value)} 
-              />
+            <div className="flex border-b mb-4">
+              <button
+                className={`flex-1 py-2 text-center border-b-2 font-medium text-sm transition-colors ${
+                  authTab === "login" 
+                    ? "border-blue-600 text-blue-600 font-semibold" 
+                    : "border-transparent text-slate-500 hover:text-slate-700"
+                }`}
+                onClick={() => setAuthTab("login")}
+              >
+                Entrar
+              </button>
+              <button
+                className={`flex-1 py-2 text-center border-b-2 font-medium text-sm transition-colors ${
+                  authTab === "register" 
+                    ? "border-blue-600 text-blue-600 font-semibold" 
+                    : "border-transparent text-slate-500 hover:text-slate-700"
+                }`}
+                onClick={() => setAuthTab("register")}
+              >
+                Criar Conta
+              </button>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="login-password">Senha</Label>
-              <Input 
-                id="login-password" 
-                type="password" 
-                placeholder="••••••••" 
-                value={loginPassword} 
-                onChange={e => setLoginPassword(e.target.value)} 
-              />
-            </div>
-            <Button 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium" 
-              disabled={loginMutation.isPending}
-              onClick={() => {
-                if (!loginEmail || !loginPassword) {
-                  toast({ title: "Erro", description: "Preencha e-mail e senha.", variant: "destructive" });
-                  return;
-                }
-                loginMutation.mutate({ email: loginEmail, password: loginPassword });
-              }}
-            >
-              {loginMutation.isPending ? "Entrando..." : "Entrar no TáMarcado"}
-            </Button>
+
+            {authTab === "login" ? (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email">E-mail</Label>
+                  <Input 
+                    id="login-email" 
+                    type="email" 
+                    placeholder="seu@email.com" 
+                    value={loginEmail} 
+                    onChange={e => setLoginEmail(e.target.value)} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="login-password">Senha</Label>
+                  <Input 
+                    id="login-password" 
+                    type="password" 
+                    placeholder="••••••••" 
+                    value={loginPassword} 
+                    onChange={e => setLoginPassword(e.target.value)} 
+                  />
+                </div>
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium" 
+                  disabled={loginMutation.isPending}
+                  onClick={() => {
+                    if (!loginEmail || !loginPassword) {
+                      toast({ title: "Erro", description: "Preencha e-mail e senha.", variant: "destructive" });
+                      return;
+                    }
+                    loginMutation.mutate({ email: loginEmail, password: loginPassword });
+                  }}
+                >
+                  {loginMutation.isPending ? "Entrando..." : "Entrar no TáMarcado"}
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="register-username">Nome Completo</Label>
+                  <Input 
+                    id="register-username" 
+                    type="text" 
+                    placeholder="Seu nome" 
+                    value={registerUsername} 
+                    onChange={e => setRegisterUsername(e.target.value)} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="register-email">E-mail</Label>
+                  <Input 
+                    id="register-email" 
+                    type="email" 
+                    placeholder="seu@email.com" 
+                    value={loginEmail} 
+                    onChange={e => setLoginEmail(e.target.value)} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="register-password">Senha</Label>
+                  <Input 
+                    id="register-password" 
+                    type="password" 
+                    placeholder="Mínimo 6 caracteres" 
+                    value={loginPassword} 
+                    onChange={e => setLoginPassword(e.target.value)} 
+                  />
+                </div>
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium" 
+                  disabled={registerMutation.isPending}
+                  onClick={() => {
+                    if (!loginEmail || !loginPassword || !registerUsername) {
+                      toast({ title: "Erro", description: "Preencha todos os campos.", variant: "destructive" });
+                      return;
+                    }
+                    registerMutation.mutate({ 
+                      email: loginEmail, 
+                      username: registerUsername, 
+                      password: loginPassword 
+                    });
+                  }}
+                >
+                  {registerMutation.isPending ? "Criando conta..." : "Criar Conta e Acessar"}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
