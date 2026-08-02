@@ -8,7 +8,8 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { useToast } from "../../hooks/use-toast";
 import { Clock, Calendar as CalendarIcon, User, ChevronLeft } from "lucide-react";
-import { SchedulingEngine, Slot } from "../../lib/tamarcado/engine";
+import { SchedulingEngine } from "../../lib/tamarcado/engine";
+import type { Slot } from "../../lib/tamarcado/engine";
 import { format } from "date-fns";
 
 export default function PublicBooking() {
