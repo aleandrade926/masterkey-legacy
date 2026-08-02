@@ -16,11 +16,36 @@ export default function MarketCheckout() {
         setProduct(data);
       } else {
         // Fallback para testar sem banco preenchido
-        setProduct({
+        const mockProducts = [
+          {
+            id: "prod-1",
+            name: "ToDeAcordo",
+            price: 97.00,
+            commission_rate: 30.00,
+            access_link: "#"
+          },
+          {
+            id: "prod-2",
+            name: "TaxManagers",
+            price: 497.00,
+            commission_rate: 20.00,
+            access_link: "#"
+          },
+          {
+            id: "prod-5",
+            name: "TáMarcado",
+            price: 49.00,
+            commission_rate: 40.00,
+            access_link: "/market/tamarcado"
+          }
+        ];
+        const mockProduct = mockProducts.find(p => p.id === productId);
+        setProduct(mockProduct || {
           id: productId,
           name: "SaaS Premium",
           price: 97.00,
-          commission_rate: 30.00
+          commission_rate: 30.00,
+          access_link: "#"
         });
       }
     }
@@ -63,7 +88,11 @@ export default function MarketCheckout() {
       }
 
       alert("Venda Simulada com Sucesso! " + (affiliateId ? `Comissão gerada para o afiliado.` : "Nenhum afiliado atribuído."));
-      setLocation("/market");
+      if (product.access_link && product.access_link !== "#") {
+        setLocation(product.access_link);
+      } else {
+        setLocation("/market");
+      }
 
     } catch (err) {
       console.error(err);

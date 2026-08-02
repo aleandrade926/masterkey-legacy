@@ -59,6 +59,17 @@ const MOCK_PRODUCTS: Product[] = [
     commission_rate: 25.00,
     access_link: "#",
     is_active: false,
+  },
+  {
+    id: "prod-5",
+    name: "TáMarcado",
+    description: "Sistema inteligente de agendamento de reuniões sincronizado com sua agenda.",
+    image_url: "https://images.unsplash.com/photo-1506784926709-22f1ec395907?auto=format&fit=crop&q=80&w=300&h=200",
+    benefits: ["Página pública de agendamento", "Fuso horário automático", "Design responsivo premium"],
+    price: 49.00,
+    commission_rate: 40.00,
+    access_link: "/market/tamarcado",
+    is_active: true,
   }
 ];
 
@@ -88,6 +99,12 @@ export default function Marketplace() {
         if (error) throw error;
         
         if (data && data.length > 0) {
+          // Garante que o TáMarcado sempre apareça mesmo se não estiver no DB ainda
+          const hasTamarcado = data.some(p => p.id === 'prod-5' || p.name === 'TáMarcado');
+          if (!hasTamarcado) {
+            const tamarcado = MOCK_PRODUCTS.find(p => p.name === 'TáMarcado');
+            if (tamarcado) data.push(tamarcado);
+          }
           setProducts(data);
         } else {
           setProducts(MOCK_PRODUCTS.filter(p => p.is_active));
