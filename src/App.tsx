@@ -82,7 +82,14 @@ function App() {
     if (location.startsWith("/market/checkout")) return <MarketCheckout />;
     if (location.startsWith("/market/afiliado")) return <MarketAffiliate />;
     
-    // Qualquer outra rota no domínio todeacordo abre a vitrine do Marketplace
+    // Se for especificamente todeacordo.com.br
+    if (hostname === "todeacordo.com.br" || hostname === "www.todeacordo.com.br") {
+      if (location === "/") {
+        return <Marketplace />;
+      }
+    }
+    
+    // Qualquer outra rota no domínio todeacordo (como app.todeacordo.com.br) ou default fallback
     return <Marketplace />;
   }
 
@@ -96,13 +103,14 @@ function App() {
   // ==========================================
   // 3. ISOLAMENTO TOTAL: Tax Managers Ecosystem
   // ==========================================
+  // Landing page via rota explícita
   if (location === "/taxmanagers") {
     return <TaxManagers />;
   }
-  if (location === "/taxmanagers/politica-de-privacidade" || location === "/taxmanagers/privacidade") {
+  if (location === "/taxmanagers/politica-de-privacidade" || location === "/taxmanagers/privacidade" || location === "/politica-de-privacidade" || location === "/privacidade") {
     return <TaxManagersPrivacy />;
   }
-  if (import.meta.env.DEV && location === "/taxmanagers/foot-in-the-door-lab") {
+  if (import.meta.env.DEV && (location === "/taxmanagers/foot-in-the-door-lab" || location === "/foot-in-the-door-lab")) {
     return <FootInTheDoorLab />;
   }
 
@@ -114,21 +122,35 @@ function App() {
     location.startsWith("/taxmanagers/oportunidades/") ||
     location.startsWith("/taxmanagers/entregas/") ||
     location.startsWith("/taxmanagers/in/") ||
-    location.startsWith("/taxmanagers/company/")
+    location.startsWith("/taxmanagers/company/") ||
+    location.startsWith("/empresas/") ||
+    location.startsWith("/pessoas/") ||
+    location.startsWith("/negocios/") ||
+    location.startsWith("/oportunidades/") ||
+    location.startsWith("/entregas/")
   ) {
-    if (location.startsWith("/taxmanagers/empresas/") || location.startsWith("/taxmanagers/company/")) return <Empresas />;
-    if (location.startsWith("/taxmanagers/pessoas/") || location.startsWith("/taxmanagers/in/")) return <Pessoas />;
-    if (location.startsWith("/taxmanagers/negocios/")) return <Negocios />;
-    if (location.startsWith("/taxmanagers/oportunidades/")) return <Oportunidades />;
-    if (location.startsWith("/taxmanagers/entregas/")) return <Entregas />;
+    if (location.startsWith("/taxmanagers/empresas/") || location.startsWith("/taxmanagers/company/") || location.startsWith("/empresas/") || location.startsWith("/company/")) return <Empresas />;
+    if (location.startsWith("/taxmanagers/pessoas/") || location.startsWith("/taxmanagers/in/") || location.startsWith("/pessoas/") || location.startsWith("/in/")) return <Pessoas />;
+    if (location.startsWith("/taxmanagers/negocios/") || location.startsWith("/negocios/")) return <Negocios />;
+    if (location.startsWith("/taxmanagers/oportunidades/") || location.startsWith("/oportunidades/")) return <Oportunidades />;
+    if (location.startsWith("/taxmanagers/entregas/") || location.startsWith("/entregas/")) return <Entregas />;
   }
 
   // Rotas legadas de retrocompatibilidade Tax Managers
   if (location.startsWith("/p/") || location.startsWith("/in/")) return <Pessoas />;
   if (location.startsWith("/c/") || location.startsWith("/company/")) return <Empresas />;
 
-  // Rota independente Tax Managers App Portal
-  if (location === "/" || location.startsWith("/app") || location.startsWith("/taxmanagers") || isTaxManagersDomain) {
+  if (isTaxManagersDomain) {
+    // Se for taxmanagers.com.br na raiz, carrega Landing Page
+    if ((hostname === "taxmanagers.com.br" || hostname === "www.taxmanagers.com.br") && location === "/") {
+      return <TaxManagers />;
+    }
+    // Qualquer outra coisa (app.taxmanagers.com.br), carrega App
+    return <TaxManagersApp />;
+  }
+
+  // Rota independente Tax Managers App Portal (fallback de rota /app)
+  if (location.startsWith("/app")) {
     return <TaxManagersApp />;
   }
 
