@@ -118,24 +118,6 @@ function App() {
   if (location.startsWith("/p/") || location.startsWith("/in/")) return <Pessoas />;
   if (location.startsWith("/c/") || location.startsWith("/company/")) return <Empresas />;
 
-  const isTodeAcordoDomain = typeof window !== "undefined" && (
-    window.location.hostname.includes("todeacordo")
-  );
-
-  const isMestreDasTeclasRoute = ["/training", "/lessons", "/achievements", "/leaderboard", "/shortcuts", "/auth"].some(r => location.startsWith(r));
-
-  // Se estiver no domínio todeacordo e não bateu em nenhuma rota acima (/market, /book, etc),
-  // redireciona para o Marketplace como página principal
-  if (isTodeAcordoDomain) {
-    if (location === "/" || location === "/app" || location === "/app/") {
-      return <Marketplace />;
-    }
-    // Para qualquer outra rota desconhecida no todeacordo, mostra o Marketplace
-    if (!isMestreDasTeclasRoute) {
-      return <Marketplace />;
-    }
-  }
-
   // Rota independente Tax Managers App Portal (apenas para domínio taxmanagers ou rotas explícitas)
   if (location === "/" || location.startsWith("/app") || location.startsWith("/taxmanagers") || (isTaxManagersDomain && !isMestreDasTeclasRoute)) {
     return <TaxManagersApp />;
