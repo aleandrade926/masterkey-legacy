@@ -25,11 +25,15 @@ export default function TamarcadoDashboard() {
   const [displayName, setDisplayName] = useState("");
   const [description, setDescription] = useState("");
 
+  const { loginMutation } = useAuth();
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
   useEffect(() => {
     if (user) {
       loadData();
-    } else if (!authLoading) {
-      window.location.href = "/auth";
+    } else {
+      setLoading(false);
     }
   }, [user, authLoading]);
 
@@ -159,7 +163,60 @@ export default function TamarcadoDashboard() {
     }
   }
 
-  if (loading) return <div className="p-8 text-center">Carregando...</div>;
+  if (loading || authLoading) return <div className="p-8 text-center">Carregando...</div>;
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-lg border border-slate-200">
+          <CardHeader className="text-center space-y-2">
+            <div className="mx-auto w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+              📅
+            </div>
+            <CardTitle className="text-2xl font-bold text-slate-900">TáMarcado</CardTitle>
+            <CardDescription className="text-slate-500">
+              Entre para gerenciar sua agenda e eventos de agendamento.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="login-email">E-mail</Label>
+              <Input 
+                id="login-email" 
+                type="email" 
+                placeholder="seu@email.com" 
+                value={loginEmail} 
+                onChange={e => setLoginEmail(e.target.value)} 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="login-password">Senha</Label>
+              <Input 
+                id="login-password" 
+                type="password" 
+                placeholder="••••••••" 
+                value={loginPassword} 
+                onChange={e => setLoginPassword(e.target.value)} 
+              />
+            </div>
+            <Button 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium" 
+              disabled={loginMutation.isPending}
+              onClick={() => {
+                if (!loginEmail || !loginPassword) {
+                  toast({ title: "Erro", description: "Preencha e-mail e senha.", variant: "destructive" });
+                  return;
+                }
+                loginMutation.mutate({ email: loginEmail, password: loginPassword });
+              }}
+            >
+              {loginMutation.isPending ? "Entrando..." : "Entrar no TáMarcado"}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
