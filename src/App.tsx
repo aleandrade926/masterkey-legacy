@@ -118,8 +118,19 @@ function App() {
   if (location.startsWith("/p/") || location.startsWith("/in/")) return <Pessoas />;
   if (location.startsWith("/c/") || location.startsWith("/company/")) return <Empresas />;
 
-  // Rota independente Tax Managers App Portal (apenas para domínio taxmanagers ou rotas explícitas)
-  if (location === "/" || location.startsWith("/app") || location.startsWith("/taxmanagers") || (isTaxManagersDomain && !isMestreDasTeclasRoute)) {
+  const isTodeAcordoDomain = typeof window !== "undefined" && (
+    window.location.hostname.includes("todeacordo")
+  );
+
+  // Rota do ToDeAcordo no domínio todeacordo.com.br (para / e /app)
+  if (isTodeAcordoDomain && (location === "/" || location === "/app" || location === "/app/")) {
+    return <Marketplace />;
+  }
+
+  const isMestreDasTeclasRoute = ["/training", "/lessons", "/achievements", "/leaderboard", "/shortcuts", "/auth"].some(r => location.startsWith(r));
+
+  // Rota independente Tax Managers App Portal (apenas no domínio taxmanagers ou rotas explícitas /taxmanagers)
+  if (location.startsWith("/taxmanagers") || (isTaxManagersDomain && (location === "/" || location.startsWith("/app")))) {
     return <TaxManagersApp />;
   }
 
