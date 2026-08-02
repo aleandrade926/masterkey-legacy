@@ -79,7 +79,7 @@ function App() {
 
   // Rotas do TáMarcado (Calendly Clone MVP)
   if (location.startsWith("/book/")) return <PublicBooking />;
-  if (location === "/tamarcado" || location === "/tamarcado/") return <TamarcadoDashboard />;
+  if (location === "/market/tamarcado" || location === "/market/tamarcado/") return <TamarcadoDashboard />;
 
   // Rota independente Tax Managers Privacidade
   if (location === "/taxmanagers/politica-de-privacidade" || location === "/taxmanagers/privacidade") {
