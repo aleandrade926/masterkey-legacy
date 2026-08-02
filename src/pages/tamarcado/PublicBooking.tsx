@@ -8,6 +8,8 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { useToast } from "../../hooks/use-toast";
 import { Clock, Calendar as CalendarIcon, User, ChevronLeft } from "lucide-react";
+import { SchedulingEngine, Slot } from "../../lib/tamarcado/engine";
+import { format } from "date-fns";
 
 export default function PublicBooking() {
   const [params] = useParams();
@@ -17,13 +19,18 @@ export default function PublicBooking() {
 
   const [profile, setProfile] = useState<any>(null);
   const [eventTypes, setEventTypes] = useState<any[]>([]);
+  const [availability, setAvailability] = useState<any>(null);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [availableSlots, setAvailableSlots] = useState<Slot[]>([]);
+  const [guestTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const [step, setStep] = useState<"event" | "date" | "form" | "success">("event");
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
 
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
@@ -61,6 +68,24 @@ export default function PublicBooking() {
         .order('created_at', { ascending: false });
 
       if (eventsData) setEventTypes(eventsData);
+
+      const { data: availData } = await supabase
+        .from('tamarcado_availability')
+        .select('*')
+        .eq('profile_id', profileData.id)
+        .single();
+        
+      if (availData) setAvailability(availData);
+
+      // Carrega os bookings futuros (para conflitos)
+      const { data: bookingsData } = await supabase
+        .from('tamarcado_bookings')
+        .select('*')
+        .eq('profile_id', profileData.id)
+        .gte('end_time', new Date().toISOString());
+
+      if (bookingsData) setBookings(bookingsData);
+
     } catch (err) {
       console.error(err);
       setError("Erro ao carregar os dados.");
@@ -69,40 +94,39 @@ export default function PublicBooking() {
     }
   }
 
-  // Generate fake time slots for MVP (9:00 to 17:00)
-  const generateTimeSlots = () => {
-    const slots = [];
-    for (let i = 9; i <= 17; i++) {
-      slots.push(`${i.toString().padStart(2, '0')}:00`);
-      slots.push(`${i.toString().padStart(2, '0')}:30`);
+  // Generate time slots when date or event changes
+  useEffect(() => {
+    if (selectedDate && selectedEvent && availability) {
+      const slots = SchedulingEngine.getAvailableSlots(
+        selectedDate,
+        selectedEvent,
+        availability,
+        bookings,
+        guestTimezone
+      );
+      setAvailableSlots(slots);
     }
-    return slots;
-  };
+  }, [selectedDate, selectedEvent, availability, bookings, guestTimezone]);
 
   const handleBook = async () => {
-    if (!guestName || !guestEmail || !selectedDate || !selectedTime || !selectedEvent) {
+    if (!guestName || !guestEmail || !selectedDate || !selectedSlot || !selectedEvent) {
       toast({ title: "Erro", description: "Preencha todos os campos obrigatórios.", variant: "destructive" });
       return;
     }
     setBookingLoading(true);
 
     try {
-      // Create a Date object for the start_time
-      const [hours, minutes] = selectedTime.split(':');
-      const startTime = new Date(selectedDate);
-      startTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-
-      // End time is start_time + duration
-      const endTime = new Date(startTime.getTime() + selectedEvent.duration_minutes * 60000);
-
       const { error } = await supabase.from('tamarcado_bookings').insert([{
         event_type_id: selectedEvent.id,
         profile_id: profile.id,
         guest_name: guestName,
         guest_email: guestEmail,
         guest_notes: guestNotes,
-        start_time: startTime.toISOString(),
-        end_time: endTime.toISOString(),
+        start_time: selectedSlot.startTimeUtc,
+        end_time: new Date(new Date(selectedSlot.startTimeUtc).getTime() + selectedEvent.duration_minutes * 60000).toISOString(),
+        guest_timezone: guestTimezone,
+        meeting_url: selectedEvent.location_url || null,
+        status: 'confirmed'
       }]);
 
       if (error) throw error;
@@ -154,10 +178,10 @@ export default function PublicBooking() {
                     <Clock className="w-4 h-4 mr-2" />
                     {selectedEvent.duration_minutes} minutos
                   </div>
-                  {selectedDate && selectedTime && step === "form" && (
+                  {selectedDate && selectedSlot && step === "form" && (
                     <div className="flex items-center text-slate-600 text-sm text-blue-600 font-medium">
                       <CalendarIcon className="w-4 h-4 mr-2" />
-                      {selectedDate.toLocaleDateString('pt-BR')} às {selectedTime}
+                      {selectedSlot.startTime.toLocaleDateString('pt-BR')} às {format(selectedSlot.startTime, 'HH:mm')}
                     </div>
                   )}
                 </div>
@@ -211,12 +235,24 @@ export default function PublicBooking() {
                     mode="single"
                     selected={selectedDate}
                     onSelect={(date) => {
-                      setSelectedDate(date);
-                      setSelectedTime("");
+                      if (date) {
+                        setSelectedDate(date);
+                        setSelectedSlot(null);
+                      }
                     }}
                     className="rounded-md border mx-auto"
-                    disabled={(date) => date < new Date(new Date().setHours(0,0,0,0)) || date.getDay() === 0 || date.getDay() === 6}
+                    disabled={(date) => {
+                      if (date < new Date(new Date().setHours(0,0,0,0))) return true;
+                      if (availability) {
+                        const daily = SchedulingEngine.getDailyAvailability(date, availability);
+                        if (!daily || !daily.active) return true;
+                      }
+                      return false;
+                    }}
                   />
+                  <p className="text-center text-sm text-slate-500 mt-4">
+                    Fuso horário: {guestTimezone.replace('_', ' ')}
+                  </p>
                 </div>
                 
                 {selectedDate && (
@@ -224,22 +260,26 @@ export default function PublicBooking() {
                     <p className="text-center font-medium text-slate-700 sticky top-0 bg-white py-2">
                       {selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric' })}
                     </p>
-                    {generateTimeSlots().map(time => (
-                      <button
-                        key={time}
-                        onClick={() => {
-                          setSelectedTime(time);
-                          setStep("form");
-                        }}
-                        className={`w-full py-3 rounded-md text-sm font-medium transition-colors ${
-                          selectedTime === time 
-                            ? "bg-blue-600 text-white" 
-                            : "bg-blue-50 text-blue-600 hover:bg-blue-100"
-                        }`}
-                      >
-                        {time}
-                      </button>
-                    ))}
+                    {availableSlots.length === 0 ? (
+                      <p className="text-sm text-center text-slate-500 py-4">Nenhum horário disponível.</p>
+                    ) : (
+                      availableSlots.map((slot, i) => (
+                        <button
+                          key={i}
+                          onClick={() => {
+                            setSelectedSlot(slot);
+                            setStep("form");
+                          }}
+                          className={`w-full py-3 rounded-md text-sm font-medium transition-colors ${
+                            selectedSlot?.startTimeUtc === slot.startTimeUtc 
+                              ? "bg-blue-600 text-white" 
+                              : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                          }`}
+                        >
+                          {format(slot.startTime, 'HH:mm')}
+                        </button>
+                      ))
+                    )}
                   </div>
                 )}
               </div>
@@ -282,8 +322,16 @@ export default function PublicBooking() {
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900 mb-2">Está marcado!</h2>
                 <p className="text-slate-600 max-w-sm mx-auto">
-                  Seu agendamento com {profile.display_name} foi confirmado para {selectedDate?.toLocaleDateString('pt-BR')} às {selectedTime}.
+                  Seu agendamento com {profile.display_name} foi confirmado para {selectedSlot && format(selectedSlot.startTime, 'dd/MM/yyyy')} às {selectedSlot && format(selectedSlot.startTime, 'HH:mm')}.
                 </p>
+                {selectedEvent?.location_url && (
+                  <div className="mt-4 p-4 bg-slate-100 rounded-lg">
+                    <p className="text-sm font-medium text-slate-900 mb-1">Local da Reunião (Link)</p>
+                    <a href={selectedEvent.location_url} target="_blank" rel="noreferrer" className="text-blue-600 break-all text-sm hover:underline">
+                      {selectedEvent.location_url}
+                    </a>
+                  </div>
+                )}
                 <div className="mt-8">
                   <Button variant="outline" onClick={() => setStep("event")}>
                     Fazer outro agendamento

@@ -7,7 +7,7 @@ import { Label } from "../../components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
 import { useToast } from "../../hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Calendar, Clock, Copy, Link as LinkIcon, Plus, Users } from "lucide-react";
+import { Calendar, Clock, Copy, Link as LinkIcon, Plus, Users, Globe } from "lucide-react";
 
 export default function TamarcadoDashboard() {
   const { user } = useAuth();
@@ -16,6 +16,7 @@ export default function TamarcadoDashboard() {
   const [profile, setProfile] = useState<any>(null);
   const [eventTypes, setEventTypes] = useState<any[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
+  const [availability, setAvailability] = useState<any>(null);
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -63,6 +64,32 @@ export default function TamarcadoDashboard() {
           .order('start_time', { ascending: true });
           
         if (bookingsData) setBookings(bookingsData);
+
+        // Load Availability
+        const { data: availabilityData } = await supabase
+          .from('tamarcado_availability')
+          .select('*')
+          .eq('profile_id', profileData.id)
+          .single();
+
+        if (availabilityData) {
+          setAvailability(availabilityData);
+        } else {
+          // Default availability setup
+          const defaultAvailability = {
+            profile_id: profileData.id,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            monday: { active: true, start: "09:00", end: "17:00" },
+            tuesday: { active: true, start: "09:00", end: "17:00" },
+            wednesday: { active: true, start: "09:00", end: "17:00" },
+            thursday: { active: true, start: "09:00", end: "17:00" },
+            friday: { active: true, start: "09:00", end: "17:00" },
+            saturday: { active: false, start: "09:00", end: "12:00" },
+            sunday: { active: false, start: "09:00", end: "12:00" }
+          };
+          const { data: newAvail } = await supabase.from('tamarcado_availability').insert([defaultAvailability]).select().single();
+          if (newAvail) setAvailability(newAvail);
+        }
       }
     } catch (error) {
       console.error("Error loading data:", error);
@@ -99,6 +126,18 @@ export default function TamarcadoDashboard() {
     }
   }
 
+  async function saveAvailability() {
+    setSaving(true);
+    try {
+      await supabase.from('tamarcado_availability').update(availability).eq('id', availability.id);
+      toast({ title: "Sucesso", description: "Disponibilidade salva com sucesso!" });
+    } catch (error: any) {
+      toast({ title: "Erro", description: "Não foi possível salvar a disponibilidade.", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function createDefaultEventType() {
     if (!profile) return;
     try {
@@ -130,6 +169,7 @@ export default function TamarcadoDashboard() {
       <Tabs defaultValue="events" className="w-full">
         <TabsList>
           <TabsTrigger value="events">Tipos de Evento</TabsTrigger>
+          <TabsTrigger value="availability">Disponibilidade</TabsTrigger>
           <TabsTrigger value="bookings">Agendamentos</TabsTrigger>
           <TabsTrigger value="profile">Meu Perfil</TabsTrigger>
         </TabsList>
@@ -213,6 +253,85 @@ export default function TamarcadoDashboard() {
                     </div>
                   ))}
                 </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="availability" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Disponibilidade Semanal</CardTitle>
+              <CardDescription>Defina seus horários padrão de trabalho.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {availability && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Fuso Horário Padrão</Label>
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-muted-foreground" />
+                      <Input 
+                        value={availability.timezone} 
+                        onChange={e => setAvailability({...availability, timezone: e.target.value})}
+                        className="max-w-xs"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4 pt-4 border-t">
+                    {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
+                      const dayName = {
+                        monday: 'Segunda-feira', tuesday: 'Terça-feira', wednesday: 'Quarta-feira',
+                        thursday: 'Quinta-feira', friday: 'Sexta-feira', saturday: 'Sábado', sunday: 'Domingo'
+                      }[day as keyof typeof availability];
+                      
+                      const dayConfig = availability[day as keyof typeof availability];
+                      if (typeof dayConfig !== 'object' || dayConfig === null) return null;
+                      
+                      return (
+                        <div key={day} className="flex items-center gap-4">
+                          <label className="flex items-center gap-2 w-32">
+                            <input 
+                              type="checkbox" 
+                              checked={dayConfig.active}
+                              onChange={(e) => setAvailability({
+                                ...availability,
+                                [day]: { ...dayConfig, active: e.target.checked }
+                              })}
+                            />
+                            <span className="text-sm font-medium">{dayName}</span>
+                          </label>
+                          <div className={`flex items-center gap-2 ${!dayConfig.active && 'opacity-50 pointer-events-none'}`}>
+                            <Input 
+                              type="time" 
+                              value={dayConfig.start}
+                              onChange={(e) => setAvailability({
+                                ...availability,
+                                [day]: { ...dayConfig, start: e.target.value }
+                              })}
+                              className="w-32"
+                            />
+                            <span>até</span>
+                            <Input 
+                              type="time" 
+                              value={dayConfig.end}
+                              onChange={(e) => setAvailability({
+                                ...availability,
+                                [day]: { ...dayConfig, end: e.target.value }
+                              })}
+                              className="w-32"
+                            />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  
+                  <Button onClick={saveAvailability} disabled={saving}>
+                    {saving ? "Salvando..." : "Salvar Disponibilidade"}
+                  </Button>
+                </>
               )}
             </CardContent>
           </Card>
