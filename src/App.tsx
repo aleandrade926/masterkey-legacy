@@ -78,8 +78,20 @@ function App() {
   if (location === "/market" || location === "/market/") return <Marketplace />;
 
   // Rotas do TáMarcado (Calendly Clone MVP)
-  if (location.startsWith("/book/")) return <PublicBooking />;
-  if (location === "/market/tamarcado" || location === "/market/tamarcado/") return <TamarcadoDashboard />;
+  if (location.startsWith("/book/")) return (
+    <QueryClientProvider client={queryClient}>
+      <Toaster />
+      <PublicBooking />
+    </QueryClientProvider>
+  );
+  if (location === "/market/tamarcado" || location === "/market/tamarcado/") return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Toaster />
+        <TamarcadoDashboard />
+      </AuthProvider>
+    </QueryClientProvider>
+  );
 
   // Rota independente Tax Managers Privacidade
   if (location === "/taxmanagers/politica-de-privacidade" || location === "/taxmanagers/privacidade") {
