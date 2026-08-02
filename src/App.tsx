@@ -32,6 +32,10 @@ import Marketplace from "./pages/market/Marketplace";
 import MarketAffiliate from "./pages/market/MarketAffiliate";
 import MarketCheckout from "./pages/market/MarketCheckout";
 
+// Rotas do TáMarcado (Calendly Clone MVP)
+import TamarcadoDashboard from "./pages/tamarcado/Dashboard";
+import PublicBooking from "./pages/tamarcado/PublicBooking";
+
 function Router() {
   return (
     <Switch>
@@ -72,6 +76,10 @@ function App() {
   if (location.startsWith("/market/checkout")) return <MarketCheckout />;
   if (location.startsWith("/market/afiliado")) return <MarketAffiliate />;
   if (location === "/market" || location === "/market/") return <Marketplace />;
+
+  // Rotas do TáMarcado (Calendly Clone MVP)
+  if (location.startsWith("/book/")) return <PublicBooking />;
+  if (location === "/tamarcado" || location === "/tamarcado/") return <TamarcadoDashboard />;
 
   // Rota independente Tax Managers Privacidade
   if (location === "/taxmanagers/politica-de-privacidade" || location === "/taxmanagers/privacidade") {

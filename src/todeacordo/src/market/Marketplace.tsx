@@ -70,6 +70,17 @@ const MOCK_PRODUCTS: Product[] = [
     is_active: false,
   },
   {
+    id: "prod-tamarcado",
+    name: "TáMarcado",
+    description: "Agendamento simples e rápido. Sua agenda online, sem conflitos de horário.",
+    image_url: "https://via.placeholder.com/150",
+    benefits: ["Página pública de agendamento", "Sincronização de eventos", "Fuso horário automático"],
+    price: 27.00,
+    commission_rate: 40.00,
+    access_link: "/tamarcado",
+    is_active: true,
+  },
+  {
     id: "prod-integrador",
     name: "Agente Integrador",
     description: "Automações baseadas em IA para conectar fluxos de trabalho.",
