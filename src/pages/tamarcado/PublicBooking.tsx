@@ -13,9 +13,9 @@ import type { Slot } from "../../lib/tamarcado/engine";
 import { format } from "date-fns";
 
 export default function PublicBooking() {
-  const [params] = useParams();
   const [, setLocation] = useLocation();
-  const slug = params?.slug;
+  const pathParts = window.location.pathname.split('/');
+  const slug = pathParts[pathParts.length - 1] === 'book' ? undefined : pathParts[pathParts.length - 1];
   const { toast } = useToast();
 
   const [profile, setProfile] = useState<any>(null);
@@ -41,6 +41,9 @@ export default function PublicBooking() {
   useEffect(() => {
     if (slug) {
       loadProfile();
+    } else {
+      setError("Link inválido. Informe o nome de quem deseja agendar.");
+      setLoading(false);
     }
   }, [slug]);
 

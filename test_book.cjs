@@ -13,7 +13,7 @@ const puppeteer = require('puppeteer');
       console.log(`[PAGE ERROR] ${err.toString()}`);
     });
 
-    await page.goto('http://localhost:5174/market/tamarcado', { waitUntil: 'networkidle0' });
+    await page.goto('http://localhost:5174/book/alexandre', { waitUntil: 'networkidle0' });
     
     const bodyText = await page.evaluate(() => document.body.innerText);
     console.log('Body Text:', bodyText);
