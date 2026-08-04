@@ -5,7 +5,7 @@ import { normalizeSlug, validateSlugFormat, checkSlugAvailability, generateUniqu
 import { User, Building, ExternalLink, Sparkles, ArrowLeft, CheckCircle, AlertCircle, Link as LinkIcon, Activity, FileText, Phone, MessageCircle, Mail, Calendar, Clock, Clipboard } from "lucide-react";
 
 export default function Pessoas() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   
   const pathParts = location.split("/").filter(Boolean);
   const routeParam = pathParts[pathParts.length - 1];
