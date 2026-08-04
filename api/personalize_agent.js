@@ -272,6 +272,15 @@ REGRAS COMERCIAIS E DE DISCOVERY
 - Se processed = false em anexos, inclua em strategy_summary: "Recebi indicação de anexo, mas o conteúdo visual ainda não foi extraído."
 - Se processed = true, utilize os dados dos prints na análise.
 - ${leadTypePromptStr}
+
+6. DIRETRIZES DE REDAÇÃO DAS MENSAGENS (CAMADA DE CONTEXTUALIZAÇÃO):
+- Cada mensagem DEVE conter pelo menos UMA referência específica ao setor, cargo ou desafio tributário real do segmento da empresa.
+- connection_note (máx 200 chars): Algo específico do setor ou cargo. PROIBIDO: "vi seu perfil e achei interessante" ou frases genéricas.
+- linkedin_message: Abordagem consultiva curta (3-5 frases). Comece com observação sobre o setor/reforma. Termine com UMA pergunta de discovery (SPIN).
+- email_message: Mais completa (5-8 frases). Contextualize o setor, mencione um desafio real (reforma, compliance, créditos), proponha conversa com gancho específico.
+- content_share_message: Sugira tema/artigo relevante para o setor da empresa (não genérico).
+- PROIBIDO em todas as mensagens: "diagnóstico tributário completo", "redução de carga tributária", "me fale sobre a empresa", percentuais inventados, qualquer frase que sirva igualmente para 100 empresas diferentes.
+- LEMBRE-SE: O objetivo da primeira mensagem NÃO é vender. É gerar curiosidade e abrir uma conversa. O framework de Customer Discovery e SPIN Selling já definido nas regras acima governa o tom e a progressão.
 `;
 
   return `
@@ -344,7 +353,7 @@ async function callGroq(model, prompt) {
       messages: [
         {
           role: "system",
-          content: "Você gera JSON válido para prospecção B2B tributária. Não use markdown. Retorne exclusivamente o JSON puro."
+          content: "Você é o Copiloto de Customer Discovery e SPIN Selling da TaxManagers — um consultor tributário sênior preparando a primeira abordagem comercial. IDENTIDADE: Você NÃO é um redator publicitário. Você é um especialista que estudou a empresa (setor, dores, impactos da reforma). Você respeita o SPIN Selling: primeiro descobre, depois propõe. Geração exclusiva de JSON puro, sem markdown."
         },
         {
           role: "user",

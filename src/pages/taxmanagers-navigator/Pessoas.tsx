@@ -208,14 +208,24 @@ export default function Pessoas() {
                           ))}
                         </select>
                       ) : (
-                        <span className="text-xs text-slate-400 cursor-pointer hover:text-cyan-400 transition-colors" onClick={() => setIsEditingCompany(true)}>
-                          {data.empresa && data.empresa !== "N/A" ? data.empresa : "Empresa atual não identificada"}
+                        <div className="flex items-center gap-2">
                           {data.company_id ? (
-                            <span className="text-[10px] text-emerald-500 ml-2 font-semibold">✓ Vinculada</span>
+                            <>
+                              <a href={`/taxmanagers/empresas/${data.company_id}`} className="text-xs text-cyan-400 hover:underline font-semibold flex items-center gap-1">
+                                {data.empresa && data.empresa !== "N/A" ? data.empresa : "Empresa vinculada"}
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                              <span className="text-[10px] text-slate-500 cursor-pointer hover:text-cyan-400 transition-colors underline decoration-dashed" onClick={() => setIsEditingCompany(true)}>
+                                (editar)
+                              </span>
+                            </>
                           ) : (
-                            <span className="text-[10px] text-slate-500 ml-2 underline decoration-dashed">(clique para vincular)</span>
+                            <span className="text-xs text-slate-400 cursor-pointer hover:text-cyan-400 transition-colors flex items-center" onClick={() => setIsEditingCompany(true)}>
+                              {data.empresa && data.empresa !== "N/A" ? data.empresa : "Empresa atual não identificada"}
+                              <span className="text-[10px] text-slate-500 ml-2 underline decoration-dashed">(clique para vincular)</span>
+                            </span>
                           )}
-                        </span>
+                        </div>
                       )}
                     </div>
                   </div>

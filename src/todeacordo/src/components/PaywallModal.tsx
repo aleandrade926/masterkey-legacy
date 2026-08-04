@@ -21,7 +21,6 @@ export const PaywallModal = ({ isOpen, onClose, attemptedFeature, sourceMeetingI
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [activationCode, setActivationCode] = useState('');
   const [activationError, setActivationError] = useState('');
   const [activationSuccess, setActivationSuccess] = useState(false);
@@ -41,12 +40,6 @@ export const PaywallModal = ({ isOpen, onClose, attemptedFeature, sourceMeetingI
       setActivationError('Código inválido. Verifique com o suporte.');
       setActivationSuccess(false);
     }
-  };
-
-  const handleCopyPix = () => {
-    navigator.clipboard.writeText('40130122866');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   if (!isOpen) return null;
@@ -126,7 +119,7 @@ export const PaywallModal = ({ isOpen, onClose, attemptedFeature, sourceMeetingI
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-bold text-indigo-900 text-sm">Plano Fundador</span>
-                <span className="text-xs font-black text-indigo-700">R$ 29/mês ou R$ 97/3 meses</span>
+                <span className="text-xs font-black text-indigo-700">R$ 29,90/mês</span>
               </div>
               <ul className="text-left text-xs text-slate-600 space-y-1.5 mb-3">
                 <li className="flex items-center gap-1.5 font-medium text-indigo-950">✓ Mais transcrições</li>
@@ -137,39 +130,27 @@ export const PaywallModal = ({ isOpen, onClose, attemptedFeature, sourceMeetingI
             </div>
           </div>
 
-          {/* Sessão PIX Fundador */}
-          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-4 shadow-sm text-center">
-            <span className="text-[10px] font-black text-indigo-700 uppercase tracking-widest block mb-1">💸 SEJA UM FUNDADOR (APOIO DIRETO)</span>
-            <p className="text-slate-705 text-xs mb-3 leading-relaxed">
-              O pagamento é feito diretamente para o Pix pessoal da equipe para financiar a hospedagem e evolução do produto sem investidores externos.
+          {/* Sessão Stripe Fundador */}
+          <div className="bg-gradient-to-br from-indigo-55 to-purple-55 border border-indigo-100 rounded-2xl p-4 shadow-sm text-center">
+            <span className="text-[10px] font-black text-indigo-700 uppercase tracking-widest block mb-1">⚡ SEJA UM FUNDADOR</span>
+            <p className="text-slate-700 text-xs mb-4 leading-relaxed">
+              Assine o Plano Fundador por apenas R$ 29,90/mês e tenha acesso ilimitado a todas as transcrições e acordos gerados.
             </p>
             
-            <div className="bg-white border border-slate-200 rounded-xl py-3 px-4 mb-3">
-              <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Chave Pix (CPF)</div>
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-base font-black text-indigo-900 select-all font-mono">40130122866</span>
-                <button 
-                  onClick={handleCopyPix}
-                  type="button"
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 transition-colors text-[10px] font-bold border border-indigo-200"
-                >
-                  {copied ? (
-                    <span>✓ Copiado!</span>
-                  ) : (
-                    <>
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
-                      </svg>
-                      <span>Copiar</span>
-                    </>
-                  )}
-                </button>
-              </div>
-              <div className="text-[10px] text-slate-450 mt-1 font-semibold">Nome do Favorecido: André (Equipe de Desenvolvimento)</div>
-            </div>
+            <a 
+              href="https://buy.stripe.com/eVqdR9aXm8PS3XiaoNew801"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 w-full bg-indigo-650 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all active:scale-98 text-xs font-semibold"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+              </svg>
+              Assinar Plano Fundador
+            </a>
             
-            <p className="text-[10px] text-indigo-600 font-medium">
-              💡 Dica: Envie o comprovante no WhatsApp do Alexandre ou Sonia para liberação imediata!
+            <p className="text-[10px] text-slate-500 mt-3 font-medium">
+              🔒 Pagamento seguro processado pelo Stripe. Cancelamento simples a qualquer momento.
             </p>
           </div>
 

@@ -28,7 +28,8 @@ import {
   CheckSquare,
   Radar,
   Workflow,
-  ShieldCheck
+  ShieldCheck,
+  Building
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { OpportunityModule } from "../components/taxmanagers/OpportunityModule";
@@ -120,8 +121,10 @@ export default function TaxManagersApp() {
   const [authError, setAuthError] = useState("");
 
   // Estado da Importação do Bookmarklet
-  const [importStatus, setImportStatus] = useState<"loading" | "success" | "error" | "unauthenticated">("loading");
+  const [importStatus, setImportStatus] = useState<"loading" | "success" | "error" | "unauthenticated" | "link_lead">("loading");
   const [importedLeadInfo, setImportedLeadInfo] = useState<any>(null);
+  const [recentLead, setRecentLead] = useState<any>(null);
+  const [importedCompanyId, setImportedCompanyId] = useState<string | null>(null);
 
   const leadSavedRef = useRef(false);
 
@@ -166,17 +169,19 @@ export default function TaxManagersApp() {
           .ilike("normalized_name", name.toLowerCase().trim())
           .limit(1);
 
+        let companyId = "";
         if (existing && existing.length > 0) {
+          companyId = existing[0].id;
           await supabase.from("taxmanagers_companies").update({
             industry: industry || undefined,
             domain: email || undefined,
             cnpj: phone || undefined,
             linkedin_url: url || undefined,
             updated_at: new Date().toISOString()
-          }).eq("id", existing[0].id);
+          }).eq("id", companyId);
         } else {
           const compSlug = await generateUniqueSlug("taxmanagers_companies", name);
-          await supabase.from("taxmanagers_companies").insert([{
+          const { data: newComp } = await supabase.from("taxmanagers_companies").insert([{
             display_name: name,
             legal_name: name,
             normalized_name: name.toLowerCase().trim(),
@@ -188,12 +193,29 @@ export default function TaxManagersApp() {
             linkedin_url: url || undefined,
             source: "extension",
             status: "active"
-          }]);
+          }]).select("id").single();
+          if (newComp) companyId = newComp.id;
         }
 
-        setImportStatus("success");
-        await fetchDbCounts();
-        setTimeout(() => window.close(), 2000);
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+        const { data: recentLeads } = await supabase
+          .from("taxmanagers_leads")
+          .select("id, nome")
+          .eq("parceiro_id", sessionObj.user.id)
+          .gte("created_at", fiveMinutesAgo)
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (recentLeads && recentLeads.length > 0 && companyId) {
+          setRecentLead(recentLeads[0]);
+          setImportedCompanyId(companyId);
+          setImportStatus("link_lead");
+          await fetchDbCounts();
+        } else {
+          setImportStatus("success");
+          await fetchDbCounts();
+          setTimeout(() => window.close(), 2000);
+        }
       } catch (e) {
         console.error(e);
         setImportStatus("error");
@@ -613,6 +635,18 @@ export default function TaxManagersApp() {
     };
   }, [location]);
 
+  const handleLinkCompanyToLead = async (link: boolean) => {
+    if (link && recentLead && importedCompanyId) {
+      setImportStatus("loading");
+      await supabase
+        .from("taxmanagers_leads")
+        .update({ company_id: importedCompanyId })
+        .eq("id", recentLead.id);
+    }
+    setImportStatus("success");
+    setTimeout(() => window.close(), 2000);
+  };
+
   // Perfil e Estado Multi-tenant
   const [profile, setProfile] = useState<Partner | null>(null);
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -620,7 +654,7 @@ export default function TaxManagersApp() {
   const [appLoading, setAppLoading] = useState(true);
 
   // Tabs e Navegação (Preservação de Estado F5)
-  const [activeTab, setActiveTab] = useState<"hoje" | "dashboard" | "leads" | "comissoes" | "config" | "fruta_baixa">(() => getSavedActiveTab());
+  const [activeTab, setActiveTab] = useState<"hoje" | "dashboard" | "leads" | "comissoes" | "config" | "fruta_baixa" | "empresas">(() => getSavedActiveTab() as any);
   const [frutaBaixaSubTab, setFrutaBaixaSubTab] = useState<"fila_padrao" | "oportunidade">(() => getSavedFrutaBaixaSubTab());
 
   const handleTabChange = (tab: typeof activeTab) => {
@@ -959,6 +993,35 @@ export default function TaxManagersApp() {
     }
   };
 
+  const [companiesList, setCompaniesList] = useState<any[]>([]);
+  const [companiesLoading, setCompaniesLoading] = useState(false);
+
+  const fetchCompanies = async () => {
+    if (!session) return;
+    const targetPartner = profile?.is_admin ? selectedPartnerId : profile?.id;
+    if (!targetPartner) return;
+    
+    setCompaniesLoading(true);
+    let query = supabase
+      .from("taxmanagers_companies")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (targetPartner !== "all") {
+      query = query.eq("parceiro_id", targetPartner);
+    }
+    
+    if (debouncedSearch) {
+      query = query.ilike("display_name", `%${debouncedSearch}%`);
+    }
+
+    const { data, error } = await query.limit(50);
+    if (!error && data) {
+      setCompaniesList(data);
+    }
+    setCompaniesLoading(false);
+  };
+
   const fetchActiveLeads = async () => {
     if (!session) return;
     const targetPartner = profile?.is_admin ? selectedPartnerId : profile?.id;
@@ -1286,6 +1349,8 @@ export default function TaxManagersApp() {
       fetchActiveLeads();
     } else if (activeTab === "fruta_baixa") {
       fetchQuarantineLeads();
+    } else if (activeTab === "empresas") {
+      fetchCompanies();
     }
   };
 
@@ -1307,6 +1372,13 @@ export default function TaxManagersApp() {
       fetchQuarantineLeads();
     }
   }, [session, profile, selectedPartnerId, debouncedSearch, quarantineLeadsLimit, activeTab, ataque50kMode]);
+
+  // Recarrega empresas
+  useEffect(() => {
+    if (activeTab === "empresas") {
+      fetchCompanies();
+    }
+  }, [session, profile, selectedPartnerId, debouncedSearch, activeTab]);
 
   // Carrega as contagens gerais do banco APENAS ao alternar para a aba de leads como Admin
   useEffect(() => {
@@ -2989,6 +3061,28 @@ ${fonteDados}`;
               <p className="text-sm">Importando lead para o Supabase...</p>
             </div>
           )}
+          {importStatus === "link_lead" && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold text-white">Empresa Salva!</h2>
+              <p className="text-sm text-slate-300">
+                Deseja vincular esta empresa ao lead <strong className="text-cyan-400">{recentLead?.nome}</strong>?
+              </p>
+              <div className="flex flex-col gap-2 mt-4">
+                <button
+                  onClick={() => handleLinkCompanyToLead(true)}
+                  className="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 rounded-lg transition-colors"
+                >
+                  Sim, vincular
+                </button>
+                <button
+                  onClick={() => handleLinkCompanyToLead(false)}
+                  className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 rounded-lg transition-colors"
+                >
+                  Não, apenas fechar
+                </button>
+              </div>
+            </div>
+          )}
           {importStatus === "success" && (
             <div className="space-y-3">
               <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-xl font-bold">✓</div>
@@ -3317,6 +3411,13 @@ ${fonteDados}`;
             >
               <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
               <span>Fila Fruta Baixa</span>
+            </button>
+            <button 
+              onClick={() => handleTabChange("empresas")}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${activeTab === 'empresas' ? 'bg-blue-600/10 text-blue-400 border-l-2 border-blue-500' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`}
+            >
+              <Building className="w-4 h-4" />
+              <span>Gestão de Empresas</span>
             </button>
           </div>
 
@@ -3691,7 +3792,13 @@ ${fonteDados}`;
                               </td>
                               <td className="px-6 py-4 min-w-0">
                                 <div className="text-slate-300 truncate" title={displayEmpresa}>
-                                  {displayEmpresa}
+                                  {lead.company_id ? (
+                                    <a href={`/taxmanagers/empresas/${lead.company_id}`} className="text-cyan-400 hover:underline">
+                                      {displayEmpresa}
+                                    </a>
+                                  ) : (
+                                    displayEmpresa
+                                  )}
                                 </div>
                                 <div className="text-[10px] text-slate-500 font-mono truncate mt-1" title={lead.email || "Sem e-mail"}>
                                   {lead.email || "Sem e-mail"}
@@ -4026,7 +4133,15 @@ ${fonteDados}`;
                               )}
                             </td>
                             <td className="px-6 py-4 align-top">
-                              <div className="text-slate-300 font-semibold truncate">{lead.empresa || "N/A"}</div>
+                              <div className="text-slate-300 font-semibold truncate">
+                                {lead.company_id ? (
+                                  <a href={`/taxmanagers/empresas/${lead.company_id}`} className="text-cyan-400 hover:underline">
+                                    {lead.empresa || "N/A"}
+                                  </a>
+                                ) : (
+                                  lead.empresa || "N/A"
+                                )}
+                              </div>
                               <div className="text-xs text-slate-500 font-mono mt-1 break-all">{lead.email || "Sem e-mail"}</div>
                             </td>
                             <td className="px-6 py-4 text-right align-top">
@@ -4059,6 +4174,98 @@ ${fonteDados}`;
             </div>
             );
           })()}
+
+          {/* TAB: GESTÃO DE EMPRESAS */}
+          {activeTab === "empresas" && (
+            <div className="space-y-6">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                    <Building className="w-5 h-5 text-cyan-400" />
+                    Gestão de Empresas
+                  </h2>
+                  <p className="text-sm text-slate-500 mt-1">
+                    Lista das empresas extraídas e monitoradas.
+                  </p>
+                </div>
+                <div className="relative w-full md:w-96">
+                  <input
+                    type="text"
+                    value={leadSearch}
+                    onChange={(e) => setLeadSearch(e.target.value)}
+                    placeholder="Buscar empresa por nome ou url..."
+                    className="w-full bg-[#0b0b0f] border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
+                  />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[#0b0b0f] border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+                {companiesLoading ? (
+                  <div className="text-center py-16">
+                    <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-slate-400 text-sm">Carregando empresas...</p>
+                  </div>
+                ) : companiesList.length === 0 ? (
+                  <div className="text-center py-16">
+                    <Building className="w-12 h-12 text-slate-700 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-white mb-2">Nenhuma empresa encontrada</h3>
+                    <p className="text-slate-500 text-sm">Nenhuma empresa correspondente aos critérios de busca.</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto min-h-[500px]">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-white/5 bg-[#101016]/40 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                          <th className="px-6 py-4 w-[40%]">Empresa</th>
+                          <th className="px-6 py-4">Indústria / Porte</th>
+                          <th className="px-6 py-4 text-right">Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5 text-sm">
+                        {companiesList.map((comp: any) => (
+                          <tr key={comp.id} className="hover:bg-white/[0.02] transition-colors">
+                            <td className="px-6 py-4 align-top">
+                              <div className="font-semibold text-white">
+                                <a href={`/taxmanagers/empresas/${comp.id}`} className="hover:text-cyan-400 hover:underline transition-colors flex items-center gap-1.5">
+                                  {comp.display_name || "Sem Nome"}
+                                  <ExternalLink className="w-3 h-3 text-slate-500" />
+                                </a>
+                              </div>
+                              <div className="text-xs text-slate-500 mt-1 font-mono truncate max-w-xs" title={comp.linkedin_url}>
+                                {comp.linkedin_url || "-"}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 align-top">
+                              <div className="text-slate-300 font-medium">
+                                {comp.industry || "N/A"}
+                              </div>
+                              <div className="text-xs text-slate-500 mt-1">
+                                Porte: {comp.company_size || "N/A"}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-right align-top">
+                              <a
+                                href={`/taxmanagers/empresas/${comp.id}`}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-cyan-500/10 text-slate-300 hover:text-cyan-400 text-xs font-medium border border-white/5 hover:border-cyan-500/20 transition-all"
+                              >
+                                Detalhes
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
         </main>
       </div>
