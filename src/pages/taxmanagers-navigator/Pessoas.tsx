@@ -5,7 +5,7 @@ import { normalizeSlug, validateSlugFormat, checkSlugAvailability, generateUniqu
 import { User, Building, ExternalLink, Sparkles, ArrowLeft, CheckCircle, AlertCircle, Link as LinkIcon, Activity, FileText, Phone, MessageCircle, Mail, Calendar, Clock, Clipboard } from "lucide-react";
 
 export default function Pessoas() {
-  const [location] = useLocation();
+  const [, setLocation] = useLocation();
   
   const pathParts = location.split("/").filter(Boolean);
   const routeParam = pathParts[pathParts.length - 1];
@@ -18,6 +18,9 @@ export default function Pessoas() {
   const [slugInput, setSlugInput] = useState("");
   const [slugStatus, setSlugStatus] = useState<{ message: string; isError: boolean } | null>(null);
   const [savingSlug, setSavingSlug] = useState(false);
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [isEditingCompany, setIsEditingCompany] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!routeParam || routeParam === "novo") {
@@ -70,9 +73,14 @@ export default function Pessoas() {
         } finally {
           setInteractionsLoading(false);
         }
+
+        // Buscar lista de empresas para dropdown
+        supabase.from("taxmanagers_companies").select("id, display_name, slug").order("display_name").then(({data: comps}) => {
+          if (comps) setCompanies(comps);
+        });
       }
     });
-  }, [routeParam, location]);
+  }, [routeParam]);
 
   const handleSaveSlug = async () => {
     if (!data?.id) return;
@@ -108,6 +116,25 @@ export default function Pessoas() {
     setSavingSlug(false);
   };
 
+  const handleLinkCompany = async (companyId: string, companyName: string) => {
+    setIsEditingCompany(false);
+    if (!companyId || !data?.id) return;
+    const { error } = await supabase.from("taxmanagers_leads").update({ company_id: companyId, empresa: companyName }).eq("id", data.id);
+    if (!error) {
+      setData({ ...data, company_id: companyId, empresa: companyName });
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!data?.id) return;
+    const confirmDelete = window.confirm("Tem certeza que deseja excluir esta pessoa? Esta ação não pode ser desfeita.");
+    if (!confirmDelete) return;
+    
+    setDeleting(true);
+    await supabase.from("taxmanagers_leads").delete().eq("id", data.id);
+    setLocation("/taxmanagers/app?tab=leads");
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0d] text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
       {/* Header Tax Managers */}
@@ -121,11 +148,22 @@ export default function Pessoas() {
             </div>
           </div>
 
-          <Link href="/taxmanagers/app?tab=leads">
-            <span className="px-4 py-2 rounded-lg bg-[#111116] border border-white/10 hover:bg-white/5 text-slate-300 text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer">
-              <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao Painel
-            </span>
-          </Link>
+          <div className="flex items-center gap-3">
+            {data && (
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                {deleting ? "Excluindo..." : "Excluir"}
+              </button>
+            )}
+            <Link href="/taxmanagers/app?tab=leads">
+              <span className="px-4 py-2 rounded-lg bg-[#111116] border border-white/10 hover:bg-white/5 text-slate-300 text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer">
+                <ArrowLeft className="w-3.5 h-3.5" /> Voltar
+              </span>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -150,10 +188,36 @@ export default function Pessoas() {
                   <div>
                     <h1 className="text-2xl font-bold text-white tracking-tight">{data.nome || "Lead Sem Nome"}</h1>
                     <p className="text-sm text-cyan-400 font-medium mt-0.5">{data.cargo || "Cargo atual não identificado"}</p>
-                    <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+                    <div className="mt-1 flex items-center gap-1.5 relative">
                       <Building className="w-3.5 h-3.5 text-slate-500" />
-                      <span>{data.empresa || "Empresa atual não identificada"}</span>
-                    </p>
+                      {isEditingCompany ? (
+                        <select
+                          className="bg-[#111116] border border-white/10 rounded px-2 py-1 text-xs text-slate-300 outline-none w-64"
+                          onChange={(e) => {
+                            if (!e.target.value) return;
+                            const opt = e.target.options[e.target.selectedIndex];
+                            handleLinkCompany(e.target.value, opt.text);
+                          }}
+                          onBlur={() => setIsEditingCompany(false)}
+                          defaultValue=""
+                          autoFocus
+                        >
+                          <option value="" disabled>Selecione uma empresa...</option>
+                          {companies.map(c => (
+                            <option key={c.id} value={c.id}>{c.display_name}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <span className="text-xs text-slate-400 cursor-pointer hover:text-cyan-400 transition-colors" onClick={() => setIsEditingCompany(true)}>
+                          {data.empresa && data.empresa !== "N/A" ? data.empresa : "Empresa atual não identificada"}
+                          {data.company_id ? (
+                            <span className="text-[10px] text-emerald-500 ml-2 font-semibold">✓ Vinculada</span>
+                          ) : (
+                            <span className="text-[10px] text-slate-500 ml-2 underline decoration-dashed">(clique para vincular)</span>
+                          )}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 

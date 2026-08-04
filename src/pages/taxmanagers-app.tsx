@@ -132,6 +132,76 @@ export default function TaxManagersApp() {
 
     let timeoutId: any = null;
 
+    const saveImportedCompany = async (companyData: any) => {
+      if (_importLock || leadSavedRef.current) return;
+      _importLock = true;
+      leadSavedRef.current = true;
+      let sessionObj: any = null;
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (currentSession?.user?.id) { sessionObj = currentSession; break; }
+        await new Promise((res) => setTimeout(res, 200));
+      }
+      if (!sessionObj?.user?.id) {
+        setImportStatus("unauthenticated");
+        _importLock = false;
+        leadSavedRef.current = false;
+        return;
+      }
+
+      try {
+        const name = companyData.name || "";
+        const industry = companyData.role || ""; // Passed via role
+        const url = companyData.url || "";
+        const email = companyData.email || ""; // Passed via email
+        const phone = companyData.phone || ""; // Passed via phone
+        const action = companyData.action || "Mapear Empresa";
+
+        setImportedLeadInfo({ name, role: industry, company: name, action });
+
+        const { data: existing } = await supabase
+          .from("taxmanagers_companies")
+          .select("id")
+          .eq("parceiro_id", sessionObj.user.id)
+          .ilike("normalized_name", name.toLowerCase().trim())
+          .limit(1);
+
+        if (existing && existing.length > 0) {
+          await supabase.from("taxmanagers_companies").update({
+            industry: industry || undefined,
+            domain: email || undefined,
+            cnpj: phone || undefined,
+            linkedin_url: url || undefined,
+            updated_at: new Date().toISOString()
+          }).eq("id", existing[0].id);
+        } else {
+          const compSlug = await generateUniqueSlug("taxmanagers_companies", name);
+          await supabase.from("taxmanagers_companies").insert([{
+            display_name: name,
+            legal_name: name,
+            normalized_name: name.toLowerCase().trim(),
+            parceiro_id: sessionObj.user.id,
+            slug: compSlug,
+            industry: industry || undefined,
+            domain: email || undefined,
+            cnpj: phone || undefined,
+            linkedin_url: url || undefined,
+            source: "extension",
+            status: "active"
+          }]);
+        }
+
+        setImportStatus("success");
+        await fetchDbCounts();
+        setTimeout(() => window.close(), 2000);
+      } catch (e) {
+        console.error(e);
+        setImportStatus("error");
+        _importLock = false;
+        leadSavedRef.current = false;
+      }
+    };
+
     const saveImportedLead = async (leadData: any) => {
       // Trava síncrona — se já iniciou, abandona imediatamente
       if (_importLock || leadSavedRef.current) {
@@ -498,7 +568,11 @@ export default function TaxManagersApp() {
         if (timeoutId) clearTimeout(timeoutId);
         _importLock = false;
         leadSavedRef.current = false;
-        saveImportedLead(event.data);
+        if (event.data.is_company) {
+          saveImportedCompany(event.data);
+        } else {
+          saveImportedLead(event.data);
+        }
       }
     };
 
@@ -519,11 +593,18 @@ export default function TaxManagersApp() {
       const company = params.get("company") || "";
       const url = params.get("url") || "";
       const action = params.get("action") || "Importado";
+      const isCompany = params.get("is_company") === "true";
       
-      saveImportedLead({
+      const payload = {
         name, role, company, url, action,
-        email: "", phone: "", birthday: "", chat_history: ""
-      });
+        email: "", phone: "", birthday: "", chat_history: "", is_company: isCompany
+      };
+
+      if (isCompany) {
+        saveImportedCompany(payload);
+      } else {
+        saveImportedLead(payload);
+      }
     }, 3000);
 
     return () => {
@@ -1096,13 +1177,13 @@ export default function TaxManagersApp() {
             }
           } else {
             if (cargoLower.includes("advogado") || cargoLower.includes("boutique") || cargoLower.includes("tributaria") || cargoLower.includes("tributario")) {
-              sugestaoMensagem = `Olá ${pNome}, tudo bem? Vi sua atuação em planejamento tributário na ${pEmpresa}. A TaxManagers apoia escritórios e consultorias tributárias fornecendo inteligência artificial e retaguarda técnica especializada para acelerar a captação e entrega de soluções tributárias corporativas. Teria 10 minutos para conversarmos sobre um modelo de parceria?`;
+              sugestaoMensagem = `Olá ${pNome}. Acompanhando sua trajetória em planejamento tributário na ${pEmpresa}, percebo que escritórios do setor têm enfrentado o desafio de escalar a revisão fiscal sem onerar a equipe sênior. Seria interessante entender como vocês estão estruturando a retaguarda técnica hoje para absorver as demandas da transição tributária?`;
             } else if (cargoLower.includes("contador") || cargoLower.includes("contabilidade")) {
-              sugestaoMensagem = `Olá ${pNome}, tudo bem? Notei sua experiência na área contábil e fiscal. Apoiamos contadores a expandirem seus portfólios com soluções avançadas de recuperação de créditos e revisão tributária de forma automatizada, atuando como sua retaguarda de engenharia fiscal. Que tal conversarmos sobre uma parceria de retaguarda técnica?`;
+              sugestaoMensagem = `Olá ${pNome}. Vi sua atuação contábil e fiscal. Notamos que muitas consultorias têm perdido oportunidades de recuperação de créditos por falta de braço tecnológico para auditoria massiva. Faz sentido uma rápida troca de ideias sobre como automatizar parte dessa engenharia fiscal para os seus clientes?`;
             } else if (cargoLower.includes("cfo") || cargoLower.includes("controller") || cargoLower.includes("diretor")) {
-              sugestaoMensagem = `Olá ${pNome}, tudo bem? Vi que atua na gestão financeira e fiscal na ${pEmpresa}. Desenvolvemos soluções de auditoria digital e IA para retaguarda contábil/fiscal que auxiliam empresas a identificarem oportunidades tributárias de forma automatizada. Gostaria de conhecer nossa retaguarda técnica para apoiar seus projetos?`;
+              sugestaoMensagem = `Olá ${pNome}. Vi que atua na gestão financeira da ${pEmpresa}. Com a transição do IBS/CBS, muitas empresas do seu porte estão revendo preventivamente o compliance e o mapeamento de créditos para não deixar caixa na mesa. Como vocês têm lidado com essa pressão de conformidade vs. oportunidades tributárias atualmente?`;
             } else {
-              sugestaoMensagem = `Olá ${pNome}, tudo bem? A TaxManagers atua como retaguarda técnica especializada e IA para consultores tributários independentes e escritórios corporativos. Vi seu perfil como ${l.cargo || "especialista"} e gostaria de explorar sinergias para apoiarmos seus projetos e clientes. Teria disponibilidade para um bate-papo rápido esta semana?`;
+              sugestaoMensagem = `Olá ${pNome}. Vi seu trabalho como ${l.cargo || "especialista"} na ${pEmpresa}. Temos notado que profissionais da sua área estão buscando cada vez mais inteligência técnica para se antecipar aos impactos da reforma tributária. Faz sentido conectarmos para uma troca de ideias sobre o cenário do seu setor?`;
             }
           }
 

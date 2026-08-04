@@ -5,17 +5,20 @@ import { normalizeSlug, validateSlugFormat, checkSlugAvailability, generateUniqu
 import { Building, ExternalLink, Sparkles, ArrowLeft, CheckCircle, AlertCircle, Link as LinkIcon } from "lucide-react";
 
 export default function Empresas() {
-  const [location] = useLocation();
+  const [currentLoc, setLocation] = useLocation();
   const params = useParams();
   
-  const pathParts = location.split("/").filter(Boolean);
+  const pathParts = currentLoc.split("/").filter(Boolean);
   const routeParam = params.id || params.slug || pathParts[pathParts.length - 1];
 
   const [data, setData] = useState<any>(null);
+  const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingLeads, setLoadingLeads] = useState(false);
   const [slugInput, setSlugInput] = useState("");
   const [slugStatus, setSlugStatus] = useState<{ message: string; isError: boolean } | null>(null);
   const [savingSlug, setSavingSlug] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!routeParam || routeParam === "novo") {
@@ -48,9 +51,21 @@ export default function Empresas() {
         const suggested = await generateUniqueSlug("taxmanagers_companies", companyName, record.id);
         setSlugInput(suggested);
       }
+
+      // Fetch linked leads
+      setLoadingLeads(true);
+      const { data: leadsData } = await supabase
+        .from("taxmanagers_leads")
+        .select("*")
+        .eq("company_id", record.id);
+      
+      if (leadsData) {
+        setLeads(leadsData);
+      }
+      setLoadingLeads(false);
       setLoading(false);
     });
-  }, [routeParam, location]);
+  }, [routeParam]);
 
   const handleSaveSlug = async () => {
     if (!data?.id) return;
@@ -86,6 +101,19 @@ export default function Empresas() {
     setSavingSlug(false);
   };
 
+  const handleDelete = async () => {
+    if (!data?.id) return;
+    const confirmDelete = window.confirm("Tem certeza que deseja excluir esta empresa? Todos os leads vinculados ficarão órfãos. Esta ação não pode ser desfeita.");
+    if (!confirmDelete) return;
+    
+    setDeleting(true);
+    // Remove vínculo dos leads
+    await supabase.from("taxmanagers_leads").update({ company_id: null }).eq("company_id", data.id);
+    // Apaga empresa
+    await supabase.from("taxmanagers_companies").delete().eq("id", data.id);
+    setLocation("/taxmanagers/app?tab=leads");
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0d] text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
       {/* Header Tax Managers */}
@@ -99,11 +127,22 @@ export default function Empresas() {
             </div>
           </div>
 
-          <Link href="/taxmanagers/app?tab=leads">
-            <span className="px-4 py-2 rounded-lg bg-[#111116] border border-white/10 hover:bg-white/5 text-slate-300 text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer">
-              <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao Painel
-            </span>
-          </Link>
+          <div className="flex items-center gap-3">
+            {data && (
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                {deleting ? "Excluindo..." : "Excluir"}
+              </button>
+            )}
+            <Link href="/taxmanagers/app?tab=leads">
+              <span className="px-4 py-2 rounded-lg bg-[#111116] border border-white/10 hover:bg-white/5 text-slate-300 text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer">
+                <ArrowLeft className="w-3.5 h-3.5" /> Voltar
+              </span>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -226,6 +265,44 @@ export default function Empresas() {
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* Nova Seção: Leads Vinculados */}
+            <div className="bg-[#0b0b0f] border border-white/5 rounded-2xl p-6 space-y-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-cyan-400" /> Pessoas (Leads) Vinculadas a esta Empresa
+              </h3>
+              
+              {loadingLeads ? (
+                <div className="py-8 text-center text-slate-500 text-xs">
+                  Buscando contatos vinculados...
+                </div>
+              ) : leads.length === 0 ? (
+                <div className="py-8 text-center bg-[#111116] border border-white/5 rounded-xl">
+                  <p className="text-slate-400 text-xs">Nenhum contato formalmente vinculado a esta empresa ainda.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  {leads.map((lead) => (
+                    <Link key={lead.id} href={`/taxmanagers/in/${lead.slug || lead.id}`}>
+                      <div className="group bg-[#111116] border border-white/5 hover:border-cyan-500/30 rounded-xl p-4 transition-all cursor-pointer hover:shadow-[0_0_15px_-3px_rgba(34,211,238,0.1)] flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center shrink-0 border border-white/10 group-hover:border-cyan-500/50 group-hover:text-cyan-400 transition-colors">
+                          {lead.nome ? lead.nome.charAt(0).toUpperCase() : "?"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-bold text-slate-200 truncate group-hover:text-white transition-colors">{lead.nome || "Sem Nome"}</h4>
+                          <p className="text-[11px] text-slate-400 truncate mt-0.5">{lead.cargo || lead.headline || "Cargo não informado"}</p>
+                          {lead.status && (
+                            <span className="inline-block mt-1.5 px-2 py-0.5 bg-cyan-500/10 text-cyan-400 text-[9px] font-bold uppercase tracking-wider rounded border border-cyan-500/20">
+                              {lead.status}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ) : (

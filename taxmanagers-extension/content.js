@@ -19,6 +19,7 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
   if (cleanUrl.includes('/overlay/contact-info')) {
     cleanUrl = cleanUrl.replace('/overlay/contact-info', '');
   }
+  let isCompanyPage = window.location.href.includes('/company/');
 
   function openFinalPrompt() {
     if (promptOpened) return;
@@ -30,17 +31,24 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
     sessionStorage.removeItem("tm_company");
     sessionStorage.removeItem("tm_role");
 
-    let promptMsg = 'Revisão de Mapeamento Tributário:\n\n';
+    let promptMsg = isCompanyPage ? 'Revisão de Mapeamento Corporativo:\n\n' : 'Revisão de Mapeamento Tributário:\n\n';
     promptMsg += 'Nome: ' + (name || '') + '\n';
-    promptMsg += 'Cargo: ' + (role || '') + '\n';
-    promptMsg += 'Empresa: ' + (company || '') + '\n';
-    promptMsg += 'Email: ' + (email || '') + '\n';
-    promptMsg += 'Telefone: ' + (phone || '') + '\n';
-    promptMsg += 'Aniversário: ' + (birthday || '') + '\n\n';
-    promptMsg += 'Ação:\n1 = Mapear Oportunidade\n2 = Curtiu\n3 = News\n4 = Chat\n5 = Conexão aceita - outbound\n6 = Pediu conexão - inbound\n\n';
-    promptMsg += 'Para ajustar dados antes, use o formato:\n';
-    promptMsg += 'Cargo na Empresa | Email | Telefone\n';
-    promptMsg += 'Ou cole a CONVERSA do chat:';
+    if (isCompanyPage) {
+      promptMsg += 'Infos/Setor: ' + (role || '') + '\n\n';
+      promptMsg += 'Ação:\n1 = Importar Empresa\n2 = Monitorar\n3 = Descartar\n\n';
+      promptMsg += 'Para ajustar dados antes, use o formato:\n';
+      promptMsg += 'Setor | Site | CNPJ\n';
+    } else {
+      promptMsg += 'Cargo: ' + (role || '') + '\n';
+      promptMsg += 'Empresa: ' + (company || '') + '\n';
+      promptMsg += 'Email: ' + (email || '') + '\n';
+      promptMsg += 'Telefone: ' + (phone || '') + '\n';
+      promptMsg += 'Aniversário: ' + (birthday || '') + '\n\n';
+      promptMsg += 'Ação:\n1 = Mapear Oportunidade\n2 = Curtiu\n3 = News\n4 = Chat\n5 = Conexão aceita - outbound\n6 = Pediu conexão - inbound\n\n';
+      promptMsg += 'Para ajustar dados antes, use o formato:\n';
+      promptMsg += 'Cargo na Empresa | Email | Telefone\n';
+      promptMsg += 'Ou cole a CONVERSA do chat:';
+    }
 
     let defaultAct = '1';
     const txtContent = document.body.innerText || '';
@@ -59,13 +67,25 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
     inst = inst.trim();
 
     let act = 'Importado';
-    if      (inst === '1') act = 'Importado';
-    else if (inst === '2') act = 'Curtiu Artigo';
-    else if (inst === '3') act = 'Assinou Newsletter';
-    else if (inst === '4') act = 'Respondeu Chat';
-    else if (inst === '5') act = 'Aceitou Conexão (Outbound)';
-    else if (inst === '6') act = 'Pediu Conexão (Inbound)';
-    
+    if (isCompanyPage) {
+      if (inst === '1') act = 'Mapear Empresa';
+      else if (inst === '2') act = 'Monitorar';
+      else if (inst === '3') act = 'Descartar';
+      else if (inst.includes('|')) {
+        const parts = inst.split('|').map(p => p.trim());
+        if (parts[0]) role = parts[0];
+        if (parts[1]) email = parts[1]; // using email for website
+        if (parts[2]) phone = parts[2]; // using phone for cnpj
+        act = 'Mapear Empresa';
+      }
+    } else {
+      if      (inst === '1') act = 'Importado';
+      else if (inst === '2') act = 'Curtiu Artigo';
+      else if (inst === '3') act = 'Assinou Newsletter';
+      else if (inst === '4') act = 'Respondeu Chat';
+      else if (inst === '5') act = 'Aceitou Conexão (Outbound)';
+      else if (inst === '6') act = 'Pediu Conexão (Inbound)';
+    }
     // Classifica se o texto colado/capturado é mensagem enviada (outbound) ou resposta do lead (inbound)
     function classifyChatText(chatText, selectedAct, prospectName) {
       const lower = (chatText || '').toLowerCase();
@@ -93,7 +113,8 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
         + '&role='    + encodeURIComponent(role)
         + '&company=' + encodeURIComponent(company)
         + '&url='     + encodeURIComponent(cleanUrl)
-        + '&action='  + encodeURIComponent(act);
+        + '&action='  + encodeURIComponent(act)
+        + '&is_company=' + (isCompanyPage ? 'true' : 'false');
 
       console.log("[TaxManagers] Abrindo janela de importação...");
       let popup = window.open(iu, '_blank', 'width=420,height=340');
@@ -126,7 +147,7 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
         }
       });
       return;
-    } else if (inst.includes('|')) {
+    } else if (inst.includes('|') && !isCompanyPage) {
       const parts = inst.split('|').map(p => p.trim());
       if (parts[0] && parts[0].length > 0) {
         const roleComp = parts[0];
@@ -175,7 +196,8 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
         + '&role='    + encodeURIComponent(role)
         + '&company=' + encodeURIComponent(company)
         + '&url='     + encodeURIComponent(cleanUrl)
-        + '&action='  + encodeURIComponent(act);
+        + '&action='  + encodeURIComponent(act)
+        + '&is_company=' + (isCompanyPage ? 'true' : 'false');
 
       console.log("[TaxManagers] Abrindo janela de importação...");
       let popup = window.open(iu, '_blank', 'width=420,height=340');
@@ -216,7 +238,8 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
       + '&role='    + encodeURIComponent(role)
       + '&company=' + encodeURIComponent(company)
       + '&url='     + encodeURIComponent(cleanUrl)
-      + '&action='  + encodeURIComponent(act);
+      + '&action='  + encodeURIComponent(act)
+      + '&is_company=' + (isCompanyPage ? 'true' : 'false');
 
     console.log("[TaxManagers] Abrindo janela de importação...");
     let popup = window.open(iu, '_blank', 'width=420,height=340');
@@ -243,6 +266,7 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
           email:        email,
           phone:        phone,
           birthday:     birthday,
+          is_company:   isCompanyPage,
           chat_history: autoChatHistory.trim()
         }, targetOrigin);
         window.removeEventListener('message', handler);
@@ -266,6 +290,19 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
       name = name.replace(/[^a-zA-Z0-9À-ÿ\s]+$/gu, '');
       name = name.replace(/\s+/g, ' ').trim();
       return name;
+    }
+
+    if (isCompanyPage) {
+      console.log("[TaxManagers] Lendo página de Empresa...");
+      const h1 = document.querySelector('h1');
+      if (h1) name = cleanName(h1.innerText.trim());
+      else name = cleanName(document.title.split('-')[0].split('|')[0].trim());
+      
+      const ind = document.querySelector('.org-top-card-summary-info-list__info-item, .org-top-card-summary-info-list');
+      if (ind) role = ind.innerText.trim();
+      
+      company = name;
+      return; // Finaliza o fluxo principal aqui, vai para openFinalPrompt
     }
 
     let invMsg = '';
@@ -374,137 +411,78 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
         return false;
       }
 
-      // 0. Procura em todos os links de empresa (/company/) da página (cabeçalho/DOM principal)
-      try {
-        if (!company) {
-          const companyLinks = Array.from(document.querySelectorAll('a[href*="/company/"]'));
-          for (const link of companyLinks) {
-            const cText = link.innerText ? link.innerText.split('\n')[0].trim() : '';
-            if (cText && !isInvalidCompany(cText)) {
-              company = cText;
-              break;
-            }
-          }
-        }
-      } catch (err) {
-        console.warn("[TaxManagers] Erro no mapeador de links de empresa:", err);
-      }
-
-      // 1. Right Panel / Top Card
-      const rightPanelSelectors = [
-        '.pv-text-details__right-panel',
-        '[data-estimated-current-company="true"]',
-        '[data-field="experience_member_company_single_line"]',
-        '.pv-text-details__right-panel-item'
-      ];
+      // ==========================================
+      // LEITURA VISUAL HUMANA (O PASSO 0)
+      // O LinkedIn esconde a experiência. Precisamos rolar a página para baixo como um humano.
+      // ==========================================
+      console.log("[TaxManagers] Iniciando leitura visual para encontrar a Experiência...");
       
-      for (const selector of rightPanelSelectors) {
-        const rightPanel = document.querySelector(selector);
-        if (rightPanel) {
-          const items = Array.from(rightPanel.querySelectorAll('button, a, li, span, div'))
-            .map(el => el.innerText.trim())
-            .filter(t => t.length > 2);
-          
-          for (const item of items) {
-            const c = item.replace(/\n.*/, '').trim();
-            if (!isInvalidCompany(c)) {
-              company = c;
-              break;
-            }
-          }
-          if (company) break;
-        }
-      }
-
-      // 2. Fallback no texto do corpo próximo ao headline
-      if (!company && headline) {
-        const bodyText = document.body.innerText;
-        const lines = bodyText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        const hlIndex = lines.findIndex(l => l.includes(headline) || headline.includes(l));
+      let expSection = null;
+      
+      // Rola a página em blocos para forçar o lazy-load do LinkedIn
+      for (let i = 1; i <= 4; i++) {
+        window.scrollBy(0, 600); // Dá um "scroll down"
+        await new Promise(r => setTimeout(r, 600)); // Espera carregar
         
-        if (hlIndex !== -1) {
-          for (let i = hlIndex + 1; i < Math.min(hlIndex + 10, lines.length); i++) {
-            const line = lines[i];
-            if (!isInvalidCompany(line)) {
-              company = line;
-              break;
-            }
+        expSection = document.querySelector('section#experience, section[data-section="experience"], #experience-section, [id*="experience"]');
+        if (!expSection) {
+          const headings = Array.from(document.querySelectorAll('h2, h3, span'));
+          const expHeading = headings.find(h => {
+            const txt = h.innerText.trim().toLowerCase();
+            return txt === 'experiência' || txt === 'experience' || txt === 'experiencia';
+          });
+          if (expHeading) {
+            expSection = expHeading.closest('section') || expHeading.parentElement;
           }
-        } else {
-           const nameIndex = lines.findIndex(l => l.toLowerCase().includes(name.toLowerCase()));
-           if (nameIndex !== -1) {
-             for (let i = nameIndex + 2; i < Math.min(nameIndex + 10, lines.length); i++) {
-               const line = lines[i];
-               if (!isInvalidCompany(line)) {
-                 company = line;
-                 break;
-               }
-             }
-           }
+        }
+        
+        if (expSection) {
+          console.log("[TaxManagers] Seção de Experiência encontrada na rolagem " + i);
+          expSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          await new Promise(r => setTimeout(r, 800)); // Pausa final para renderizar as caixinhas
+          break; // Sai do loop, já achamos!
         }
       }
 
-      // Captura de cargo e empresa da seção de Experiência
       let scrapedRole = '';
       let scrapedCompany = '';
-      let expSection = document.querySelector('section#experience, section[data-section="experience"], #experience-section, [id*="experience"]');
-      if (!expSection) {
-        const headings = Array.from(document.querySelectorAll('h2, h3, span'));
-        const expHeading = headings.find(h => {
-          const txt = h.innerText.trim().toLowerCase();
-          return txt === 'experiência' || txt === 'experience' || txt === 'experiencia';
-        });
-        if (expHeading) {
-          expSection = expHeading.closest('section') || expHeading.parentElement;
-        }
-      }
 
       if (expSection) {
-        const firstLi = expSection.querySelector('li');
+        console.log("[TaxManagers] Lendo a primeira caixinha de experiência...");
+        const firstLi = expSection.querySelector('li.artdeco-list__item, li');
         if (firstLi) {
           const hasSubList = firstLi.querySelector('ul');
-          const spans = Array.from(firstLi.querySelectorAll('span[aria-hidden="true"]'))
+          const allSpans = Array.from(firstLi.querySelectorAll('span[aria-hidden="true"]'))
             .map(el => el.innerText.trim())
-            .filter(t => t.length > 0);
+            .filter(t => t.length > 0 && !t.includes('mês') && !t.includes('ano') && !t.includes('mos') && !t.includes('yr'));
 
           if (hasSubList) {
-            // Com sublista: spans[0] é a Empresa
-            if (spans.length > 0) scrapedCompany = spans[0];
-            
-            const subSpans = Array.from(firstLi.querySelector('ul li').querySelectorAll('span[aria-hidden="true"]'))
+            // Múltiplos cargos na mesma empresa
+            if (allSpans.length > 0) scrapedCompany = allSpans[0];
+            const subSpans = Array.from(firstLi.querySelector('ul').querySelectorAll('span[aria-hidden="true"]'))
               .map(el => el.innerText.trim())
               .filter(t => t.length > 0);
             if (subSpans.length > 0) scrapedRole = subSpans[0];
           } else {
-            // Sem sublista: spans[0] é o Cargo, spans[1] é a Empresa
-            if (spans.length > 0) scrapedRole = spans[0];
-            if (spans.length > 1) {
-              // Limpar sufixos comuns de tempo ou jornada (ex: " · Full-time")
-              scrapedCompany = spans[1].split('·')[0].split('•')[0].trim();
+            // Único cargo na empresa
+            if (allSpans.length > 0) scrapedRole = allSpans[0];
+            if (allSpans.length > 1) {
+              scrapedCompany = allSpans[1].split('·')[0].split('•')[0].split('-')[0].trim();
             }
           }
         }
       }
 
+      // PASSO 0 CONCLUÍDO: Salva APENAS o que leu da experiência. Nada de "EXAME" ou barra lateral.
+      company = scrapedCompany || '';
       role = scrapedRole || headline;
-      if (!company && scrapedCompany && !isInvalidCompany(scrapedCompany)) {
-        company = scrapedCompany;
-      }
 
-      const separators = [' at ', ' na ', ' no ', ' em ', ' @ '];
-      if (!company && headline) {
-        for (const sep of separators) {
-          if (headline.includes(sep)) {
-            const parts = headline.split(sep);
-            const candidate = parts.slice(1).join(sep).trim();
-            if (!isInvalidCompany(candidate)) {
-               company = candidate;
-               role = parts[0].trim();
-               break;
-            }
-          }
-        }
+      if (!role) {
+        role = headline;
       }
+      
+      // Volta a tela pro topo suavemente
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
       if (!role) {
         role = headline;
