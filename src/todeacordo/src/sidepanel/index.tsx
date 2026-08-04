@@ -190,14 +190,14 @@ const SidePanel = () => {
           disabled={isGenerating || segments.length === 0}
           className={`w-full py-3 px-4 rounded-lg font-bold text-white shadow-md transition-colors flex items-center justify-center gap-2 ${isGenerating || segments.length === 0 ? "bg-slate-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
         >
-          {isGenerating ? "Gerando na Nuvem..." : "? Gerar entendimento"}
+          {isGenerating ? "Gerando na Nuvem..." : "Gerar entendimento"}
         </button>
 
         <button 
           onClick={handleOpenDashboard}
           className="w-full py-3 px-4 rounded-lg font-bold text-blue-600 bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors text-xs"
         >
-          ?? Acessar meu painel
+          Acessar meu painel
         </button>
       </main>
     </div>
