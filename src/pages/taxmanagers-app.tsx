@@ -679,6 +679,17 @@ export default function TaxManagersApp() {
 
   // Chat com Llama (Copiloto IA)
   const [chatMessages, setChatMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+
+  // Exclusão de Lead (Direto da Tabela)
+  const handleDeleteLead = async (leadId: string) => {
+    const confirm = window.confirm("Tem certeza que deseja excluir este lead? A ação não pode ser desfeita.");
+    if (!confirm) return;
+    
+    await supabase.from("taxmanagers_leads").delete().eq("id", leadId);
+    setLeads(leads.filter(l => l.id !== leadId));
+    setActiveLeadsTotalCount(prev => prev - 1);
+    fetchDbCounts();
+  };
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
 
@@ -3707,12 +3718,21 @@ ${fonteDados}`;
                                 </span>
                               </td>
                               <td className="px-6 py-4 text-right min-w-0">
-                                <button 
-                                  onClick={() => startEditLead(lead)}
-                                  className="px-3.5 py-1.5 rounded-lg bg-[#111116] border border-white/10 hover:bg-blue-600 hover:text-white hover:border-transparent transition-all text-xs font-semibold text-slate-300"
-                                >
-                                  Abrir Dossiê
-                                </button>
+                                <div className="flex items-center justify-end gap-2">
+                                  <button 
+                                    onClick={() => startEditLead(lead)}
+                                    className="px-3.5 py-1.5 rounded-lg bg-[#111116] border border-white/10 hover:bg-blue-600 hover:text-white hover:border-transparent transition-all text-xs font-semibold text-slate-300"
+                                  >
+                                    Abrir Dossiê
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteLead(lead.id)}
+                                    title="Excluir Lead"
+                                    className="p-1.5 rounded-lg bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 transition-all cursor-pointer"
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           );
