@@ -166,7 +166,7 @@ export default function TaxManagersApp() {
           .from("taxmanagers_companies")
           .select("id")
           .eq("parceiro_id", sessionObj.user.id)
-          .ilike("normalized_name", name.toLowerCase().trim())
+          .ilike("display_name", name.trim())
           .limit(1);
 
         let companyId = "";
@@ -184,7 +184,6 @@ export default function TaxManagersApp() {
           const { data: newComp } = await supabase.from("taxmanagers_companies").insert([{
             display_name: name,
             legal_name: name,
-            normalized_name: name.toLowerCase().trim(),
             parceiro_id: sessionObj.user.id,
             slug: compSlug,
             industry: industry || undefined,
