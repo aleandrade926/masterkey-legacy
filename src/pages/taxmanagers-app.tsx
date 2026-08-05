@@ -4900,21 +4900,6 @@ ${fonteDados}`;
                           if (!error) {
                             inputEl.value = "";
                             fetchLeadInteractions(selectedLead.id);
-                            
-                            // Gerar tarefa de follow-up se não houver tarefas pendentes
-                            const leadTasksQuery = await supabase
-                              .from("taxmanagers_tasks")
-                              .select("id")
-                              .eq("lead_id", selectedLead.id)
-                              .eq("status", "pending");
-                            
-                            if (leadTasksQuery.data && leadTasksQuery.data.length === 0) {
-                              const { data: cads } = await supabase.from("taxmanagers_cadences").select("id").limit(1);
-                              if (cads && cads.length > 0) {
-                                await startLeadCadence(selectedLead.id, cads[0].id);
-                                refreshCRMData();
-                              }
-                            }
                           } else {
                             alert("Erro ao salvar nota: " + error.message);
                           }
