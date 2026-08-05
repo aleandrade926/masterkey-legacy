@@ -4874,12 +4874,31 @@ ${fonteDados}`;
                       placeholder="Registre um resumo de ligação, feedback do lead ou comentário..."
                       id="timeline-note-input"
                     ></textarea>
-                    <div className="flex justify-end">
+                    
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:text-white transition-colors">
+                          <input type="radio" name="note_type" value="note" defaultChecked className="accent-cyan-500" />
+                          Simples Anotação
+                        </label>
+                        <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:text-white transition-colors" title="Conta para as métricas de Concluídas Hoje">
+                          <input type="radio" name="note_type" value="done" className="accent-emerald-500" />
+                          Atividade Realizada
+                        </label>
+                        <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer hover:text-white transition-colors" title="Aparecerá na Fila de Atividades de Hoje">
+                          <input type="radio" name="note_type" value="pending" className="accent-blue-500" />
+                          Agendar Tarefa (Hoje)
+                        </label>
+                      </div>
+                      
                       <button 
                         onClick={async () => {
                           const inputEl = document.getElementById("timeline-note-input") as HTMLTextAreaElement;
                           if (!inputEl || !inputEl.value.trim()) return;
                           const noteText = inputEl.value.trim();
+                          
+                          const typeEl = document.querySelector('input[name="note_type"]:checked') as HTMLInputElement;
+                          const noteType = typeEl ? typeEl.value : "note";
                           
                           const resolvedPartnerId = (profile?.is_admin && selectedPartnerId === "all")
                             ? (selectedLead?.parceiro_id || profile?.id)
@@ -4888,23 +4907,39 @@ ${fonteDados}`;
                           const createdByResolved = profile?.id || null;
                           
                           // Inserir interação
-                          const { error } = await supabase.from("taxmanagers_interactions").insert([{
+                          const { error: interError } = await supabase.from("taxmanagers_interactions").insert([{
                             lead_id: selectedLead.id,
                             partner_id: targetPartnerResolved,
-                            type: "note",
+                            type: noteType === "note" ? "note" : "follow_up",
                             direction: "internal",
-                            content: noteText,
+                            content: (noteType === "done" ? "ATIVIDADE REALIZADA: " : noteType === "pending" ? "TAREFA AGENDADA: " : "ANOTAÇÃO INTERNA: ") + noteText,
                             created_by: createdByResolved
                           }]);
                           
-                          if (!error) {
+                          if (!interError) {
+                            if (noteType !== "note") {
+                              const { error: taskError } = await supabase.from("taxmanagers_tasks").insert([{
+                                lead_id: selectedLead.id,
+                                partner_id: targetPartnerResolved,
+                                type: "follow_up",
+                                channel: "note",
+                                title: noteType === "done" ? "Atividade Manual" : "Follow-up Manual",
+                                description: noteText,
+                                due_at: new Date().toISOString(),
+                                status: noteType === "done" ? "done" : "pending",
+                                completed_at: noteType === "done" ? new Date().toISOString() : null
+                              }]);
+                              if (taskError) console.error("Erro ao criar tarefa:", taskError);
+                            }
+                            
                             inputEl.value = "";
                             fetchLeadInteractions(selectedLead.id);
+                            refreshCRMData();
                           } else {
-                            alert("Erro ao salvar nota: " + error.message);
+                            alert("Erro ao salvar: " + interError.message);
                           }
                         }}
-                        className="px-4 py-1.5 bg-cyan-600/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-600 hover:text-white rounded-lg text-xs font-semibold transition-all"
+                        className="px-4 py-2 bg-cyan-600/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-600 hover:text-white rounded-lg text-xs font-semibold transition-all whitespace-nowrap"
                       >
                         Registrar na Timeline
                       </button>
