@@ -16,6 +16,7 @@ import InfraPage from "./pages/infra";
 import TaxManagers from "./pages/taxmanagers";
 import TaxManagersPrivacy from "./pages/taxmanagers-privacy";
 import TaxManagersApp from "./pages/taxmanagers-app";
+import OperacaoHojeV2 from "./pages/taxmanagers/OperacaoHojeV2";
 import FootInTheDoorLab from "./pages/foot-in-the-door-lab";
 import Empresas from "./pages/taxmanagers-navigator/Empresas";
 import Pessoas from "./pages/taxmanagers-navigator/Pessoas";
@@ -151,6 +152,10 @@ function App() {
   }
 
   // Rota independente Tax Managers App Portal (fallback de rota /app)
+  if (location.startsWith("/taxmanagers/operacao-hoje-v2")) {
+    return <OperacaoHojeV2 />;
+  }
+
   if (location.startsWith("/app")) {
     return <TaxManagersApp />;
   }
