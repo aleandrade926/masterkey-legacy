@@ -1313,19 +1313,40 @@ export default function TaxManagersApp() {
     if (!targetPartner) return;
     const query = supabase
       .from("taxmanagers_tasks")
-      .select("*, lead:taxmanagers_leads(nome, empresa, cargo, import_status)")
+      .select("*")
       .order("due_at", { ascending: true });
     
     if (targetPartner !== "all") {
       query.eq("partner_id", targetPartner);
     }
-    const { data, error } = await query;
+    const { data: rawTasks, error } = await query;
     if (error) {
       console.error("Erro ao buscar tarefas:", error);
     }
-    if (data) {
-      const activeTasks = data.filter(t => t.lead && t.lead.import_status === "active");
+    
+    if (rawTasks && rawTasks.length > 0) {
+      const leadIds = [...new Set(rawTasks.map(t => t.lead_id).filter(Boolean))];
+      const { data: leadsData } = await supabase
+        .from("taxmanagers_leads")
+        .select("id, nome, empresa, cargo, import_status")
+        .in("id", leadIds);
+        
+      const leadsMap = {};
+      if (leadsData) {
+        leadsData.forEach(l => {
+          leadsMap[l.id] = l;
+        });
+      }
+      
+      const enrichedTasks = rawTasks.map(t => ({
+        ...t,
+        lead: leadsMap[t.lead_id] || null
+      }));
+      
+      const activeTasks = enrichedTasks.filter(t => t.lead && t.lead.import_status === "active");
       setTasks(activeTasks);
+    } else {
+      setTasks([]);
     }
   };
 
