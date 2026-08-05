@@ -1313,15 +1313,20 @@ export default function TaxManagersApp() {
     if (!targetPartner) return;
     const query = supabase
       .from("taxmanagers_tasks")
-      .select("*, lead:taxmanagers_leads!inner(nome, empresa, cargo, import_status)")
-      .eq("lead.import_status", "active")
+      .select("*, lead:taxmanagers_leads(nome, empresa, cargo, import_status)")
       .order("due_at", { ascending: true });
     
     if (targetPartner !== "all") {
       query.eq("partner_id", targetPartner);
     }
     const { data, error } = await query;
-    if (data) setTasks(data);
+    if (error) {
+      console.error("Erro ao buscar tarefas:", error);
+    }
+    if (data) {
+      const activeTasks = data.filter(t => t.lead && t.lead.import_status === "active");
+      setTasks(activeTasks);
+    }
   };
 
   const fetchCadences = async () => {
@@ -2385,6 +2390,12 @@ ${fonteDados}`;
         created_by: profile.id
       }]);
 
+      // 4. Iniciar cadência padrão
+      const { data: cads } = await supabase.from("taxmanagers_cadences").select("id").limit(1);
+      if (cads && cads.length > 0) {
+        await startLeadCadence(selectedLead.id, cads[0].id);
+      }
+
       alert("Clone ativado com sucesso para sua operação!");
       fetchAgentProfile(selectedLead.id);
       refreshCRMData();
@@ -2444,6 +2455,12 @@ ${fonteDados}`;
         content: `Clone IA ativado e transferido para a operação do parceiro ${partnerName} por ${profile.nome}.`,
         created_by: profile.id
       }]);
+
+      // 4. Iniciar cadência padrão
+      const { data: cads } = await supabase.from("taxmanagers_cadences").select("id").limit(1);
+      if (cads && cads.length > 0) {
+        await startLeadCadence(selectedLead.id, cads[0].id);
+      }
 
       alert(`Clone ativado com sucesso para o parceiro ${partnerName}!`);
       fetchAgentProfile(selectedLead.id);
@@ -4862,6 +4879,21 @@ ${fonteDados}`;
                           if (!error) {
                             inputEl.value = "";
                             fetchLeadInteractions(selectedLead.id);
+                            
+                            // Gerar tarefa de follow-up se não houver tarefas pendentes
+                            const leadTasksQuery = await supabase
+                              .from("taxmanagers_tasks")
+                              .select("id")
+                              .eq("lead_id", selectedLead.id)
+                              .eq("status", "pending");
+                            
+                            if (leadTasksQuery.data && leadTasksQuery.data.length === 0) {
+                              const { data: cads } = await supabase.from("taxmanagers_cadences").select("id").limit(1);
+                              if (cads && cads.length > 0) {
+                                await startLeadCadence(selectedLead.id, cads[0].id);
+                                refreshCRMData();
+                              }
+                            }
                           } else {
                             alert("Erro ao salvar nota: " + error.message);
                           }
