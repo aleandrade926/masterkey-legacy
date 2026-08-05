@@ -142,6 +142,11 @@ function App() {
   if (location.startsWith("/p/") || location.startsWith("/in/")) return <Pessoas />;
   if (location.startsWith("/c/") || location.startsWith("/company/")) return <Empresas />;
 
+  // Rota isolada Operação Hoje V2 (deve vir antes do catch-all do domínio)
+  if (location.startsWith("/taxmanagers/operacao-hoje-v2")) {
+    return <OperacaoHojeV2 />;
+  }
+
   if (isTaxManagersDomain) {
     // Se for taxmanagers.com.br na raiz, carrega Landing Page
     if ((hostname === "taxmanagers.com.br" || hostname === "www.taxmanagers.com.br") && location === "/") {
@@ -152,9 +157,6 @@ function App() {
   }
 
   // Rota independente Tax Managers App Portal (fallback de rota /app)
-  if (location.startsWith("/taxmanagers/operacao-hoje-v2")) {
-    return <OperacaoHojeV2 />;
-  }
 
   if (location.startsWith("/app")) {
     return <TaxManagersApp />;
