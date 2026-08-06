@@ -4,7 +4,7 @@ import { supabase } from "../../lib/supabase";
 import { 
   Calendar, CheckCircle2, AlertCircle, Clock, 
   Plus, Search, ArrowRight, User, Workflow, X,
-  Pencil, Trash2
+  Pencil, Trash2, Download
 } from "lucide-react";
 
 export default function OperacaoHojeV2() {
@@ -219,6 +219,97 @@ export default function OperacaoHojeV2() {
   const futureTasks = pendingTasks.filter(t => new Date(t.due_at) > todayEnd);
   const completedToday = tasks.filter(t => t.status === "done" && new Date(t.completed_at || t.updated_at) >= todayStart && new Date(t.completed_at || t.updated_at) <= todayEnd);
 
+  const [isExporting, setIsExporting] = useState(false);
+
+  const downloadBlob = (content: string, filename: string, type: string) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportToNotebookLM = async () => {
+    setIsExporting(true);
+    try {
+      const { data: activeLeads } = await supabase.from('taxmanagers_leads').select('*').neq('import_status', 'quarantine');
+      const { data: interactions } = await supabase.from('taxmanagers_interactions').select('*').order('created_at', { ascending: false });
+      const { data: allTasks } = await supabase.from('taxmanagers_tasks').select('*').order('due_at', { ascending: true });
+
+      const interactionsByLead: any = {};
+      if (interactions) {
+        interactions.forEach((i: any) => {
+          if (!interactionsByLead[i.lead_id]) interactionsByLead[i.lead_id] = [];
+          interactionsByLead[i.lead_id].push(i);
+        });
+      }
+
+      const escapeCsv = (str: any) => {
+        if (str === null || str === undefined) return '""';
+        return `"${String(str).replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`;
+      };
+
+      const activeRows = [['ID', 'Nome', 'Cargo', 'Empresa', 'Email', 'Telefone', 'Status', 'Qtd_Interacoes', 'Ultima_Interacao', 'Historico_Timeline'].map(escapeCsv).join(',')];
+      if (activeLeads) {
+        activeLeads.forEach((l: any) => {
+          const leadInteractions = interactionsByLead[l.id] || [];
+          const qtd = leadInteractions.length;
+          const last = qtd > 0 ? leadInteractions[0].created_at : '';
+          const timeline = leadInteractions.map((i: any) => `[${new Date(i.created_at).toLocaleDateString('pt-BR')} ${i.type}]: ${i.content}`).join(' | ');
+          activeRows.push([l.id, l.nome || '', l.cargo || '', l.empresa || '', l.email || '', l.telefone || '', l.import_status || 'active', qtd, last, timeline].map(escapeCsv).join(','));
+        });
+      }
+      downloadBlob(activeRows.join('\n'), '01_Leads_Ativos_E_Interacoes.csv', 'text/csv;charset=utf-8;');
+
+      const taskRows = [['ID', 'Titulo', 'Descricao', 'Tipo', 'Canal', 'Lead_ID', 'Data_Vencimento', 'Status', 'Data_Conclusao'].map(escapeCsv).join(',')];
+      if (allTasks) {
+        allTasks.forEach((t: any) => {
+          taskRows.push([t.id, t.title || '', t.description || '', t.type || '', t.channel || '', t.lead_id || '', t.due_at || '', t.status || '', t.completed_at || ''].map(escapeCsv).join(','));
+        });
+      }
+      downloadBlob(taskRows.join('\n'), '03_Todas_As_Tarefas.csv', 'text/csv;charset=utf-8;');
+
+      const { data: quarantineLeads } = await supabase.from('taxmanagers_leads').select('id, nome, cargo, empresa, email, telefone, import_status').eq('import_status', 'quarantine').limit(5000);
+      const quarRows = [['ID', 'Nome', 'Cargo', 'Empresa', 'Email', 'Telefone', 'Status'].map(escapeCsv).join(',')];
+      if (quarantineLeads) {
+        quarantineLeads.forEach((l: any) => {
+          quarRows.push([l.id, l.nome || '', l.cargo || '', l.empresa || '', l.email || '', l.telefone || '', l.import_status || 'quarantine'].map(escapeCsv).join(','));
+        });
+      }
+      downloadBlob(quarRows.join('\n'), '02_Base_Geral_Quarentena.csv', 'text/csv;charset=utf-8;');
+
+      const manualMd = `# Manual de Inteligência e Regras de Negócio — Tax Managers CRM
+
+## Visão Geral do Sistema
+O **Tax Managers** é uma plataforma de inteligência preditiva e outreach tributário focada em abordar decisores de alto nível (CFOs, Diretores Financeiros e Gerentes Fiscais).
+
+### Princípios da Estratégia de Vendas:
+1. **Cadência de Touchpoints**: Cada lead necessita de **7 a 13 touchpoints** estruturados para atingir uma resposta/conversão qualificada.
+2. **Proposta Quantificada para CFO**: Abordagem baseada em **99% de certeza e resultados quantificados** de recuperação/otimização tributária.
+3. **Divisão de Base (Ativos vs. Quarentena)**:
+   - **Ativos**: Leads em processo de outreach ativo, com tarefas agendadas e histórico na timeline.
+   - **Quarentena**: Base fria de volumetria que é aquecida e engajada progressivamente.
+
+## Estrutura dos Arquivos para NotebookLM:
+- \`01_Leads_Ativos_E_Interacoes.csv\`: Todos os leads fora da quarentena com histórico de timeline.
+- \`02_Base_Geral_Quarentena.csv\`: Base completa de prospecção.
+- \`03_Todas_As_Tarefas.csv\`: Fila de atividades e agendamentos.
+`;
+      downloadBlob(manualMd, '04_Dicionario_E_Regras_Negocio.md', 'text/markdown;charset=utf-8;');
+
+      alert("🎉 4 arquivos baixados com sucesso! Arraste-os para o seu NotebookLM.");
+    } catch (err: any) {
+      console.error(err);
+      alert("Erro ao exportar: " + err.message);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-slate-300 font-sans p-6 lg:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -234,12 +325,23 @@ export default function OperacaoHojeV2() {
             <p className="text-slate-400 mt-2 ml-13">Pipeline ultra responsivo para alta volumetria (Salesforce/Pipedrive style)</p>
           </div>
           
-          <button 
-            onClick={() => setLocation("/taxmanagers/app")}
-            className="px-4 py-2 bg-[#1a1a24] hover:bg-[#222230] border border-white/10 rounded-lg text-sm transition-colors flex items-center gap-2 text-white"
-          >
-            Voltar ao CRM Legacy
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={handleExportToNotebookLM}
+              disabled={isExporting}
+              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20"
+              title="Baixar a base de dados organizada em arquivos prontos para o NotebookLM"
+            >
+              <Download className="w-4 h-4" />
+              {isExporting ? "Exportando..." : "Exportar p/ NotebookLM"}
+            </button>
+            <button 
+              onClick={() => setLocation("/taxmanagers/app")}
+              className="px-4 py-2 bg-[#1a1a24] hover:bg-[#222230] border border-white/10 rounded-lg text-sm transition-colors flex items-center gap-2 text-white"
+            >
+              Voltar ao CRM Legacy
+            </button>
+          </div>
         </header>
 
         {/* KPIs */}
