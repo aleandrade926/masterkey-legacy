@@ -1343,7 +1343,7 @@ export default function TaxManagersApp() {
         lead: leadsMap[t.lead_id] || null
       }));
       
-      const activeTasks = enrichedTasks.filter(t => t.lead && t.lead.import_status === "active");
+      const activeTasks = enrichedTasks.filter(t => t.lead && t.lead.import_status !== "quarantine");
       setTasks(activeTasks);
     } else {
       setTasks([]);
