@@ -3,7 +3,8 @@ import { useLocation } from "wouter";
 import { supabase } from "../../lib/supabase";
 import { 
   Calendar, CheckCircle2, AlertCircle, Clock, 
-  Plus, Search, ArrowRight, User, Workflow, X
+  Plus, Search, ArrowRight, User, Workflow, X,
+  Pencil, Trash2
 } from "lucide-react";
 
 export default function OperacaoHojeV2() {
@@ -22,6 +23,7 @@ export default function OperacaoHojeV2() {
   const [taskLeadResults, setTaskLeadResults] = useState<any[]>([]);
   const [taskSelectedLead, setTaskSelectedLead] = useState<any>(null);
   const [isSearchingLeads, setIsSearchingLeads] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProfileAndTasks();
@@ -125,37 +127,84 @@ export default function OperacaoHojeV2() {
     }
   };
 
-  const handleCreateCustomTask = async () => {
+  const resetModal = () => {
+    setShowTaskModal(false);
+    setEditingTaskId(null);
+    setCustomTaskTitle("");
+    setCustomTaskDesc("");
+    setCustomTaskDate("");
+    setCustomTaskTime("");
+    setTaskSelectedLead(null);
+    setTaskLeadSearch("");
+  };
+
+  const openEditModal = (task: any) => {
+    setEditingTaskId(task.id);
+    setCustomTaskTitle(task.title || "");
+    setCustomTaskDesc(task.description || "");
+    const d = new Date(task.due_at);
+    setCustomTaskDate(d.toISOString().slice(0, 10));
+    setCustomTaskTime(d.toTimeString().slice(0, 5));
+    setTaskSelectedLead(task.lead || { id: task.lead_id, nome: "Lead vinculado", empresa: "" });
+    setTaskLeadSearch("");
+    setShowTaskModal(true);
+  };
+
+  const handleCreateOrUpdateTask = async () => {
     if (!customTaskTitle || !customTaskDate || !customTaskTime || !taskSelectedLead) {
       alert("Preencha título, data, hora e selecione um Lead.");
       return;
     }
     try {
       const dueAt = new Date(`${customTaskDate}T${customTaskTime}:00`);
-      
-      const { error } = await supabase.from("taxmanagers_tasks").insert([{
-        lead_id: taskSelectedLead.id,
-        partner_id: profile?.id,
-        type: "follow_up",
-        channel: "custom",
-        title: customTaskTitle,
-        description: customTaskDesc,
-        due_at: dueAt.toISOString(),
-        status: "pending"
-      }]);
-      
-      if (error) throw error;
-      
-      setShowTaskModal(false);
-      setCustomTaskTitle("");
-      setCustomTaskDesc("");
-      setTaskSelectedLead(null);
-      setTaskLeadSearch("");
-      
+
+      if (editingTaskId) {
+        // UPDATE
+        const { error } = await supabase
+          .from("taxmanagers_tasks")
+          .update({
+            lead_id: taskSelectedLead.id,
+            title: customTaskTitle,
+            description: customTaskDesc,
+            due_at: dueAt.toISOString(),
+          })
+          .eq("id", editingTaskId);
+        if (error) throw error;
+      } else {
+        // INSERT
+        const { error } = await supabase.from("taxmanagers_tasks").insert([{
+          lead_id: taskSelectedLead.id,
+          partner_id: profile?.id,
+          type: "follow_up",
+          channel: "custom",
+          title: customTaskTitle,
+          description: customTaskDesc,
+          due_at: dueAt.toISOString(),
+          status: "pending"
+        }]);
+        if (error) throw error;
+      }
+
+      resetModal();
       if (profile) fetchV2Tasks(profile);
     } catch (e: any) {
       console.error(e);
-      alert("Erro ao criar tarefa: " + e.message);
+      alert("Erro ao salvar tarefa: " + e.message);
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (!confirm("Tem certeza que deseja excluir esta tarefa?")) return;
+    try {
+      const { error } = await supabase
+        .from("taxmanagers_tasks")
+        .delete()
+        .eq("id", taskId);
+      if (error) throw error;
+      if (profile) fetchV2Tasks(profile);
+    } catch (e: any) {
+      console.error(e);
+      alert("Erro ao excluir: " + e.message);
     }
   };
 
@@ -263,7 +312,7 @@ export default function OperacaoHojeV2() {
                   </h3>
                   <div className="grid gap-3">
                     {overdueTasks.map(task => (
-                      <TaskRow key={task.id} task={task} onComplete={handleCompleteTask} />
+                      <TaskRow key={task.id} task={task} onComplete={handleCompleteTask} onEdit={openEditModal} onDelete={handleDeleteTask} />
                     ))}
                   </div>
                 </div>
@@ -277,7 +326,7 @@ export default function OperacaoHojeV2() {
                   </h3>
                   <div className="grid gap-3">
                     {todayTasks.map(task => (
-                      <TaskRow key={task.id} task={task} onComplete={handleCompleteTask} />
+                      <TaskRow key={task.id} task={task} onComplete={handleCompleteTask} onEdit={openEditModal} onDelete={handleDeleteTask} />
                     ))}
                   </div>
                 </div>
@@ -291,7 +340,7 @@ export default function OperacaoHojeV2() {
                   </h3>
                   <div className="grid gap-3">
                     {futureTasks.map(task => (
-                      <TaskRow key={task.id} task={task} onComplete={handleCompleteTask} />
+                      <TaskRow key={task.id} task={task} onComplete={handleCompleteTask} onEdit={openEditModal} onDelete={handleDeleteTask} />
                     ))}
                   </div>
                 </div>
@@ -308,11 +357,11 @@ export default function OperacaoHojeV2() {
           <div className="bg-[#111117] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-5 border-b border-white/10 flex items-center justify-between">
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Plus className="w-5 h-5 text-cyan-500" />
-                Agendar Tarefa Customizada
+                {editingTaskId ? <Pencil className="w-5 h-5 text-amber-500" /> : <Plus className="w-5 h-5 text-cyan-500" />}
+                {editingTaskId ? "Editar Tarefa" : "Agendar Tarefa Customizada"}
               </h3>
               <button 
-                onClick={() => setShowTaskModal(false)}
+                onClick={resetModal}
                 className="text-slate-400 hover:text-white transition-colors p-1"
               >
                 <X className="w-5 h-5" />
@@ -422,17 +471,17 @@ export default function OperacaoHojeV2() {
             
             <div className="p-5 border-t border-white/10 bg-[#0a0a0f] flex justify-end gap-3 shrink-0">
               <button 
-                onClick={() => setShowTaskModal(false)}
+                onClick={resetModal}
                 className="px-4 py-2 text-slate-400 hover:text-white transition-colors text-sm font-medium"
               >
                 Cancelar
               </button>
               <button 
-                onClick={handleCreateCustomTask}
+                onClick={handleCreateOrUpdateTask}
                 disabled={!customTaskTitle || !customTaskDate || !customTaskTime || !taskSelectedLead}
-                className="px-6 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold shadow-lg shadow-cyan-500/20 transition-all"
+                className={`px-6 py-2 ${editingTaskId ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 shadow-amber-500/20' : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-cyan-500/20'} disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-semibold shadow-lg transition-all`}
               >
-                Agendar
+                {editingTaskId ? "Salvar Alterações" : "Agendar"}
               </button>
             </div>
           </div>
@@ -443,7 +492,7 @@ export default function OperacaoHojeV2() {
   );
 }
 
-function TaskRow({ task, onComplete }: { task: any, onComplete: (id: string) => void }) {
+function TaskRow({ task, onComplete, onEdit, onDelete }: { task: any, onComplete: (id: string) => void, onEdit: (task: any) => void, onDelete: (id: string) => void }) {
   const [, setLocation] = useLocation();
 
   return (
@@ -492,6 +541,22 @@ function TaskRow({ task, onComplete }: { task: any, onComplete: (id: string) => 
         >
           Tratar Lead <ArrowRight className="w-4 h-4" />
         </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => onEdit(task)}
+            className="flex-1 px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-400 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
+            title="Editar tarefa"
+          >
+            <Pencil className="w-3.5 h-3.5" /> Editar
+          </button>
+          <button 
+            onClick={() => onDelete(task.id)}
+            className="flex-1 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
+            title="Excluir tarefa"
+          >
+            <Trash2 className="w-3.5 h-3.5" /> Excluir
+          </button>
+        </div>
       </div>
     </div>
   );
