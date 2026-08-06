@@ -40,6 +40,8 @@ import {
 } from "../lib/taxmanagers/navigation-state";
 import { detectChatActionAndDirection } from "../lib/taxmanagers/chat-direction";
 import { generateUniqueSlug, ensureLeadSlug } from "../lib/taxmanagers/slug-utils";
+import { MergeLeadsModal } from "../components/MergeLeadsModal";
+import { findDuplicateGroups, DuplicateGroup } from "../lib/leadDeduplication";
 
 // Flag de módulo — FORA do componente React, persiste entre re-renders e StrictMode.
 // Garante que apenas UM processo de gravação ocorra por abertura do popup de importação.
@@ -692,6 +694,10 @@ export default function TaxManagersApp() {
   const [quarantineLoadedCount, setQuarantineLoadedCount] = useState(0);
   const [dbCounts, setDbCounts] = useState<{ total: number; active: number; quarantine: number; other: number } | null>(null);
   const [ataque50kMode, setAtaque50kMode] = useState(false);
+
+  // Estados para Unificação de Leads Duplicados
+  const [isMergeModalOpen, setIsMergeModalOpen] = useState(false);
+  const duplicateGroups = React.useMemo(() => findDuplicateGroups(leads as any[]), [leads]);
 
   // Efeito para debounce de busca (300ms)
   useEffect(() => {
@@ -3708,6 +3714,16 @@ ${fonteDados}`;
                 </div>
                 
                 <div className="flex gap-2">
+                  {duplicateGroups.length > 0 && (
+                    <button 
+                      onClick={() => setIsMergeModalOpen(true)}
+                      className="px-4 py-2 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
+                      title="Revisar e unificar cadastros duplicados"
+                    >
+                      <Users className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Unificar Duplicados ({duplicateGroups.length})</span>
+                    </button>
+                  )}
                   <button 
                     onClick={() => setShowAddCampaignModal(true)}
                     className="px-4 py-2 rounded-lg bg-[#111116] border border-white/10 hover:bg-white/5 text-slate-300 text-xs font-semibold transition-colors flex items-center gap-1.5"
@@ -3722,6 +3738,31 @@ ${fonteDados}`;
                   </button>
                 </div>
               </div>
+
+              {/* Banner de Aviso de Duplicatas Detectadas */}
+              {duplicateGroups.length > 0 && (
+                <div className="bg-amber-950/20 border border-amber-500/20 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                      <Users className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-amber-200">
+                        {duplicateGroups.length} grupo{duplicateGroups.length > 1 ? "s" : ""} de leads duplicados detectado{duplicateGroups.length > 1 ? "s" : ""}
+                      </h4>
+                      <p className="text-xs text-amber-400/80 mt-0.5">
+                        Encontramos registros com nomes, telefones ou e-mails idênticos na sua carteira (ex: "Luciano Hillesheim").
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setIsMergeModalOpen(true)}
+                    className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 whitespace-nowrap"
+                  >
+                    <span>Revisar e Unificar Leads</span>
+                  </button>
+                </div>
+              )}
 
               {/* Filtros e Buscas */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -5467,6 +5508,20 @@ ${fonteDados}`;
           </div>
         </div>
       )}
+
+      {/* Modal de Unificação de Leads Duplicados */}
+      <MergeLeadsModal
+        isOpen={isMergeModalOpen}
+        onClose={() => setIsMergeModalOpen(false)}
+        duplicateGroups={duplicateGroups}
+        onMergeComplete={() => {
+          if (typeof (window as any).fetchActiveLeads === "function") {
+            (window as any).fetchActiveLeads();
+          } else {
+            window.location.reload();
+          }
+        }}
+      />
 
     </div>
   );
