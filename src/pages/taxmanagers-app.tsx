@@ -482,7 +482,7 @@ export default function TaxManagersApp() {
               .from("taxmanagers_companies")
               .select("id, slug, parceiro_id")
               .eq("parceiro_id", session.user.id)
-              .or(`display_name.ilike."%${sComp}%",legal_name.ilike."%${sComp}%"`)
+              .or(`display_name.ilike."${sComp}",legal_name.ilike."${sComp}"`)
               .limit(1);
 
             if (searchErr) {
@@ -1555,7 +1555,7 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
           .from("taxmanagers_companies")
           .select("id")
           .eq("parceiro_id", partnerId)
-          .or(`display_name.ilike."%${sComp}%",legal_name.ilike."%${sComp}%"`)
+          .or(`display_name.ilike."${sComp}",legal_name.ilike."${sComp}"`)
           .limit(1);
 
         if (searchErr) {
