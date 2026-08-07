@@ -76,7 +76,6 @@ interface Lead {
   url: string;
   email: string;
   telefone: string;
-  aniversario: string;
   passo1_mensagem: string;
   passo2_mensagem: string;
   passo3_mensagem: string;
@@ -307,7 +306,7 @@ export default function TaxManagersApp() {
         if (handle) {
           const { data: byUrl } = await supabase
             .from("taxmanagers_leads")
-            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status, parceiro_id")
+            .select("id, email, telefone, cargo, empresa, status, chat_history, import_status, parceiro_id")
             .or(`parceiro_id.eq.${session.user.id},parceiro_id.is.null`)
             .eq("linkedin_key", handle)
             .order("created_at", { ascending: false })
@@ -319,7 +318,7 @@ export default function TaxManagersApp() {
         if (!existingLead && normalizedUrl) {
           const { data: byUrl } = await supabase
             .from("taxmanagers_leads")
-            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status, parceiro_id")
+            .select("id, email, telefone, cargo, empresa, status, chat_history, import_status, parceiro_id")
             .or(`parceiro_id.eq.${session.user.id},parceiro_id.null`)
             .ilike("url", normalizedUrl + "%")
             .order("created_at", { ascending: false })
@@ -331,7 +330,7 @@ export default function TaxManagersApp() {
         if (!existingLead && name && company) {
           const { data: byName } = await supabase
             .from("taxmanagers_leads")
-            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status, parceiro_id")
+            .select("id, email, telefone, cargo, empresa, status, chat_history, import_status, parceiro_id")
             .or(`parceiro_id.eq.${session.user.id},parceiro_id.is.null`)
             .ilike("nome", name)
             .ilike("empresa", company)
@@ -344,7 +343,7 @@ export default function TaxManagersApp() {
         if (!existingLead && name && !company) {
           const { data: byNameOnly } = await supabase
             .from("taxmanagers_leads")
-            .select("id, email, telefone, cargo, empresa, aniversario, status, chat_history, import_status, parceiro_id")
+            .select("id, email, telefone, cargo, empresa, status, chat_history, import_status, parceiro_id")
             .or(`parceiro_id.eq.${session.user.id},parceiro_id.is.null`)
             .ilike("nome", name)
             .order("created_at", { ascending: false })
@@ -364,7 +363,6 @@ export default function TaxManagersApp() {
         let mergedPhone = phone;
         let mergedRole = role;
         let mergedCompany = company;
-        let mergedAnniversary = anniversary;
         let mergedChatHistory = chatHistory;
         let mergedStatus = "Pendente";
 
@@ -386,7 +384,6 @@ export default function TaxManagersApp() {
           mergedPhone = phone || existingLead.telefone || "";
           mergedRole = role || existingLead.cargo || "";
           mergedCompany = company || existingLead.empresa || "";
-          mergedAnniversary = anniversary || existingLead.aniversario || "";
 
           if (chatHistory) {
             if (!existingLead.chat_history) {
@@ -409,7 +406,6 @@ export default function TaxManagersApp() {
           url: url,
           email: mergedEmail || "Sem e-mail",
           telefone: mergedPhone || "Sem telefone",
-          aniversario: mergedAnniversary,
           status: mergedStatus,
           chat_history: mergedChatHistory,
           parceiro_id: session.user.id,
@@ -513,9 +509,7 @@ export default function TaxManagersApp() {
                   slug: compSlug,
                   source: "import",
                   status: "active",
-                  data_confidence: "unknown",
-                  review_status: "unreviewed",
-                  metadata: {}
+                  review_status: "unreviewed"
                 }])
                 .select("id");
 
@@ -578,21 +572,15 @@ export default function TaxManagersApp() {
 
         if (normalizedUrl) _inFlightUrls.delete(normalizedUrl);
 
-        setImportStatus("success");
+        if (companyErrorMsg) {
+          setImportStatus("company_error");
+        } else {
+          setImportStatus("success");
+          setTimeout(() => window.close(), 2000);
+        }
         await fetchDbCounts();
         
-        // Se houve erro na empresa, não fecha a janela!
-        setCompanyErrorMsg(prev => {
-          if (prev) {
-             setImportStatus("company_error");
-             return prev;
-          } else {
-             setTimeout(() => {
-               window.close();
-             }, 2000);
-             return null;
-          }
-        });
+
 
       } catch (e) {
         console.error(e);
@@ -1461,7 +1449,6 @@ export default function TaxManagersApp() {
     setEditName(selectedLead.nome || "");
     setEditEmail(selectedLead.email || "");
     setEditPhone(selectedLead.telefone || "");
-    setEditAnniversary(selectedLead.aniversario || "");
     setEditStatus(selectedLead.status || "Pendente");
     setEditCampaignId(selectedLead.campanha_id || "none");
     setEditCompany(selectedLead.empresa || "");
@@ -1670,7 +1657,6 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
         nome: editName,
         email: editEmail,
         telefone: editPhone,
-        aniversario: editAnniversary,
         status: editStatus,
         campanha_id: editCampaignId === "none" ? null : editCampaignId,
         empresa: editCompany,
@@ -1685,7 +1671,6 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
         nome: editName,
         email: editEmail,
         telefone: editPhone,
-        aniversario: editAnniversary,
         status: editStatus,
         campanha_id: editCampaignId === "none" ? null : editCampaignId,
         empresa: editCompany,
