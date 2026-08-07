@@ -183,9 +183,10 @@ export default function TaxManagersApp() {
           }).eq("id", companyId);
         } else {
           const compSlug = await generateUniqueSlug("taxmanagers_companies", name);
-          const { data: newComp } = await supabase.from("taxmanagers_companies").insert([{
+          const { data: newComp, error: insertErr } = await supabase.from("taxmanagers_companies").insert([{
             display_name: name,
             legal_name: name,
+            normalized_name: name.toLowerCase().trim(),
             parceiro_id: sessionObj.user.id,
             slug: compSlug,
             industry: industry || undefined,
@@ -193,8 +194,10 @@ export default function TaxManagersApp() {
             cnpj: phone || undefined,
             linkedin_url: url || undefined,
             source: "extension",
-            status: "active"
+            status: "active",
+            review_status: "unreviewed"
           }]).select("id").single();
+          if (insertErr) throw new Error("Erro ao criar empresa via extensão: " + insertErr.message);
           if (newComp) companyId = newComp.id;
         }
 
@@ -468,68 +471,72 @@ export default function TaxManagersApp() {
           console.warn("[Etapa Slug Isolada] Erro inesperado ignorado (lead preservado):", e);
         }
 
-        // Etapa posterior e isolada: tenta vincular/criar empresa sem bloquear ou afetar a captura do lead
+        // Etapa vinculação de empresa: await para não ser abortada pelo fechamento da janela
         if (mergedCompany && mergedCompany.trim().length > 1 && !mergedCompany.toLowerCase().includes("sem empresa")) {
-          (async () => {
-            try {
-              const cleanCompanyName = mergedCompany.trim();
-              let compId: string | null = null;
+          try {
+            const cleanCompanyName = mergedCompany.trim();
+            let compId: string | null = null;
 
-              const { data: existingComp, error: searchErr } = await supabase
-                .from("taxmanagers_companies")
-                .select("id, slug, parceiro_id")
-                .eq("parceiro_id", session.user.id)
-                .or(`display_name.ilike.%${cleanCompanyName}%,legal_name.ilike.%${cleanCompanyName}%`)
-                .limit(1);
+            const sComp = cleanCompanyName.replace(/[%,()"'"]/g, "");
+            const { data: existingComp, error: searchErr } = await supabase
+              .from("taxmanagers_companies")
+              .select("id, slug, parceiro_id")
+              .eq("parceiro_id", session.user.id)
+              .or(`display_name.ilike."%${sComp}%",legal_name.ilike."%${sComp}%"`)
+              .limit(1);
 
-              if (searchErr) {
-                console.warn("[Etapa Empresa] Erro na busca de empresa (lead preservado):", searchErr.message);
-              } else if (existingComp && existingComp.length > 0) {
-                compId = existingComp[0].id;
-                if (!existingComp[0].slug) {
-                  const compSlug = await generateUniqueSlug("taxmanagers_companies", cleanCompanyName, compId);
-                  await supabase
-                    .from("taxmanagers_companies")
-                    .update({ slug: compSlug })
-                    .eq("id", compId)
-                    .eq("parceiro_id", session.user.id);
-                }
-              } else {
-                const compSlug = await generateUniqueSlug("taxmanagers_companies", cleanCompanyName);
-                const { data: newComp, error: insertErr } = await supabase
-                  .from("taxmanagers_companies")
-                  .insert([{
-                    display_name: cleanCompanyName,
-                    legal_name: cleanCompanyName,
-                    normalized_name: cleanCompanyName.toLowerCase().trim(),
-                    parceiro_id: session.user.id,
-                    slug: compSlug,
-                    source: "import",
-                    status: "active",
-                    data_confidence: "unknown",
-                    review_status: "unreviewed",
-                    metadata: {}
-                  }])
-                  .select("id");
-
-                if (insertErr) {
-                  console.warn("[Etapa Empresa] Erro na criação de empresa (lead preservado):", insertErr.message);
-                } else if (newComp && newComp.length > 0) {
-                  compId = newComp[0].id;
-                }
-              }
-
-              if (compId) {
+            if (searchErr) {
+              alert("Erro de sintaxe ao buscar empresa pré-existente: " + searchErr.message);
+              console.warn("[Etapa Empresa] Erro na busca de empresa (tentando criar mesmo assim):", searchErr.message);
+            } 
+            
+            if (!searchErr && existingComp && existingComp.length > 0) {
+              compId = existingComp[0].id;
+              if (!existingComp[0].slug) {
+                const compSlug = await generateUniqueSlug("taxmanagers_companies", cleanCompanyName, compId);
                 await supabase
-                  .from("taxmanagers_leads")
-                  .update({ company_id: compId })
-                  .eq("id", targetLeadId);
-                console.log("[Etapa Empresa] Lead vinculado com sucesso à company_id:", compId);
+                  .from("taxmanagers_companies")
+                  .update({ slug: compSlug })
+                  .eq("id", compId)
+                  .eq("parceiro_id", session.user.id);
               }
-            } catch (compErr: any) {
-              console.warn("[Etapa Empresa Isolada] Exceção capturada com sucesso (lead preservado):", compErr?.message || compErr);
+            } else {
+              const compSlug = await generateUniqueSlug("taxmanagers_companies", cleanCompanyName);
+              const { data: newComp, error: insertErr } = await supabase
+                .from("taxmanagers_companies")
+                .insert([{
+                  display_name: cleanCompanyName,
+                  legal_name: cleanCompanyName,
+                  normalized_name: cleanCompanyName.toLowerCase().trim(),
+                  parceiro_id: session.user.id,
+                  slug: compSlug,
+                  source: "import",
+                  status: "active",
+                  data_confidence: "unknown",
+                  review_status: "unreviewed",
+                  metadata: {}
+                }])
+                .select("id");
+
+              if (insertErr) {
+                alert("Erro ao tentar criar a empresa no banco: " + insertErr.message);
+                console.warn("[Etapa Empresa] Erro na criação de empresa (lead preservado):", insertErr.message);
+              } else if (newComp && newComp.length > 0) {
+                compId = newComp[0].id;
+              }
             }
-          })();
+
+            if (compId) {
+              await supabase
+                .from("taxmanagers_leads")
+                .update({ company_id: compId })
+                .eq("id", targetLeadId);
+              console.log("[Etapa Empresa] Lead vinculado com sucesso à company_id:", compId);
+            }
+          } catch (compErr: any) {
+            alert("Erro Inesperado na criação da empresa: " + (compErr?.message || compErr));
+            console.warn("[Etapa Empresa Isolada] Exceção capturada com sucesso (lead preservado):", compErr?.message || compErr);
+          }
         }
 
         // Cria a interação de importação na timeline
@@ -686,6 +693,7 @@ export default function TaxManagersApp() {
   const [leadSearch, setLeadSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [leadStatusFilter, setLeadStatusFilter] = useState<string>("all");
+  const [importStatusFilter, setImportStatusFilter] = useState<"all" | "active" | "quarantine">("active");
   const [activeLeadsLimit, setActiveLeadsLimit] = useState(50);
   const [quarantineLeadsLimit, setQuarantineLeadsLimit] = useState(50);
   const [activeLeadsTotalCount, setActiveLeadsTotalCount] = useState(0);
@@ -707,11 +715,11 @@ export default function TaxManagersApp() {
     return () => clearTimeout(handler);
   }, [leadSearch]);
 
-  // Reseta os limites de listagem de leads para 50 sempre que a busca, o status, a campanha, o parceiro ou a aba mudarem
+  // Reseta os limites de listagem de leads para 50 sempre que a busca, o status, o filtro de base, a campanha, o parceiro ou a aba mudarem
   useEffect(() => {
     setActiveLeadsLimit(50);
     setQuarantineLeadsLimit(50);
-  }, [debouncedSearch, leadStatusFilter, selectedCampaignId, selectedPartnerId, activeTab]);
+  }, [debouncedSearch, leadStatusFilter, importStatusFilter, selectedCampaignId, selectedPartnerId, activeTab]);
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [activeLeadSubTab, setActiveLeadSubTab] = useState<"outreach" | "ia" | "timeline" | "files" | "edit" | "espelho" | "chat">("outreach");
@@ -1016,8 +1024,11 @@ export default function TaxManagersApp() {
       query = query.eq("parceiro_id", targetPartner);
     }
     
-    if (debouncedSearch) {
-      query = query.ilike("display_name", `%${debouncedSearch}%`);
+    if (debouncedSearch.trim()) {
+      const s = debouncedSearch.trim().replace(/[%,()"'"]/g, "");
+      query = query.or(
+        `display_name.ilike."%${s}%",legal_name.ilike."%${s}%",nome_fantasia.ilike."%${s}%",razao_social.ilike."%${s}%",domain.ilike."%${s}%",cnpj.ilike."%${s}%",slug.ilike."%${s}%"`
+      );
     }
 
     const { data, error } = await query.limit(50);
@@ -1035,8 +1046,13 @@ export default function TaxManagersApp() {
     let query = supabase
       .from("taxmanagers_leads")
       .select("*", { count: "exact" })
-      .eq("import_status", "active")
       .order("created_at", { ascending: false });
+
+    if (importStatusFilter === "active" && !debouncedSearch.trim()) {
+      query = query.eq("import_status", "active");
+    } else if (importStatusFilter === "quarantine") {
+      query = query.eq("import_status", "quarantine");
+    }
 
     if (targetPartner !== "all") {
       query = query.eq("parceiro_id", targetPartner);
@@ -1051,9 +1067,11 @@ export default function TaxManagersApp() {
     }
 
     if (debouncedSearch.trim()) {
-      const s = debouncedSearch.trim().replace(/[%,()]/g, "");
+      const cleanSearch = debouncedSearch.trim().replace(/[%,()"'"]/g, "");
+      const words = cleanSearch.split(/\s+/).filter(Boolean);
+      const pattern = words.join("%");
       query = query.or(
-        `nome.ilike.%${s}%,empresa.ilike.%${s}%,cargo.ilike.%${s}%,email.ilike.%${s}%,telefone.ilike.%${s}%,linkedin_key.ilike.%${s}%`
+        `nome.ilike."%${pattern}%",empresa.ilike."%${pattern}%",cargo.ilike."%${pattern}%",email.ilike."%${cleanSearch}%",telefone.ilike."%${cleanSearch}%",linkedin_key.ilike."%${cleanSearch}%"`
       );
     }
 
@@ -1093,9 +1111,11 @@ export default function TaxManagersApp() {
       const isSearchActive = !!debouncedSearch.trim();
 
       if (isSearchActive) {
-        const s = debouncedSearch.trim().replace(/[%,()]/g, "");
+        const cleanSearch = debouncedSearch.trim().replace(/[%,()"'"]/g, "");
+        const words = cleanSearch.split(/\s+/).filter(Boolean);
+        const pattern = words.join("%");
         query = query.or(
-          `nome.ilike.%${s}%,empresa.ilike.%${s}%,cargo.ilike.%${s}%,email.ilike.%${s}%,telefone.ilike.%${s}%,linkedin_key.ilike.%${s}%`
+          `nome.ilike."%${pattern}%",empresa.ilike."%${pattern}%",cargo.ilike."%${pattern}%",email.ilike."%${cleanSearch}%",telefone.ilike."%${cleanSearch}%",linkedin_key.ilike."%${cleanSearch}%"`
         );
         query = query.range(0, quarantineLeadsLimit - 1);
       } else {
@@ -1147,7 +1167,7 @@ export default function TaxManagersApp() {
           if (ataque50kMode) {
             // Lógica Ataque 50k
             const parceiroFirmKeywords = ["advocacia", "advogados", "sociedade de advogados", "contabilidade", "contabil", "auditoria", "consultoria", "consultores", "tax", "fiscal", "tributario", "boutique", "escritorio"];
-            const parceiroRoleKeywords = ["socio", "partner", "fundador", "consultor independente", "advogado tributarista", "contador proprietario"];
+            const parceiroRoleKeywords = ["socio", "partner", "fundador", "consultor independente", "tributarista", "contador proprietario"];
 
             const isParceiroFirm = parceiroFirmKeywords.some(kw => empresaLower.includes(kw));
             const isParceiroRole = parceiroRoleKeywords.some(kw => cargoLower.includes(kw));
@@ -1390,12 +1410,12 @@ export default function TaxManagersApp() {
     refreshCRMData();
   }, [session, profile, selectedPartnerId]);
 
-  // Recarrega os leads ativos sempre que o parceiro, busca, status, campanha ou limite de paginação mudarem
+  // Recarrega os leads ativos sempre que o parceiro, busca, status, tipo de base, campanha ou limite de paginação mudarem
   useEffect(() => {
     if (activeTab === "leads") {
       fetchActiveLeads();
     }
-  }, [session, profile, selectedPartnerId, debouncedSearch, leadStatusFilter, selectedCampaignId, activeLeadsLimit, activeTab]);
+  }, [session, profile, selectedPartnerId, debouncedSearch, leadStatusFilter, importStatusFilter, selectedCampaignId, activeLeadsLimit, activeTab]);
 
   // Recarrega os leads em quarentena sempre que a busca, parceiro ou limite mudarem
   useEffect(() => {
@@ -1525,16 +1545,58 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
     }
 
     const emailToInsert = newLeadEmail.trim() || `sem-email-${Date.now()}-${Math.floor(Math.random() * 10000)}@taxmanagers.com.br`;
+    const companyNameClean = newLeadCompany.trim();
+
+    let compId: string | null = null;
+    if (companyNameClean && companyNameClean.length > 1 && !companyNameClean.toLowerCase().includes("sem empresa")) {
+      try {
+        const sComp = companyNameClean.replace(/[%,()"'"]/g, "");
+        const { data: existingComp, error: searchErr } = await supabase
+          .from("taxmanagers_companies")
+          .select("id")
+          .eq("parceiro_id", partnerId)
+          .or(`display_name.ilike."%${sComp}%",legal_name.ilike."%${sComp}%"`)
+          .limit(1);
+
+        if (searchErr) {
+          console.warn("Erro ao buscar empresa no cadastro manual:", searchErr);
+        }
+
+        if (!searchErr && existingComp && existingComp.length > 0) {
+          compId = existingComp[0].id;
+        } else {
+          const compSlug = await generateUniqueSlug("taxmanagers_companies", companyNameClean);
+          const { data: newComp } = await supabase
+            .from("taxmanagers_companies")
+            .insert([{
+              display_name: companyNameClean,
+              legal_name: companyNameClean,
+              normalized_name: companyNameClean.toLowerCase(),
+              parceiro_id: partnerId,
+              slug: compSlug,
+              source: "manual",
+              status: "active",
+              review_status: "unreviewed"
+            }])
+            .select("id")
+            .single();
+          if (newComp) compId = newComp.id;
+        }
+      } catch (err) {
+        console.warn("Erro ao vincular/criar empresa no cadastro manual:", err);
+      }
+    }
 
     const payload = {
       nome: newLeadName.trim(),
-      empresa: newLeadCompany.trim(),
+      empresa: companyNameClean,
       cargo: newLeadCargo.trim(),
       url: newLeadUrl.trim(),
       email: emailToInsert,
       telefone: newLeadPhone.trim() || null,
       campanha_id: newLeadCampaign === "none" ? null : newLeadCampaign,
       parceiro_id: partnerId,
+      company_id: compId,
       status: "Pendente",
       import_status: "active"
     };
@@ -3072,7 +3134,13 @@ ${fonteDados}`;
   // Filtragem local de leads
   const filteredLeads = (leads || []).filter(l => {
     if (!l) return false;
-    if (l.import_status === "quarantine") return false;
+    const isSearchActive = !!leadSearch.trim();
+    if (importStatusFilter === "active" && !isSearchActive && l.import_status === "quarantine") {
+      return false;
+    }
+    if (importStatusFilter === "quarantine" && l.import_status !== "quarantine") {
+      return false;
+    }
     const safeText = (value: unknown) =>
       String(value ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
@@ -3084,10 +3152,12 @@ ${fonteDados}`;
       l.telefone,
       l.url,
       l.linkedin_key,
-      l.status
+      l.status,
+      l.import_status
     ].map(safeText).join(" ");
 
-    const matchSearch = searchable.includes(safeText(leadSearch));
+    const searchWords = safeText(leadSearch).split(/\s+/).filter(Boolean);
+    const matchSearch = searchWords.length === 0 || searchWords.every(word => searchable.includes(word));
     const matchStatus = leadStatusFilter === "all" || l.status === leadStatusFilter;
     const matchCampaign = selectedCampaignId === "all" || l.campanha_id === selectedCampaignId;
     return matchSearch && matchStatus && matchCampaign;
@@ -3765,7 +3835,7 @@ ${fonteDados}`;
               )}
 
               {/* Filtros e Buscas */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div className="relative md:col-span-2">
                   <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                   <input 
@@ -3775,6 +3845,18 @@ ${fonteDados}`;
                     value={leadSearch}
                     onChange={e => setLeadSearch(e.target.value)}
                   />
+                </div>
+
+                <div>
+                  <select 
+                    className="w-full bg-[#0b0b0f] border border-white/5 rounded-lg px-4 py-2.5 text-sm text-slate-400 focus:outline-none focus:border-cyan-500/50"
+                    value={importStatusFilter}
+                    onChange={e => setImportStatusFilter(e.target.value as any)}
+                  >
+                    <option value="active">Base: Apenas Ativos</option>
+                    <option value="all">Base: Todos (Ativos + Quarentena)</option>
+                    <option value="quarantine">Base: Apenas Quarentena</option>
+                  </select>
                 </div>
 
                 <div>
@@ -3863,7 +3945,14 @@ ${fonteDados}`;
                           return (
                             <tr key={lead.id} className="hover:bg-white/[0.02] transition-colors">
                               <td className="px-6 py-4 min-w-0">
-                                <div className="font-semibold text-white truncate" title={lead.nome}>{lead.nome}</div>
+                                <div className="font-semibold text-white truncate flex items-center gap-1.5" title={lead.nome}>
+                                  <span>{lead.nome}</span>
+                                  {lead.import_status === "quarantine" && (
+                                    <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0">
+                                      Quarentena
+                                    </span>
+                                  )}
+                                </div>
                                 <div className="text-xs text-slate-500 truncate mt-1" title={displayCargo}>
                                   {displayCargo}
                                 </div>
@@ -4311,7 +4400,7 @@ ${fonteDados}`;
                             <td className="px-6 py-4 align-top">
                               <div className="font-semibold text-white">
                                 <a href={`/taxmanagers/empresas/${comp.id}`} className="hover:text-cyan-400 hover:underline transition-colors flex items-center gap-1.5">
-                                  {comp.display_name || "Sem Nome"}
+                                  {comp.display_name || comp.legal_name || comp.nome_fantasia || comp.razao_social || comp.name || "Sem Nome"}
                                   <ExternalLink className="w-3 h-3 text-slate-500" />
                                 </a>
                               </div>
