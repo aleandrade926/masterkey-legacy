@@ -279,6 +279,8 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
     function cleanName(rawName) {
       if (!rawName) return '';
       let name = rawName;
+      // Remove LinkedIn notification counts at the start, e.g. "(16) "
+      name = name.replace(/^\(\d+\)\s*/, '');
       try {
         name = name.replace(/\p{Emoji_Presentation}/gu, '');
         name = name.replace(/\p{Extended_Pictographic}/gu, '');
