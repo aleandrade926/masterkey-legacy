@@ -27,6 +27,7 @@ import Sidebar from "./components/sidebar";
 import { useIsMobile } from "./hooks/use-mobile";
 import { useState } from "react";
 import NotFound from "./pages/not-found";
+import AndradeFlorioHome from "./pages/andradeflorio/Home";
 
 // Rotas do ToDeAcordo Market MVP
 import Marketplace from "./pages/market/Marketplace";
@@ -61,6 +62,7 @@ function App() {
   const hostname = typeof window !== "undefined" ? window.location.hostname : "";
   const isTodeAcordoDomain = hostname.includes("todeacordo");
   const isTaxManagersDomain = hostname.includes("taxmanagers");
+  const isAndradeFlorioDomain = hostname.includes("andradeflorio") || hostname.includes("localhost");
 
   // ==========================================
   // 1. ISOLAMENTO TOTAL: KSaaS & TáMarcado
@@ -156,10 +158,16 @@ function App() {
     return <TaxManagersApp />;
   }
 
-  // Rota independente Tax Managers App Portal (fallback de rota /app)
-
-  if (location.startsWith("/app")) {
+  // Rota independente Tax Managers App Portal
+  if (location.startsWith("/app") || location.startsWith("/taxmanagers") || isTaxManagersDomain) {
     return <TaxManagersApp />;
+  }
+
+  // ==========================================
+  // 5. ANDRADE & FLORIO
+  // ==========================================
+  if (location === "/" || isAndradeFlorioDomain) {
+    return <AndradeFlorioHome />;
   }
 
   // ==========================================
