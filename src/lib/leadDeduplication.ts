@@ -10,7 +10,6 @@ export interface Lead {
   url: string;
   email: string;
   telefone: string;
-  aniversario: string;
   passo1_mensagem: string;
   passo2_mensagem: string;
   passo3_mensagem: string;
@@ -118,7 +117,6 @@ export function mergeLeadData(primary: Lead, secondary: Lead, fieldOverrides: Pa
     url: fieldOverrides.url ?? (primary.url || secondary.url),
     email: fieldOverrides.email ?? (primary.email || secondary.email),
     telefone: fieldOverrides.telefone ?? (primary.telefone || secondary.telefone),
-    aniversario: fieldOverrides.aniversario ?? (primary.aniversario || secondary.aniversario),
     status: fieldOverrides.status ?? primary.status,
     campanha_id: fieldOverrides.campanha_id ?? (primary.campanha_id || secondary.campanha_id),
     parceiro_id: fieldOverrides.parceiro_id ?? (primary.parceiro_id || secondary.parceiro_id),
@@ -159,12 +157,10 @@ export async function executeLeadMergeInSupabase(
   mergedData: Partial<Lead>
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // Sanetização de campos: remover propriedades como 'aniversario' que não são colunas no Supabase
     const payload: Record<string, any> = {
       ...mergedData,
       import_status: "active"
     };
-    delete payload.aniversario;
 
     // Remover valores undefined
     Object.keys(payload).forEach(key => {

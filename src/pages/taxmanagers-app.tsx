@@ -41,7 +41,8 @@ import {
 import { detectChatActionAndDirection } from "../lib/taxmanagers/chat-direction";
 import { generateUniqueSlug, ensureLeadSlug } from "../lib/taxmanagers/slug-utils";
 import { MergeLeadsModal } from "../components/MergeLeadsModal";
-import { findDuplicateGroups, DuplicateGroup } from "../lib/leadDeduplication";
+import { findDuplicateGroups } from "../lib/leadDeduplication";
+import type { DuplicateGroup } from "../lib/leadDeduplication";
 
 // Flag de módulo — FORA do componente React, persiste entre re-renders e StrictMode.
 // Garante que apenas UM processo de gravação ocorra por abertura do popup de importação.

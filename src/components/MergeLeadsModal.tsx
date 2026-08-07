@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { X, Check, ArrowRight, ShieldCheck, AlertTriangle, Users } from "lucide-react";
-import { Lead, DuplicateGroup, mergeLeadData, executeLeadMergeInSupabase } from "../lib/leadDeduplication";
+import type { Lead, DuplicateGroup } from "../lib/leadDeduplication";
+import { mergeLeadData, executeLeadMergeInSupabase } from "../lib/leadDeduplication";
 
 interface MergeLeadsModalProps {
   isOpen: boolean;
