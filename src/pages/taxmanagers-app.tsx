@@ -123,10 +123,11 @@ export default function TaxManagersApp() {
   const [authError, setAuthError] = useState("");
 
   // Estado da Importação do Bookmarklet
-  const [importStatus, setImportStatus] = useState<"loading" | "success" | "error" | "unauthenticated" | "link_lead">("loading");
+  const [importStatus, setImportStatus] = useState<"idle" | "loading" | "success" | "error" | "link_lead" | "company_error">("idle");
   const [importedLeadInfo, setImportedLeadInfo] = useState<any>(null);
   const [recentLead, setRecentLead] = useState<any>(null);
   const [importedCompanyId, setImportedCompanyId] = useState<string | null>(null);
+  const [companyErrorMsg, setCompanyErrorMsg] = useState<string | null>(null);
 
   const leadSavedRef = useRef(false);
 
@@ -486,8 +487,8 @@ export default function TaxManagersApp() {
               .limit(1);
 
             if (searchErr) {
-              alert("Erro de sintaxe ao buscar empresa pré-existente: " + searchErr.message);
-              console.warn("[Etapa Empresa] Erro na busca de empresa (tentando criar mesmo assim):", searchErr.message);
+              setCompanyErrorMsg("Erro de sintaxe ao buscar empresa: " + searchErr.message);
+              console.warn("[Etapa Empresa] Erro na busca de empresa:", searchErr.message);
             } 
             
             if (!searchErr && existingComp && existingComp.length > 0) {
@@ -519,8 +520,8 @@ export default function TaxManagersApp() {
                 .select("id");
 
               if (insertErr) {
-                alert("Erro ao tentar criar a empresa no banco: " + insertErr.message);
-                console.warn("[Etapa Empresa] Erro na criação de empresa (lead preservado):", insertErr.message);
+                setCompanyErrorMsg("Erro ao criar empresa no banco: " + insertErr.message);
+                console.warn("[Etapa Empresa] Erro na criação de empresa:", insertErr.message);
               } else if (newComp && newComp.length > 0) {
                 compId = newComp[0].id;
               }
@@ -534,8 +535,8 @@ export default function TaxManagersApp() {
               console.log("[Etapa Empresa] Lead vinculado com sucesso à company_id:", compId);
             }
           } catch (compErr: any) {
-            alert("Erro Inesperado na criação da empresa: " + (compErr?.message || compErr));
-            console.warn("[Etapa Empresa Isolada] Exceção capturada com sucesso (lead preservado):", compErr?.message || compErr);
+            setCompanyErrorMsg("Erro Inesperado na criação da empresa: " + (compErr?.message || compErr));
+            console.warn("[Etapa Empresa Isolada] Exceção capturada:", compErr?.message || compErr);
           }
         }
 
@@ -564,7 +565,6 @@ export default function TaxManagersApp() {
           created_by: session.user.id
         }]);
 
-        // Se houver histórico de chat, salva como uma interação de LinkedIn na timeline com a direção detectada
         if (chatHistory) {
           await supabase.from("taxmanagers_interactions").insert([{
             lead_id: targetLeadId,
@@ -576,14 +576,24 @@ export default function TaxManagersApp() {
           }]);
         }
 
-        // Se deu tudo certo, remove do Set após salvar
         if (normalizedUrl) _inFlightUrls.delete(normalizedUrl);
 
         setImportStatus("success");
         await fetchDbCounts();
-        setTimeout(() => {
-          window.close();
-        }, 2000);
+        
+        // Se houve erro na empresa, não fecha a janela!
+        setCompanyErrorMsg(prev => {
+          if (prev) {
+             setImportStatus("company_error");
+             return prev;
+          } else {
+             setTimeout(() => {
+               window.close();
+             }, 2000);
+             return null;
+          }
+        });
+
       } catch (e) {
         console.error(e);
         if (normalizedUrl) _inFlightUrls.delete(normalizedUrl);
@@ -3206,6 +3216,17 @@ ${fonteDados}`;
               <div className="text-[10px] text-slate-600 mt-4">Esta janela fechará em 2 segundos...</div>
             </div>
           )}
+          {importStatus === "company_error" && (
+            <div className="flex flex-col items-center justify-center p-6 text-center space-y-4">
+              <div className="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mb-2">
+                <AlertCircle className="w-8 h-8 text-yellow-500" />
+              </div>
+              <h2 className="text-xl font-bold text-white">Lead Salvo, mas a Empresa Falhou!</h2>
+              <p className="text-sm text-yellow-400 max-w-sm mt-2">{companyErrorMsg}</p>
+              <p className="text-xs text-white/50 max-w-sm">Tire um print desta tela e envie para o suporte.</p>
+            </div>
+          )}
+
           {importStatus === "error" && (
             <div className="space-y-3">
               <div className="w-12 h-12 bg-red-500/10 border border-red-500/20 text-red-400 rounded-full flex items-center justify-center mx-auto text-xl font-bold">✗</div>
