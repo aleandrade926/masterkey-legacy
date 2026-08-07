@@ -84,6 +84,11 @@ export async function generateUniqueSlug(
     candidate = "registro-" + Math.random().toString(36).substring(2, 7);
   }
 
+  // Truncate to 50 chars to leave room for numerical suffixes and stay under the 60 char limit
+  if (candidate.length > 50) {
+    candidate = candidate.substring(0, 50).replace(/-$/, "");
+  }
+
   if (RESERVED_SLUGS.has(candidate)) {
     candidate = `${candidate}-ref`;
   }
