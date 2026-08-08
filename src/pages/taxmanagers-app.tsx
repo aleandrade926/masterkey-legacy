@@ -123,7 +123,7 @@ export default function TaxManagersApp() {
   const [authError, setAuthError] = useState("");
 
   // Estado da Importação do Bookmarklet
-  const [importStatus, setImportStatus] = useState<"idle" | "loading" | "success" | "error" | "link_lead" | "company_error">("idle");
+  const [importStatus, setImportStatus] = useState<"idle" | "loading" | "success" | "company_success" | "error" | "link_lead" | "company_error">("idle");
   const [importedLeadInfo, setImportedLeadInfo] = useState<any>(null);
   const [recentLead, setRecentLead] = useState<any>(null);
   const [importedCompanyId, setImportedCompanyId] = useState<string | null>(null);
@@ -217,7 +217,7 @@ export default function TaxManagersApp() {
           setImportStatus("link_lead");
           await fetchDbCounts();
         } else {
-          setImportStatus("success");
+          setImportStatus("company_success");
           await fetchDbCounts();
           setTimeout(() => window.close(), 2000);
         }
@@ -969,7 +969,7 @@ export default function TaxManagersApp() {
     if (debouncedSearch.trim()) {
       const s = debouncedSearch.trim().replace(/[%,()"'"]/g, "");
       query = query.or(
-        `display_name.ilike."%${s}%",legal_name.ilike."%${s}%",nome_fantasia.ilike."%${s}%",razao_social.ilike."%${s}%",domain.ilike."%${s}%",cnpj.ilike."%${s}%",slug.ilike."%${s}%"`
+        `display_name.ilike.%${s}%,legal_name.ilike.%${s}%,nome_fantasia.ilike.%${s}%,razao_social.ilike.%${s}%,domain.ilike.%${s}%,cnpj.ilike.%${s}%,slug.ilike.%${s}%`
       );
     }
 
@@ -3146,6 +3146,15 @@ ${fonteDados}`;
               <h2 className="text-lg font-bold text-white">Lead Importado!</h2>
               <div className="text-sm text-slate-300 mt-2 font-semibold">{importedLeadInfo?.name}</div>
               <div className="text-xs text-slate-500">{importedLeadInfo?.role} na {importedLeadInfo?.company}</div>
+              <div className="text-xs text-cyan-400 font-bold mt-2 uppercase tracking-wider">{importedLeadInfo?.action}</div>
+              <div className="text-[10px] text-slate-600 mt-4">Esta janela fechará em 2 segundos...</div>
+            </div>
+          )}
+          {importStatus === "company_success" && (
+            <div className="space-y-3">
+              <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-xl font-bold">V</div>
+              <h2 className="text-lg font-bold text-white">Empresa Importada!</h2>
+              <div className="text-sm text-slate-300 mt-2 font-semibold">{importedLeadInfo?.name}</div>
               <div className="text-xs text-cyan-400 font-bold mt-2 uppercase tracking-wider">{importedLeadInfo?.action}</div>
               <div className="text-[10px] text-slate-600 mt-4">Esta janela fechará em 2 segundos...</div>
             </div>
