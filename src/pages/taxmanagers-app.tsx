@@ -469,71 +469,9 @@ export default function TaxManagersApp() {
           console.warn("[Etapa Slug Isolada] Erro inesperado ignorado (lead preservado):", e);
         }
 
-        // Etapa vinculação de empresa: await para não ser abortada pelo fechamento da janela
-        if (mergedCompany && mergedCompany.trim().length > 1 && !mergedCompany.toLowerCase().includes("sem empresa")) {
-          try {
-            const cleanCompanyName = mergedCompany.trim();
-            let compId: string | null = null;
-
-            const sComp = cleanCompanyName.replace(/[%,()"'"]/g, "");
-            const { data: existingComp, error: searchErr } = await supabase
-              .from("taxmanagers_companies")
-              .select("id, slug, parceiro_id")
-              .eq("parceiro_id", session.user.id)
-              .or(`display_name.ilike."${sComp}",legal_name.ilike."${sComp}"`)
-              .limit(1);
-
-            if (searchErr) {
-              setCompanyErrorMsg("Erro de sintaxe ao buscar empresa: " + searchErr.message);
-              console.warn("[Etapa Empresa] Erro na busca de empresa:", searchErr.message);
-            } 
-            
-            if (!searchErr && existingComp && existingComp.length > 0) {
-              compId = existingComp[0].id;
-              if (!existingComp[0].slug) {
-                const compSlug = await generateUniqueSlug("taxmanagers_companies", cleanCompanyName, compId);
-                await supabase
-                  .from("taxmanagers_companies")
-                  .update({ slug: compSlug })
-                  .eq("id", compId)
-                  .eq("parceiro_id", session.user.id);
-              }
-            } else {
-              const compSlug = await generateUniqueSlug("taxmanagers_companies", cleanCompanyName);
-              const { data: newComp, error: insertErr } = await supabase
-                .from("taxmanagers_companies")
-                .insert([{
-                  display_name: cleanCompanyName,
-                  legal_name: cleanCompanyName,
-                  normalized_name: cleanCompanyName.toLowerCase().trim(),
-                  parceiro_id: session.user.id,
-                  slug: compSlug,
-                  source: "import",
-                  status: "active",
-                  review_status: "unreviewed"
-                }])
-                .select("id");
-
-              if (insertErr) {
-                setCompanyErrorMsg("Erro ao criar empresa no banco: " + insertErr.message);
-                console.warn("[Etapa Empresa] Erro na criação de empresa:", insertErr.message);
-              } else if (newComp && newComp.length > 0) {
-                compId = newComp[0].id;
-              }
-            }
-
-            if (compId) {
-              await supabase
-                .from("taxmanagers_leads")
-                .update({ company_id: compId })
-                .eq("id", targetLeadId);
-              console.log("[Etapa Empresa] Lead vinculado com sucesso à company_id:", compId);
-            }
-          } catch (compErr: any) {
-            setCompanyErrorMsg("Erro Inesperado na criação da empresa: " + (compErr?.message || compErr));
-            console.warn("[Etapa Empresa Isolada] Exceção capturada:", compErr?.message || compErr);
-          }
-        }
+        // Etapa vinculação de empresa desativada conforme solicitação do usuário.
+        // O Lead terá apenas o texto da empresa preenchido no campo 'empresa'.
+        // O company_id permanecerá null até ser vinculado manualmente.
 
         // Cria a interação de importação na timeline
         const isUpdate = Boolean(existingLead);
@@ -763,6 +701,7 @@ export default function TaxManagersApp() {
   const [editAnniversary, setEditAnniversary] = useState("");
   const [editStatus, setEditStatus] = useState<any>("Pendente");
   const [editCampaignId, setEditCampaignId] = useState("");
+  const [editCompanyId, setEditCompanyId] = useState("");
   const [editCompany, setEditCompany] = useState("");
   const [editCargo, setEditCargo] = useState("");
 
@@ -1034,7 +973,7 @@ export default function TaxManagersApp() {
       );
     }
 
-    const { data, error } = await query.limit(50);
+    const { data, error } = await query.limit(1000);
     if (!error && data) {
       setCompaniesList(data);
     }
@@ -1396,6 +1335,7 @@ export default function TaxManagersApp() {
     fetchSales();
     fetchTasks();
     fetchCadences();
+    fetchCompanies();
   };
 
   const fetchCurrentTabLeads = () => {
@@ -1452,6 +1392,7 @@ export default function TaxManagersApp() {
     setEditPhone(selectedLead.telefone || "");
     setEditStatus(selectedLead.status || "Pendente");
     setEditCampaignId(selectedLead.campanha_id || "none");
+    setEditCompanyId(selectedLead.company_id || "none");
     setEditCompany(selectedLead.empresa || "");
     setEditCargo(selectedLead.cargo || "");
 
@@ -1660,6 +1601,7 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
         telefone: editPhone,
         status: editStatus,
         campanha_id: editCampaignId === "none" ? null : editCampaignId,
+        company_id: editCompanyId === "none" ? null : editCompanyId,
         empresa: editCompany,
         cargo: editCargo
       })
@@ -1674,6 +1616,7 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
         telefone: editPhone,
         status: editStatus,
         campanha_id: editCampaignId === "none" ? null : editCampaignId,
+        company_id: editCompanyId === "none" ? null : editCompanyId,
         empresa: editCompany,
         cargo: editCargo
       });
@@ -3025,6 +2968,7 @@ ${fonteDados}`;
     setEditAnniversary(targetLead.aniversario || "");
     setEditStatus(targetLead.status || "Pendente");
     setEditCampaignId(targetLead.campanha_id || "none");
+    setEditCompanyId(targetLead.company_id || "none");
     setEditCompany(targetLead.empresa || "");
     setEditCargo(targetLead.cargo || "");
     setActiveLeadSubTab("outreach");
@@ -5231,7 +5175,7 @@ ${fonteDados}`;
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Empresa Alvo</label>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Empresa Alvo (Texto)</label>
                       <input 
                         type="text" 
                         className="w-full bg-[#111117] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500/50"
@@ -5239,6 +5183,22 @@ ${fonteDados}`;
                         onChange={e => setEditCompany(e.target.value)}
                       />
                     </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Vincular Empresa (Manual)</label>
+                      <select 
+                        className="w-full bg-[#111117] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500/50 appearance-none"
+                        value={editCompanyId}
+                        onChange={e => setEditCompanyId(e.target.value)}
+                      >
+                        <option value="none">Nenhuma</option>
+                        {companiesList.map((comp: any) => (
+                          <option key={comp.id} value={comp.id}>{comp.display_name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cargo / Atuação</label>
                       <input 
