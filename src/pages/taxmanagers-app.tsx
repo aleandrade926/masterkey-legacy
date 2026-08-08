@@ -176,10 +176,6 @@ export default function TaxManagersApp() {
         if (existing && existing.length > 0) {
           companyId = existing[0].id;
           await supabase.from("taxmanagers_companies").update({
-            industry: industry || undefined,
-            domain: email || undefined,
-            cnpj: phone || undefined,
-            linkedin_url: url || undefined,
             updated_at: new Date().toISOString()
           }).eq("id", companyId);
         } else {
@@ -190,10 +186,6 @@ export default function TaxManagersApp() {
             normalized_name: name.toLowerCase().trim(),
             parceiro_id: sessionObj.user.id,
             slug: compSlug,
-            industry: industry || undefined,
-            domain: email || undefined,
-            cnpj: phone || undefined,
-            linkedin_url: url || undefined,
             source: "extension",
             status: "active",
             review_status: "unreviewed"
