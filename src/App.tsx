@@ -17,7 +17,9 @@ import TaxManagers from "./pages/taxmanagers";
 import TaxManagersPrivacy from "./pages/taxmanagers-privacy";
 import TaxManagersApp from "./pages/taxmanagers-app";
 import OperacaoHojeV2 from "./pages/taxmanagers/OperacaoHojeV2";
+import ConversorNfse from "./pages/taxmanagers/ConversorNfse";
 import FootInTheDoorLab from "./pages/foot-in-the-door-lab";
+import SintoniaMonitor from "./pages/SintoniaMonitor";
 import Empresas from "./pages/taxmanagers-navigator/Empresas";
 import Pessoas from "./pages/taxmanagers-navigator/Pessoas";
 import Negocios from "./pages/taxmanagers-navigator/Negocios";
@@ -98,6 +100,13 @@ function App() {
 
 
   // ==========================================
+  // ROTA INDEPENDENTE: Sintonia A+ Monitor
+  // ==========================================
+  if (location === "/sintonia-monitor" || location === "/taxmanagers/sintonia-monitor") {
+    return <SintoniaMonitor />;
+  }
+
+  // ==========================================
   // 2. ROTA INDEPENDENTE: TailorSpace Infra
   // ==========================================
   if (location === "/infra") {
@@ -116,6 +125,11 @@ function App() {
   }
   if (import.meta.env.DEV && (location === "/taxmanagers/foot-in-the-door-lab" || location === "/foot-in-the-door-lab")) {
     return <FootInTheDoorLab />;
+  }
+
+  // Isca Digital: Conversor NFS-e
+  if (location === "/taxmanagers/conversor-nfse" || location === "/conversor-nfse") {
+    return <ConversorNfse />;
   }
 
   // Rotas Tax Navigator (Entidades & Aliases)
@@ -166,7 +180,7 @@ function App() {
   // ==========================================
   // 5. ANDRADE & FLORIO
   // ==========================================
-  if (location === "/" || isAndradeFlorioDomain) {
+  if (isAndradeFlorioDomain) {
     return <AndradeFlorioHome />;
   }
 
