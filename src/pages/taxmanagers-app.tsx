@@ -4373,6 +4373,12 @@ ${fonteDados}`;
                   </p>
                 </div>
                 <div className="flex gap-2 w-full md:w-auto">
+                  <button 
+                    onClick={() => setShowAddCompanyModal(true)}
+                    className="px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-lg shadow-cyan-500/10 whitespace-nowrap"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Adicionar Empresa
+                  </button>
                   <div className="relative w-full md:w-96">
                     <input
                       type="text"
