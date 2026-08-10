@@ -724,6 +724,11 @@ export default function TaxManagersApp() {
   const [newLeadUrl, setNewLeadUrl] = useState("");
   const [newLeadCampaign, setNewLeadCampaign] = useState("");
   const [newLeadEmail, setNewLeadEmail] = useState("");
+
+  // Estado Modal Nova Empresa
+  const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
+  const [newCompanyName, setNewCompanyName] = useState("");
+  const [newCompanyUrl, setNewCompanyUrl] = useState("");
   const [newLeadPhone, setNewLeadPhone] = useState("");
   const [newCampaignName, setNewCampaignName] = useState("");
 
@@ -1464,6 +1469,48 @@ Como posso te ajudar a ajustar a hipótese de abordagem comercial, sugerir ganch
   // Logout Handler
   const handleLogout = async () => {
     await supabase.auth.signOut();
+  };
+
+  // Adicionar Empresa Manual
+  const handleAddCompany = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCompanyName) return;
+
+    let partnerId = profile?.is_admin ? selectedPartnerId : profile?.id;
+    if (profile?.is_admin && (partnerId === "all" || !partnerId)) {
+      partnerId = profile.id;
+    }
+
+    if (!partnerId) {
+      alert("Erro: Não foi possível determinar o parceiro responsável pela empresa.");
+      return;
+    }
+
+    try {
+      const compSlug = await generateUniqueSlug("taxmanagers_companies", newCompanyName.trim());
+      const { error } = await supabase.from("taxmanagers_companies").insert([{
+        display_name: newCompanyName.trim(),
+        legal_name: newCompanyName.trim(),
+        normalized_name: newCompanyName.toLowerCase().trim(),
+        parceiro_id: partnerId,
+        slug: compSlug,
+        source: "manual",
+        status: "active",
+        review_status: "unreviewed",
+        linkedin_url: newCompanyUrl.trim() || null
+      }]);
+
+      if (error) throw error;
+      
+      setShowAddCompanyModal(false);
+      setNewCompanyName("");
+      setNewCompanyUrl("");
+      if (activeTab === "empresas") {
+        fetchCompanies();
+      }
+    } catch (error: any) {
+      alert("Erro ao adicionar empresa: " + error.message);
+    }
   };
 
   // Adicionar Lead Manual
@@ -3765,6 +3812,12 @@ ${fonteDados}`;
                     <Plus className="w-3.5 h-3.5" /> Nova Campanha
                   </button>
                   <button 
+                    onClick={() => setShowAddCompanyModal(true)}
+                    className="px-4 py-2 rounded-lg bg-[#111116] border border-white/10 hover:bg-white/5 text-slate-300 text-xs font-semibold transition-colors flex items-center gap-1.5"
+                  >
+                    <Building className="w-3.5 h-3.5" /> Adicionar Empresa
+                  </button>
+                  <button 
                     onClick={() => setShowAddLeadModal(true)}
                     className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-lg shadow-blue-500/10"
                   >
@@ -5352,6 +5405,60 @@ ${fonteDados}`;
               )}
 
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: ADICIONAR EMPRESA MANUAL */}
+      {showAddCompanyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowAddCompanyModal(false)} />
+          <div className="relative w-full max-w-md bg-[#0b0b0f] border border-white/10 rounded-2xl p-6 shadow-2xl">
+            <button 
+              onClick={() => setShowAddCompanyModal(false)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h3 className="text-lg font-bold text-white mb-4">Adicionar Nova Empresa</h3>
+            <form onSubmit={handleAddCompany} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Nome da Empresa *</label>
+                <input
+                  type="text"
+                  required
+                  value={newCompanyName}
+                  onChange={e => setNewCompanyName(e.target.value)}
+                  placeholder="Ex: Apple Brasil"
+                  className="w-full bg-[#111116] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">URL do LinkedIn (Opcional)</label>
+                <input
+                  type="text"
+                  value={newCompanyUrl}
+                  onChange={e => setNewCompanyUrl(e.target.value)}
+                  placeholder="Ex: https://www.linkedin.com/company/apple"
+                  className="w-full bg-[#111116] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50"
+                />
+              </div>
+              <div className="pt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddCompanyModal(false)}
+                  className="flex-1 py-2.5 rounded-lg bg-transparent border border-white/10 text-slate-300 hover:bg-white/5 text-sm font-semibold transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-semibold transition-colors"
+                >
+                  Salvar Empresa
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
