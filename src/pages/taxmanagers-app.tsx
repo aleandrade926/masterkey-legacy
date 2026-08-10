@@ -142,6 +142,7 @@ export default function TaxManagersApp() {
       if (_importLock || leadSavedRef.current) return;
       _importLock = true;
       leadSavedRef.current = true;
+      setImportStatus("loading");
       let sessionObj: any = null;
       for (let attempt = 0; attempt < 5; attempt++) {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -269,6 +270,7 @@ export default function TaxManagersApp() {
 
       _importLock = true;
       leadSavedRef.current = true;
+      setImportStatus("loading");
       let sessionObj: any = null;
       for (let attempt = 0; attempt < 5; attempt++) {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -961,7 +963,7 @@ export default function TaxManagersApp() {
     if (debouncedSearch.trim()) {
       const s = debouncedSearch.trim().replace(/[%,()"'"]/g, "");
       query = query.or(
-        `display_name.ilike.%${s}%,legal_name.ilike.%${s}%,nome_fantasia.ilike.%${s}%,razao_social.ilike.%${s}%,domain.ilike.%${s}%,cnpj.ilike.%${s}%,slug.ilike.%${s}%`
+        `display_name.ilike.%${s}%,legal_name.ilike.%${s}%,normalized_name.ilike.%${s}%,domain.ilike.%${s}%,cnpj.ilike.%${s}%,slug.ilike.%${s}%`
       );
     }
 
@@ -3104,6 +3106,12 @@ ${fonteDados}`;
     return (
       <div className="min-h-screen bg-[#070709] flex flex-col justify-center items-center px-4 font-sans text-slate-300">
         <div className="w-full max-w-sm bg-[#0d0d12]/80 backdrop-blur-xl border border-white/10 p-6 rounded-2xl shadow-2xl text-center">
+          {importStatus === "idle" && (
+            <div className="space-y-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mx-auto"></div>
+              <p className="text-sm">Preparando importação...</p>
+            </div>
+          )}
           {importStatus === "loading" && (
             <div className="space-y-4">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mx-auto"></div>

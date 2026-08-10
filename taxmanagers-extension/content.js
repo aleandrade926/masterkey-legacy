@@ -140,7 +140,8 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
             email:        email,
             phone:        phone,
             birthday:     birthday,
-            chat_history: ch
+            chat_history: ch,
+            is_company:   isCompanyPage
           }, targetOrigin);
           window.removeEventListener('message', handler);
           setTimeout(() => { window.__tmLastCapture = 0; }, 3000);
@@ -223,7 +224,8 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
             email:        email,
             phone:        phone,
             birthday:     birthday,
-            chat_history: ch
+            chat_history: ch,
+            is_company:   isCompanyPage
           }, targetOrigin);
           window.removeEventListener('message', handler);
           setTimeout(() => { window.__tmLastCapture = 0; }, 3000);
