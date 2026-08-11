@@ -3281,7 +3281,7 @@ ${fonteDados}`;
             <div className="space-y-3">
               <div className="w-12 h-12 bg-red-500/10 border border-red-500/20 text-red-400 rounded-full flex items-center justify-center mx-auto text-xl font-bold">✗</div>
               <h2 className="text-lg font-bold text-white">Erro ao Importar</h2>
-              <p className="text-xs text-slate-400">Não foi possível salvar o lead. Verifique se o CNPJ/Empresa ou dados estão corretos.</p>
+              <p className="text-xs text-slate-400 max-w-sm">{companyErrorMsg || "Não foi possível salvar o lead. Verifique se o CNPJ/Empresa ou dados estão corretos."}</p>
               <button onClick={() => window.close()} className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-xs mt-2 hover:bg-white/10">Fechar Janela</button>
             </div>
           )}
