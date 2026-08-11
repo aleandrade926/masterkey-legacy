@@ -19,7 +19,7 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
   if (cleanUrl.includes('/overlay/contact-info')) {
     cleanUrl = cleanUrl.replace('/overlay/contact-info', '');
   }
-  let isCompanyPage = window.location.href.includes('/company/');
+  let isCompanyPage = window.location.href.includes('/company/') || window.location.href.includes('/school/') || window.location.href.includes('/showcase/');
 
   function openFinalPrompt() {
     if (promptOpened) return;
@@ -297,14 +297,27 @@ console.log("[TaxManagers] CLIQUE RECEBIDO v1.0.19");
     }
 
     if (isCompanyPage) {
-      console.log("[TaxManagers] Lendo página de Empresa...");
-      const h1 = document.querySelector('h1');
-      if (h1) name = cleanName(h1.innerText.trim());
-      else name = cleanName(document.title.split('-')[0].split('|')[0].trim());
-      
-      const ind = document.querySelector('.org-top-card-summary-info-list__info-item, .org-top-card-summary-info-list');
+      console.log("[TaxManagers] Lendo página de Empresa/Instituição...");
+      const compNameSelectors = [
+        'h1.org-top-card-summary__title',
+        'h1.org-top-card-summary-info-list__title',
+        '.org-top-card-summary__title span',
+        'h1'
+      ];
+      let rawCompName = '';
+      for (const sel of compNameSelectors) {
+        const el = document.querySelector(sel);
+        if (el && el.innerText.trim().length > 1) {
+          rawCompName = el.innerText.trim();
+          break;
+        }
+      }
+      if (!rawCompName) rawCompName = document.title.split('-')[0].split('|')[0].trim();
+      name = cleanName(rawCompName);
+
+      const ind = document.querySelector('.org-top-card-summary-info-list__info-item, .org-top-card-summary-info-list, .org-top-card-summary-info-list__info-item span');
       if (ind) role = ind.innerText.trim();
-      
+
       company = name;
       return; // Finaliza o fluxo principal aqui, vai para openFinalPrompt
     }

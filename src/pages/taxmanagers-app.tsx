@@ -157,12 +157,17 @@ export default function TaxManagersApp() {
       }
 
       try {
-        const name = companyData.name || "";
-        const industry = companyData.role || ""; // Passed via role
+        const rawName = companyData.name || companyData.company || "";
+        const name = rawName.trim();
+        const industry = companyData.role || companyData.industry || "";
         const url = companyData.url || "";
         const email = companyData.email || ""; // Passed via email
         const phone = companyData.phone || ""; // Passed via phone
         const action = companyData.action || "Mapear Empresa";
+
+        if (!name || name.length < 1) {
+          throw new Error("Nome da empresa não identificado.");
+        }
 
         setImportedLeadInfo({ name, role: industry, company: name, action });
 
@@ -170,18 +175,20 @@ export default function TaxManagersApp() {
           .from("taxmanagers_companies")
           .select("id")
           .eq("parceiro_id", sessionObj.user.id)
-          .ilike("display_name", name.trim())
+          .ilike("display_name", name)
           .limit(1);
 
         let companyId = "";
         if (existing && existing.length > 0) {
           companyId = existing[0].id;
-          await supabase.from("taxmanagers_companies").update({
+          const updateObj: any = {
             updated_at: new Date().toISOString()
-          }).eq("id", companyId);
+          };
+          if (url) updateObj.linkedin_url = url;
+          await supabase.from("taxmanagers_companies").update(updateObj).eq("id", companyId);
         } else {
           const compSlug = await generateUniqueSlug("taxmanagers_companies", name);
-          const { data: newComp, error: insertErr } = await supabase.from("taxmanagers_companies").insert([{
+          const insertPayload: any = {
             display_name: name,
             legal_name: name,
             normalized_name: name.toLowerCase().trim(),
@@ -190,7 +197,14 @@ export default function TaxManagersApp() {
             source: "extension",
             status: "active",
             review_status: "unreviewed"
-          }]).select("id").single();
+          };
+          if (url) insertPayload.linkedin_url = url;
+
+          const { data: newComp, error: insertErr } = await supabase
+            .from("taxmanagers_companies")
+            .insert([insertPayload])
+            .select("id")
+            .single();
           if (insertErr) throw new Error("Erro ao criar empresa via extensão: " + insertErr.message);
           if (newComp) companyId = newComp.id;
         }
@@ -214,8 +228,9 @@ export default function TaxManagersApp() {
           await fetchDbCounts();
           setTimeout(() => window.close(), 2000);
         }
-      } catch (e) {
-        console.error(e);
+      } catch (e: any) {
+        console.error("Erro no saveImportedCompany:", e);
+        setCompanyErrorMsg(e?.message || "Erro ao importar empresa.");
         setImportStatus("error");
         _importLock = false;
         leadSavedRef.current = false;
@@ -461,6 +476,50 @@ export default function TaxManagersApp() {
           }
         } catch (e) {
           console.warn("[Etapa Slug Isolada] Erro inesperado ignorado (lead preservado):", e);
+        }
+
+        // Resolução e Vinculação Automática da Empresa na Tabela taxmanagers_companies
+        if (mergedCompany && mergedCompany.trim().length > 1 && !isInvalidCompanyName(mergedCompany)) {
+          try {
+            const cleanComp = mergedCompany.trim();
+            const { data: existingComp } = await supabase
+              .from("taxmanagers_companies")
+              .select("id")
+              .eq("parceiro_id", session.user.id)
+              .ilike("display_name", cleanComp)
+              .limit(1);
+
+            let compId = "";
+            if (existingComp && existingComp.length > 0) {
+              compId = existingComp[0].id;
+            } else {
+              const compSlug = await generateUniqueSlug("taxmanagers_companies", cleanComp);
+              const { data: newComp } = await supabase
+                .from("taxmanagers_companies")
+                .insert([{
+                  display_name: cleanComp,
+                  legal_name: cleanComp,
+                  normalized_name: cleanComp.toLowerCase(),
+                  parceiro_id: session.user.id,
+                  slug: compSlug,
+                  source: "extension",
+                  status: "active",
+                  review_status: "unreviewed"
+                }])
+                .select("id")
+                .single();
+              if (newComp) compId = newComp.id;
+            }
+
+            if (compId) {
+              await supabase
+                .from("taxmanagers_leads")
+                .update({ company_id: compId })
+                .eq("id", targetLeadId);
+            }
+          } catch (errComp) {
+            console.warn("[Auto-Company Link/Create Warning]:", errComp);
+          }
         }
 
         // Etapa vinculação de empresa desativada conforme solicitação do usuário.
