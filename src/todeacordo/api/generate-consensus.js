@@ -31,12 +31,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'transcript_segments ausente ou inválido.' });
     }
 
-    const conversationText = transcript_segments
+    let conversationText = transcript_segments
       .map(s => `[${(s.timestamp && !isNaN(Date.parse(s.timestamp))) ? new Date(s.timestamp).toISOString() : '00:00:00'}] ${s.speaker}: ${s.text}`)
       .join('\n');
 
     if (conversationText.trim().length < 50) {
       return res.status(400).json({ error: 'Transcript insuficiente.' });
+    }
+
+    // Se o texto for absurdamente grande (reunião de 3h+), limita os 40.000 caracteres mais relevantes
+    if (conversationText.length > 40000) {
+      conversationText = conversationText.slice(0, 20000) + '\n...[conteúdo intermediário resumido]...\n' + conversationText.slice(-20000);
     }
 
     // Identificação automática de idioma para evitar legendas incorretas

@@ -5,6 +5,8 @@ import PrivacyPolicy from './Privacy';
 import { getAllMeetings, clearMeeting, saveMeeting } from '../storage/meetingStorage';
 import { clearConsensusForMeeting } from '../storage/consensusStorage';
 import { saveTranscriptSegment, getTranscriptForMeeting } from '../storage/transcriptStorage';
+import { getDB } from '../storage/db';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import ValidationPage from './ValidationPage';
 import { MeetingDetailsPage } from './MeetingDetailsPage';
 import LandingPage from './LandingPage';
@@ -156,14 +158,47 @@ const DashboardApp = () => {
 
   const loadData = async () => {
     try {
-      const allMeetings = await getAllMeetings();
+      let allMeetings = await getAllMeetings();
+
+      // Recuperação Ativa de Conteúdo: Escaneia todas as transcrições salvas no IndexedDB
+      // para restaurar reuniões que sofreram queda/crash antes de criar o registro principal
+      try {
+        const db = await getDB();
+        const allTranscripts = await db.getAll('transcripts');
+        if (allTranscripts && allTranscripts.length > 0) {
+          const meetingIds = Array.from(new Set(allTranscripts.map(t => t.meeting_id).filter(Boolean)));
+          for (const mId of meetingIds) {
+            const existingMeeting = allMeetings.find(m => m.id === mId);
+            if (!existingMeeting) {
+              const segs = allTranscripts.filter(t => t.meeting_id === mId);
+              const firstSeg = segs[0];
+              const recoveredMeeting = {
+                id: mId,
+                title: `Reunião Capturada (${segs.length} falas)`,
+                started_at: firstSeg.captured_at || (firstSeg.timestamp ? new Date(firstSeg.timestamp).getTime() : Date.now()),
+                ended_at: Date.now(),
+                duration: `${Math.max(1, Math.round(segs.length / 5))} min`,
+                status: 'ended',
+                participants: Array.from(new Set(segs.map(s => s.speaker).filter(Boolean))),
+                is_active: false,
+                transcript_segment_ids: segs.map(s => s.id || '')
+              };
+              await saveMeeting(recoveredMeeting as any);
+              allMeetings.push(recoveredMeeting as any);
+            }
+          }
+        }
+      } catch (errRec) {
+        console.error('Erro na verificação de auto-recuperação:', errRec);
+      }
+
       const validMeetings = allMeetings.filter((m: any) => m.status !== 'cleared').sort((a: any, b: any) => b.started_at - a.started_at);
       setMeetings(validMeetings);
 
       // Detects orphan sessions (has segments, but no consensus generated — e.g. battery died or crashed)
       const orphans = [];
-      for (const m of allMeetings) {
-        if (!m.consensus_object_id && m.status !== 'cleared') {
+      for (const m of validMeetings) {
+        if (!m.consensus_object_id) {
           const segs = await getTranscriptForMeeting(m.id);
           if (segs.length > 0) {
             orphans.push({ ...m, segmentCount: segs.length });
@@ -942,5 +977,9 @@ const DashboardApp = () => {
 const container = document.getElementById('dashboard-root');
 if (container) {
   const root = createRoot(container);
-  root.render(<DashboardApp />);
+  root.render(
+    <ErrorBoundary fallbackTitle="Erro ao carregar o painel do ToDeAcordo">
+      <DashboardApp />
+    </ErrorBoundary>
+  );
 }

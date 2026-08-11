@@ -30,6 +30,10 @@ export default function TaxManagers() {
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
             <a href="#solucoes" className="hover:text-cyan-400 transition-colors">Soluções</a>
             <a href="#metodo" className="hover:text-cyan-400 transition-colors">Método</a>
+            <Link href="/taxmanagers/conversor-nfse" className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors flex items-center gap-1">
+              <FileSearch className="w-4 h-4" />
+              Ferramenta Gratuita
+            </Link>
             <a href="#contato" className="px-5 py-2.5 rounded-full bg-blue-600/10 text-blue-400 border border-blue-500/20 hover:bg-blue-600 hover:text-white transition-all">
               Análise Inicial
             </a>
@@ -137,6 +141,32 @@ export default function TaxManagers() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Digital Bait / Isca Digital Section */}
+      <section className="py-16 bg-[#0a0a0c]">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="bg-gradient-to-r from-emerald-900/40 to-teal-900/20 border border-emerald-500/20 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden shadow-2xl">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
+              <FileSearch className="w-32 h-32 text-emerald-400" />
+            </div>
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/50 border border-emerald-800/50 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-6">
+                Ferramenta Gratuita
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Conversor XML para Excel de NFS-e Nacional
+              </h2>
+              <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
+                Transforme seus XMLs de notas fiscais de serviço em planilhas prontas para análise. Extraia faturamento, ISS, retenções federais e novos tributos (IBS/CBS) em segundos, sem instalar nada.
+              </p>
+              <Link href="/taxmanagers/conversor-nfse" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all group shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+                Acessar Conversor Agora
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </div>
         </div>

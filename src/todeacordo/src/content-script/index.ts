@@ -157,11 +157,10 @@ const checkMeetingState = () => {
   const newState = MeetingDetector.detectState();
   const newCaptionsEnabled = MeetingDetector.areCaptionsEnabled();
 
-  // Tarefa 4: Se o estado da reunião mudar de ACTIVE para LOBBY/INACTIVE, autodesliga a captura
-  // MAS apenas se currentCaptureAllowed também for falso.
+  // Auto-desliga captura apenas se o usuário tiver saído totalmente da sala (INACTIVE)
   const captureAllowed = captionExtractor ? captionExtractor.currentCaptureAllowed : false;
-  if (newState !== 'ACTIVE' && isCapturing && !captureAllowed) {
-    console.log('[ToDeAcordo][ContentScript] Reunião não está mais ativa. Auto-desligando capture.');
+  if (newState === 'INACTIVE' && isCapturing && !captureAllowed) {
+    console.log('[ToDeAcordo][ContentScript] Reunião finalizada/saída da sala. Auto-desligando capture.');
     if (captionExtractor) {
       captionExtractor.stop();
     }

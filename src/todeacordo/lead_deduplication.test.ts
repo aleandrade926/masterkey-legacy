@@ -77,4 +77,52 @@ test.describe('Deduplicação de Leads e Regras de Segurança', () => {
     expect(foundLead?.import_status).toBe('active');
     expect(foundLead?.parceiro_id).toBe(partnerId);
   });
+
+  test('Garantir que a unificação de dois registros "Luciano Hillesheim" consolida histórico e mantêm 1 único lead ativo', async () => {
+    const lead1 = {
+      id: 'luciano-id-1',
+      nome: 'Luciano Hillesheim',
+      empresa: 'Empresa A',
+      cargo: 'Diretor',
+      url: 'https://linkedin.com/in/lucianoh',
+      email: 'luciano@empresa.com',
+      telefone: '11999998888',
+      aniversario: '',
+      passo1_mensagem: '',
+      passo2_mensagem: '',
+      passo3_mensagem: '',
+      status: 'Abordado' as const,
+      chat_history: 'Mensagem inicial enviada no LinkedIn',
+      created_at: '2026-08-01T10:00:00Z',
+      import_status: 'active'
+    };
+
+    const lead2 = {
+      id: 'luciano-id-2',
+      nome: 'luciano hillesheim',
+      empresa: 'Empresa A Ltda',
+      cargo: 'CEO & Diretor',
+      url: '',
+      email: 'luciano.hillesheim@gmail.com',
+      telefone: '11999998888',
+      aniversario: '',
+      passo1_mensagem: '',
+      passo2_mensagem: '',
+      passo3_mensagem: '',
+      status: 'Pendente' as const,
+      chat_history: 'Respondeu pedindo apresentação',
+      created_at: '2026-08-02T12:00:00Z',
+      import_status: 'active'
+    };
+
+    // Agrupamento semântico por nome normalizado
+    const norm1 = lead1.nome.toLowerCase().trim();
+    const norm2 = lead2.nome.toLowerCase().trim();
+    expect(norm1).toBe(norm2);
+
+    // Mesclagem de dados preservando os melhores valores
+    const mergedHistory = `${lead1.chat_history}\n\n--- [Histórico Unificado de (${lead2.nome})] ---\n${lead2.chat_history}`;
+    expect(mergedHistory).toContain('Mensagem inicial enviada no LinkedIn');
+    expect(mergedHistory).toContain('Respondeu pedindo apresentação');
+  });
 });

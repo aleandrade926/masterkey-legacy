@@ -227,40 +227,44 @@ export class CaptionExtractor {
   }
 
   private handleMutations(_mutations: MutationRecord[]) {
-    this.lastMutationAt = Date.now();
-    let containerFound: HTMLElement | null = null;
-    for (const selector of MEET_SELECTORS.CAPTIONS_CONTAINERS) {
-      const el = document.querySelector(selector) as HTMLElement;
-      if (el && !isInsideSettingsOrMenu(el)) {
-        containerFound = el;
-        break;
+    try {
+      this.lastMutationAt = Date.now();
+      let containerFound: HTMLElement | null = null;
+      for (const selector of MEET_SELECTORS.CAPTIONS_CONTAINERS) {
+        const el = document.querySelector(selector) as HTMLElement;
+        if (el && !isInsideSettingsOrMenu(el)) {
+          containerFound = el;
+          break;
+        }
       }
-    }
 
-    const state = MeetingDetector.detectState();
-    
-    // Se o estado não for ACTIVE, MAS houver um container e tiver texto ou draft ativo, permitimos.
-    const hasActiveText = containerFound && containerFound.textContent && containerFound.textContent.trim().length > 0;
-    
-    if (state !== 'ACTIVE' && !hasActiveText && !this.activeDraft) {
-      this.forceCommitActiveDraft('meeting-inactive');
-      this.currentCaptureAllowed = false;
-      this.captureBlockedReason = `Reunião inativa: ${state}`;
-      return;
-    }
+      const state = MeetingDetector.detectState();
+      
+      // Se o estado não for ACTIVE, MAS houver um container e tiver texto ou draft ativo, permitimos.
+      const hasActiveText = containerFound && containerFound.textContent && containerFound.textContent.trim().length > 0;
+      
+      if (state !== 'ACTIVE' && !hasActiveText && !this.activeDraft) {
+        this.forceCommitActiveDraft('meeting-inactive');
+        this.currentCaptureAllowed = false;
+        this.captureBlockedReason = `Reunião inativa: ${state}`;
+        return;
+      }
 
-    this.currentCaptureAllowed = true;
-    this.captureBlockedReason = 'Nenhum';
+      this.currentCaptureAllowed = true;
+      this.captureBlockedReason = 'Nenhum';
 
-    if (!containerFound) return;
+      if (!containerFound) return;
 
-    const blocks = containerFound.children;
-    if (blocks.length === 0) {
-      this.processBlockElement(containerFound);
-      return;
-    }
-    for (let i = 0; i < blocks.length; i++) {
-      this.processBlockElement(blocks[i] as HTMLElement);
+      const blocks = containerFound.children;
+      if (blocks.length === 0) {
+        this.processBlockElement(containerFound);
+        return;
+      }
+      for (let i = 0; i < blocks.length; i++) {
+        this.processBlockElement(blocks[i] as HTMLElement);
+      }
+    } catch (err) {
+      console.warn('[CaptionExtractor] Exceção temporária no handleMutations ignorada para manter captura ativa:', err);
     }
   }
 

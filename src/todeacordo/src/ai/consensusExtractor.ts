@@ -19,10 +19,10 @@ export async function generateConsensusFromTranscript(options: ConsensusGenerati
     throw new Error('Nenhuma fala capturada. Não é possível gerar um entendimento.');
   }
 
-  // Filtrar apenas os consolidaddos/reais, caso passe lixo
+  // Filtrar apenas os consolidados/reais, caso passe lixo
   let cleanSegments = segments.filter(s => s.text && s.speaker);
 
-  // Fase 5.4: Deduplicação avançada no payload (Hash + Substring window)
+  // Fase 5.4: Deduplicação avançada no payload (Hash + Substring window com limite de janela)
   const normalizeForDedupe = (str: string) => {
     return str.toLowerCase().replace(/[^\w\sÀ-ÿ]/g, '').replace(/\s+/g, ' ').trim();
   };
@@ -32,10 +32,10 @@ export async function generateConsensusFromTranscript(options: ConsensusGenerati
     const normText = normalizeForDedupe(seg.text);
     if (!normText) continue;
     
-    // Procura por overlap em todas as falas anteriores para descartar re-emissão pura (MVP: checa tudo)
+    // Procura por overlap apenas na janela recente (slice -25) para O(N) de performance em reuniões longas
     let isDuplicate = false;
-    // Ao invés de usar slice(-5), vamos verificar contra todos os segmentos únicos processados até agora
-    for (const recent of uniqueSegments) {
+    const windowToSearch = uniqueSegments.slice(-25);
+    for (const recent of windowToSearch) {
       if (recent.speaker !== seg.speaker) continue;
       
       const recentNorm = normalizeForDedupe(recent.text);
@@ -86,7 +86,29 @@ export async function generateConsensusFromTranscript(options: ConsensusGenerati
     }
   }
 
-  cleanSegments = uniqueSegments;
+  // Consolidação de falas consecutivas do mesmo falante para reduzir overhead
+  const mergedSegments: TranscriptSegment[] = [];
+  for (const seg of uniqueSegments) {
+    const last = mergedSegments[mergedSegments.length - 1];
+    if (last && last.speaker === seg.speaker) {
+      last.text += ' ' + seg.text;
+    } else {
+      mergedSegments.push({ ...seg });
+    }
+  }
+
+  cleanSegments = mergedSegments;
+
+  // Se a reunião for extremamente longa (> 300 falas consolidadas), amostra/limita o payload enviado para IA
+  if (cleanSegments.length > 300) {
+    console.log(`[ToDeAcordo] Reunião longa detectada (${cleanSegments.length} falas). Amostrando para 300 segmentos.`);
+    const step = Math.ceil(cleanSegments.length / 300);
+    const sampled: TranscriptSegment[] = [];
+    for (let i = 0; i < cleanSegments.length; i += step) {
+      sampled.push(cleanSegments[i]);
+    }
+    cleanSegments = sampled;
+  }
 
   try {
     // Fase 10D: Semáforo e Red Flags

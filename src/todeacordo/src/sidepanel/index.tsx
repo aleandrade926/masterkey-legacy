@@ -129,7 +129,10 @@ const SidePanel = () => {
         throw new Error("API n�o retornou meeting_id v�lido.");
       }
 
-      chrome.tabs.create({ url: `https://todeacordo.com.br/app?route=/meeting/${result.meeting_id}` });
+      const targetUrl = typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL
+        ? chrome.runtime.getURL(`index.html?route=/meeting/${result.meeting_id}`)
+        : `https://todeacordo.com.br/app?route=/meeting/${result.meeting_id}`;
+      chrome.tabs.create({ url: targetUrl });
     } catch (err: any) {
       console.error(err);
       setGenerationError("Falha ao gerar o consenso: " + err.message);
@@ -139,7 +142,11 @@ const SidePanel = () => {
   };
 
   const handleOpenDashboard = () => {
-    chrome.tabs.create({ url: "https://todeacordo.com.br/app" });
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+      chrome.tabs.create({ url: chrome.runtime.getURL('index.html') });
+    } else {
+      window.open('https://todeacordo.com.br/app', '_blank');
+    }
   };
 
   return (

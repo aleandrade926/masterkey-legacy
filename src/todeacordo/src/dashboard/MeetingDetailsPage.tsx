@@ -4,6 +4,31 @@ import type { ConsensusObject, TranscriptSegment } from '../types';
 import { getTranscriptForMeeting } from '../storage/transcriptStorage';
 import { generateConsensusFromTranscript } from '../ai/consensusExtractor';
 import { getMeeting, saveMeeting } from '../storage/meetingStorage';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+
+// Helper de formatação segura de hora (evita RangeError: Invalid time value)
+const safeTimeString = (timestamp: string | number | undefined): string => {
+  if (!timestamp) return '';
+  try {
+    const d = new Date(timestamp);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {
+    return '';
+  }
+};
+
+// Helper de formatação segura de data (evita RangeError: Invalid time value)
+const safeDateString = (timestamp: string | number | undefined): string => {
+  if (!timestamp) return new Date().toLocaleDateString('pt-BR');
+  try {
+    const d = new Date(timestamp);
+    if (isNaN(d.getTime())) return new Date().toLocaleDateString('pt-BR');
+    return d.toLocaleDateString('pt-BR');
+  } catch (e) {
+    return new Date().toLocaleDateString('pt-BR');
+  }
+};
 
 // Detect if running inside Chrome Extension or on web
 const isExtensionContext = () => window.location.protocol === 'chrome-extension:';
@@ -15,7 +40,7 @@ const getValidationUrl = (consensusId: string) => {
 };
 const getHomeUrl = () => isExtensionContext() ? 'index.html' : '/app';
 
-export const MeetingDetailsPage = () => {
+const MeetingDetailsPageContent = () => {
   const [consensus, setConsensus] = useState<ConsensusObject | null>(null);
   const [meeting, setMeeting] = useState<any>(null);
   const [transcript, setTranscript] = useState<TranscriptSegment[]>([]);
@@ -324,7 +349,7 @@ export const MeetingDetailsPage = () => {
                           <div>
                             <div className="flex items-baseline gap-2 mb-1">
                               <span className="font-bold text-slate-900">{(seg.speaker && seg.speaker !== 'undefined' && seg.speaker !== 'Unknown') ? seg.speaker : 'Desconhecido'}</span>
-                              <span className="text-xs text-slate-400">{new Date(seg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                              <span className="text-xs text-slate-400">{safeTimeString(seg.timestamp)}</span>
                             </div>
                             <p className="text-slate-700 leading-relaxed">{seg.text}</p>
                           </div>
@@ -501,7 +526,7 @@ export const MeetingDetailsPage = () => {
                 </div>
                 <div>
                   <div className="font-bold text-slate-900 text-sm">Gravado por você</div>
-                  <div className="text-xs text-slate-500">{new Date(consensus?.created_at || Date.now()).toLocaleDateString('pt-BR')} • 1 min</div>
+                  <div className="text-xs text-slate-500">{safeDateString(consensus?.created_at)} • {transcript.length > 0 ? `${Math.max(1, Math.round(transcript.length / 5))} min` : '1 min'}</div>
                 </div>
                 <div className="ml-auto bg-slate-100 p-1.5 rounded-lg cursor-pointer hover:bg-slate-200 transition-colors">
                   <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -537,3 +562,9 @@ export const MeetingDetailsPage = () => {
     </div>
   );
 };
+
+export const MeetingDetailsPage = () => (
+  <ErrorBoundary fallbackTitle="Erro ao carregar os detalhes da reunião">
+    <MeetingDetailsPageContent />
+  </ErrorBoundary>
+);

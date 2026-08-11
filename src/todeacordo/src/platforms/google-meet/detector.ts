@@ -36,7 +36,11 @@ export class MeetingDetector {
       }
     }
 
-    // Se está em uma URL de sala, mas nenhum controle de reunião ativa está visível, assume Lobby
+    // 4. Se a URL é uma sala válida do Meet (/abc-defg-hij), mantém ACTIVE para evitar desligar quando a barra de ferramentas oculta por inatividade
+    if (path.length >= 5 && path !== '/signup' && path !== '/terms' && path !== '/landing') {
+      return 'ACTIVE';
+    }
+
     return 'LOBBY';
   }
 
