@@ -39,6 +39,7 @@ import {
   syncNavigationStateToStorageAndUrl
 } from "../lib/taxmanagers/navigation-state";
 import { detectChatActionAndDirection } from "../lib/taxmanagers/chat-direction";
+import { isInvalidCompanyName } from "../lib/taxmanagers/company-resolution";
 import { generateUniqueSlug, ensureLeadSlug } from "../lib/taxmanagers/slug-utils";
 import { MergeLeadsModal } from "../components/MergeLeadsModal";
 import { findDuplicateGroups } from "../lib/leadDeduplication";
@@ -478,9 +479,9 @@ export default function TaxManagersApp() {
           console.warn("[Etapa Slug Isolada] Erro inesperado ignorado (lead preservado):", e);
         }
 
-        // Resolução e Vinculação Automática da Empresa na Tabela taxmanagers_companies
-        if (mergedCompany && mergedCompany.trim().length > 1 && !isInvalidCompanyName(mergedCompany)) {
-          try {
+        // Resolução e Vinculação Automática da Empresa na Tabela taxmanagers_companies (Isolada)
+        try {
+          if (mergedCompany && mergedCompany.trim().length > 1 && typeof isInvalidCompanyName === "function" && !isInvalidCompanyName(mergedCompany)) {
             const cleanComp = mergedCompany.trim();
             const { data: existingComp } = await supabase
               .from("taxmanagers_companies")
@@ -517,9 +518,9 @@ export default function TaxManagersApp() {
                 .update({ company_id: compId })
                 .eq("id", targetLeadId);
             }
-          } catch (errComp) {
-            console.warn("[Auto-Company Link/Create Warning]:", errComp);
           }
+        } catch (errComp) {
+          console.warn("[Auto-Company Link/Create Warning]:", errComp);
         }
 
         // Etapa vinculação de empresa desativada conforme solicitação do usuário.
