@@ -50,7 +50,12 @@ export const MEET_SELECTORS = {
     '[jsname="tX9u1b"]',
     '.KjMtvf',
     '.i3PoEd',
-    '.X49Xn'
+    '.X49Xn',
+    '[aria-live="polite"]',
+    '[aria-live="assertive"]',
+    '[jscontroller="eI9Bfd"]',
+    '[jsname="lh4w4b"]',
+    'div[style*="bottom"] div[jsname]'
   ],
 
   // Elementos internos de fala
@@ -58,7 +63,10 @@ export const MEET_SELECTORS = {
     '.CNusmb',
     'span.zs7s8d',
     '.T2hybc',
-    '.waN44b'
+    '.waN44b',
+    '[jsname="YSpAdf"]',
+    'span[jsname]',
+    '.yg07ed'
   ],
 
   // Elementos contendo o falante
@@ -66,7 +74,9 @@ export const MEET_SELECTORS = {
     '.jO7h3c',
     '.zs7s8d',
     '.xt4G2',
-    '.yt5B2'
+    '.yt5B2',
+    '[jsname="W1iP4d"]',
+    '.P9198b'
   ],
 
   // Botões de lista de participantes

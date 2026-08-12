@@ -238,6 +238,17 @@ export class CaptionExtractor {
         }
       }
 
+      if (!containerFound) {
+        const ariaLiveElements = document.querySelectorAll('[aria-live="polite"], [aria-live="assertive"]');
+        for (let i = 0; i < ariaLiveElements.length; i++) {
+          const el = ariaLiveElements[i] as HTMLElement;
+          if (el && !isInsideSettingsOrMenu(el) && el.textContent && el.textContent.trim().length > 0) {
+            containerFound = el;
+            break;
+          }
+        }
+      }
+
       const state = MeetingDetector.detectState();
       
       // Se o estado não for ACTIVE, MAS houver um container e tiver texto ou draft ativo, permitimos.
