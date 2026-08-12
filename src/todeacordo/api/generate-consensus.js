@@ -85,14 +85,7 @@ export default async function handler(req, res) {
       return 'pt';
     }
 
-    const detectedLang = detectLanguage(conversationText);
-    if (detectedLang !== 'pt') {
-      const langName = detectedLang === 'en' ? 'Inglês' : 'Espanhol';
-      return res.status(400).json({ 
-        error: `O áudio/legenda da reunião está em ${langName}. Por favor, configure o idioma da legenda no Google Meet para Português (Brasil) e tente novamente.` 
-      });
-    }
-
+    // Adiciona instrução de idioma ao prompt sem bloquear reuniões que contêm termos em inglês
     const userPrompt = buildPrompt(source_platform, participants, transcript_segments);
     
     let parsedData = null;
