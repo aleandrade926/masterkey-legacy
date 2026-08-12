@@ -1,9 +1,6 @@
 import type { ConsensusObject, TranscriptSegment } from '../types';
 import { evaluateTrafficLight } from '../types';
 import { generateConsensusViaLlama } from './providers/llamaProvider';
-import { mockProvider } from './providers/mockProvider';
-
-const USE_MOCK_FALLBACK = false;
 
 interface ConsensusGenerationOptions {
   meetingId: string;
@@ -165,9 +162,9 @@ export async function generateConsensusFromTranscript(options: ConsensusGenerati
     console.error('[ToDeAcordo] Falha na API remota ao gerar consenso. Ativando extrator de fallback local:', error);
     
     // Extrator Heurístico Local: Garante que o usuário NUNCA perca a reunião ou veja um erro de API
-    const agreements: { text: string }[] = [];
-    const decisions: { text: string }[] = [];
-    const obligations: { text: string; owner?: string }[] = [];
+    const agreements: { id: string; text: string }[] = [];
+    const decisions: { id: string; text: string }[] = [];
+    const obligations: { id: string; text: string; owner?: string }[] = [];
     
     const keywordsAgreements = ['acordo', 'combinado', 'vamos', 'ficou definido', 'fechado', 'entregar', 'sim', 'então', 'perfeito', 'aprova', 'fazer', 'pagar', 'enviar'];
 
@@ -177,11 +174,11 @@ export async function generateConsensusFromTranscript(options: ConsensusGenerati
 
       if (hasKeyword) {
         if (lower.includes('entregar') || lower.includes('enviar') || lower.includes('fazer') || lower.includes('vou')) {
-          obligations.push({ text: seg.text, owner: seg.speaker || undefined });
+          obligations.push({ id: crypto.randomUUID(), text: seg.text, owner: seg.speaker || undefined });
         } else if (lower.includes('definido') || lower.includes('decidido') || lower.includes('fechado')) {
-          decisions.push({ text: seg.text });
+          decisions.push({ id: crypto.randomUUID(), text: seg.text });
         } else {
-          agreements.push({ text: seg.text });
+          agreements.push({ id: crypto.randomUUID(), text: seg.text });
         }
       }
     }
@@ -189,7 +186,7 @@ export async function generateConsensusFromTranscript(options: ConsensusGenerati
     // Se nenhuma frase genérica de acordo foi encontrada pelas palavras-chave, extrai 3 falas significativas de exemplo
     if (agreements.length === 0 && decisions.length === 0 && obligations.length === 0) {
       cleanSegments.slice(0, 5).forEach(seg => {
-        agreements.push({ text: `${seg.speaker}: ${seg.text}` });
+        agreements.push({ id: crypto.randomUUID(), text: `${seg.speaker}: ${seg.text}` });
       });
     }
 

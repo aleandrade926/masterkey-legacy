@@ -1,4 +1,5 @@
-import { Component, ReactNode, ErrorInfo } from 'react';
+import { Component } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -47,7 +48,6 @@ export class ErrorBoundary extends Component<Props, State> {
               </button>
               <button
                 onClick={() => {
-                  const urlParams = new URLSearchParams(window.location.search);
                   const isExt = window.location.protocol === 'chrome-extension:';
                   window.location.href = isExt ? 'index.html' : '/app';
                 }}
