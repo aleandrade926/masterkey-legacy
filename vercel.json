@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/instadoodle.html", "destination": "/instadoodle.html" },
     { "source": "/((?!api/).*)" , "destination": "/index.html" }
   ],
   "headers": [
