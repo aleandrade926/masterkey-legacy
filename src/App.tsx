@@ -22,6 +22,7 @@ import FootInTheDoorLab from "./pages/foot-in-the-door-lab";
 import SintoniaMonitor from "./pages/SintoniaMonitor";
 import Empresas from "./pages/taxmanagers-navigator/Empresas";
 import Pessoas from "./pages/taxmanagers-navigator/Pessoas";
+import CfoTaxAi from "./pages/taxmanagers/CfoTaxAi";
 import Negocios from "./pages/taxmanagers-navigator/Negocios";
 import Oportunidades from "./pages/taxmanagers-navigator/Oportunidades";
 import Entregas from "./pages/taxmanagers-navigator/Entregas";
@@ -125,6 +126,12 @@ function App() {
   }
   if (import.meta.env.DEV && (location === "/taxmanagers/foot-in-the-door-lab" || location === "/foot-in-the-door-lab")) {
     return <FootInTheDoorLab />;
+  }
+
+  // CFO Tax AI Landing Page
+  const locLower = location.toLowerCase();
+  if (locLower.includes("/taxcfointelligence") || locLower.includes("/tax-intelligence") || locLower.includes("/cfo")) {
+    return <CfoTaxAi />;
   }
 
   // Isca Digital: Conversor NFS-e

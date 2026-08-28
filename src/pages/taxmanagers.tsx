@@ -145,6 +145,7 @@ export default function TaxManagers() {
             <a href="#tecnologia" className="hover:text-amber-600 transition-colors">Tecnologia</a>
             <a href="#metodo" className="hover:text-amber-600 transition-colors">Método</a>
             <a href="#precos" className="hover:text-amber-600 transition-colors">Planos</a>
+            <a href="/taxcfointelligence" className="text-amber-600 font-bold hover:text-amber-700 transition-colors">Para CFOs</a>
             <a 
               href="https://www.linkedin.com/company/tax-managers" 
               target="_blank" 
@@ -186,6 +187,9 @@ export default function TaxManagers() {
             </button>
             <a href="#parceria" className="px-8 py-4 rounded-lg bg-transparent border-2 border-slate-400 hover:border-slate-300 text-white font-bold transition-all text-center flex items-center justify-center text-lg">
               Sou consultoria parceira
+            </a>
+            <a href="/taxcfointelligence" className="px-8 py-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold transition-all text-center flex items-center justify-center text-lg shadow-[0_0_15px_rgba(37,99,235,0.4)]">
+              Tax CFO Intelligence
             </a>
           </div>
           
