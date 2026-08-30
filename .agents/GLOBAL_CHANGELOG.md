@@ -1143,3 +1143,18 @@ export default function TaxManagers() {
 - **Motivo estratégico:**
   - Eliminar em definitivo o problema crônico de vazamento entre projetos, garantindo que leads e clientes que cheguem pelo Google ao 	odeacordo.com.br acessem a aplicação real do ToDeAcordo.
 - **Deploy:** Deploy em produção realizado com sucesso e validado via Puppeteer e curl em 	odeacordo.com.br, www.todeacordo.com.br, pp.todeacordo.com.br e 	odeacordo.com.br/auth.
+
+### [Data: 30/08/2026] - Upgrade Tactiq-Grade: Motor de Captura Semântica Resiliente, STT Whisper e Extensão v1.1.0
+
+- **Contexto / Motivo Estratégico:**
+  - Resolução definitiva dos problemas crônicos de captura de reuniões do Google Meet documentados no Arquivão (duplicação, classes CSS quebradas pelo Google, falso lobby, ghost CSS obstrutivo).
+  - Alinhamento da proposta de valor do ToDeAcordo frente ao Google Meet (Gemini), Tactiq e Otter.ai: enquanto Tactiq/Otter geram apenas notas passivas unilaterais, o ToDeAcordo entrega o motor de fechamento com link bilateral de consenso oficial (/valida/:id).
+- **Alterações Realizadas:**
+  1. `src/platforms/google-meet/selectors.ts`: Adicionados seletores semânticos universais (`div[aria-live="polite"]`, `div[role="region"]`, `div[data-sender-name]`) e classes modernas do Google Meet.
+  2. `src/platforms/google-meet/captionExtractor.ts`: Implementado fallback semântico automático no `handleMutations` para capturar blocos de fala diretamente mesmo quando classes pais sofrem mutação pelo Google.
+  3. `src/content-script/index.ts`: Removido Ghost CSS obstrutivo (`opacity: 0.001`, `z-index: -9999`) que bloqueava o ciclo de renderização de nós de texto do Google Meet.
+  4. `api/transcribe.js`: Criado endpoint serverless de áudio para transcrição via Groq Whisper API (`whisper-large-v3-turbo`).
+  5. `api/generate-consensus.js`: Suavizada a validação de idioma para não bloquear termos técnicos em inglês e ajustado mínimo de transcrição.
+  6. `public/manifest.json`: Atualizado para versão 1.1.0 e configurado `host_permissions` para `*.todeacordo.com.br` e `meet.google.com`.
+  7. `src/sidepanel/index.tsx`: Interface polida e botões atualizados para geração imediata de consenso e compartilhamento.
+  8. Build e deploy de produção na Vercel (`dpl_C1Hc81kpYHucRRw2UN9sgw82TbHa`) e empacotamento do zip da extensão (`todeacordo_extension_v1.1.0.zip`).
