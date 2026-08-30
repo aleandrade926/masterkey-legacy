@@ -8,14 +8,11 @@
     <title id="dynamic-title">Tax Managers | Inteligência Fiscal Preditiva</title>
     <script>
       (function() {
-        const hostname = window.location.hostname;
         const pathname = window.location.pathname;
-        const isTodeacordo = hostname.includes('todeacordo') || pathname.startsWith('/market') || pathname.startsWith('/book');
+        const isMarket = pathname.startsWith('/market') || pathname.startsWith('/book');
         
-        if (isTodeacordo) {
-          document.getElementById('dynamic-title').textContent = 'ToDeAcordo | Plataforma de Negócios';
-          // Use a generic modern SVG icon for ToDeAcordo or clear it so it doesn't show TM
-          document.getElementById('dynamic-favicon').href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🤝</text></svg>';
+        if (isMarket) {
+          document.getElementById('dynamic-title').textContent = 'KSaaS Marketplace';
         }
       })();
     </script>

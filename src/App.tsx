@@ -63,7 +63,6 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const hostname = typeof window !== "undefined" ? window.location.hostname : "";
-  const isTodeAcordoDomain = hostname.includes("todeacordo");
   const isTaxManagersDomain = hostname.includes("taxmanagers");
   const isAndradeFlorioDomain = hostname.includes("andradeflorio") || hostname.includes("localhost");
 
@@ -93,11 +92,6 @@ function App() {
       return <Marketplace />;
     }
   }
-
-  // ==========================================
-  // 2. ISOLAMENTO TOTAL: ToDeAcordo (MVP)
-  // ==========================================
-  // O app.todeacordo e todeacordo.com.br vão cair no fallback final (<Router />) que renderiza o <Dashboard /> (MVP)
 
 
   // ==========================================

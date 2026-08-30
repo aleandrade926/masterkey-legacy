@@ -1,0 +1,26 @@
+Puravive: {
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_3MNBdgwn67xVwrqqA7bYbKSyA4Gh",
+    "url": "https://presell-puravive-aql7w3lk5-alexandre-s-projects-4e67015b.vercel.app",
+    "inspectorUrl": "https://vercel.com/alexandre-s-projects-4e67015b/presell-puravive/3MNBdgwn67xVwrqqA7bYbKSyA4Gh",
+    "readyState": "READY",
+    "target": "production",
+    "deploymentApiUrl": "https://api.vercel.com/v13/deployments/dpl_3MNBdgwn67xVwrqqA7bYbKSyA4Gh"
+  },
+  "message": "Deployment presell-puravive-aql7w3lk5-alexandre-s-projects-4e67015b.vercel.app ready.",
+  "next": [
+    {
+      "command": "vercel curl https://presell-puravive-aql7w3lk5-alexandre-s-projects-4e67015b.vercel.app",
+      "when": "Verify deployment, including when Deployment Protection is enabled"
+    },
+    {
+      "command": "vercel inspect presell-puravive-aql7w3lk5-alexandre-s-projects-4e67015b.vercel.app",
+      "when": "Inspect deployment"
+    },
+    {
+      "command": "vercel deploy --prod",
+      "when": "Promote to production"
+    }
+  ]
+}

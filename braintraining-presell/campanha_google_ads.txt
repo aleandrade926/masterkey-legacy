@@ -1,0 +1,56 @@
+ESTRUTURA DA CAMPANHA NO GOOGLE ADS: BRAIN TRAINING FOR DOGS
+
+1. DADOS DA CAMPANHA
+--------------------
+Nome da Campanha: [Search] BTD - Fundo de Funil
+Rede: Apenas Rede de Pesquisa (DESMARQUE Rede de Display e Parceiros de Pesquisa!)
+Localização: Estados Unidos (United States)
+Idiomas: Inglês
+Estratégia de Lance: CPC Manual (Desmarque o Otimizador de CPC/Enhanced CPC)
+Orçamento: R$ 50,00 / dia
+
+2. PALAVRAS-CHAVE (Correspondência Exata)
+-----------------------------------------
+[brain training for dogs]
+[brain training for dogs course]
+[adrienne farricelli brain training for dogs]
+[buy brain training for dogs]
+[brain training for dogs discount]
+[brain training for dogs review]
+
+3. PALAVRAS-CHAVE NEGATIVAS (Bloqueie os curiosos)
+--------------------------------------------------
+free
+gratis
+pdf
+download
+torrent
+login
+members area
+scam
+does it work
+youtube
+
+4. ANÚNCIO (COPY)
+-----------------
+URL Final: [O LINK DA SUA PRESELL NA VERCEL]
+
+Títulos (Headlines - Max 30 caracteres):
+T1: Brain Training For Dogs
+T2: Stop Bad Dog Behavior Today
+T3: Official Site - Check Pricing
+T4: Stop Dog Peeing & Barking
+T5: Adrienne Farricelli Course
+T6: Make Your Dog Listen To You
+
+Descrições (Descriptions - Max 90 caracteres):
+D1: Does your dog pee inside, bark, or destroy furniture? Discover the hidden solution.
+D2: Unlock your dog's hidden intelligence. Stop bad behavior in weeks, not years.
+D3: Wasted money on dog training? See what rescue shelters use to calm anxious dogs.
+D4: Check current availability and official pricing for the Brain Training program today.
+
+Sitelinks (Opcionais, mas aumentam a taxa de clique):
+1. Official Availability
+2. Read Success Stories
+3. See How It Works
+4. The "Hidden Intelligence"

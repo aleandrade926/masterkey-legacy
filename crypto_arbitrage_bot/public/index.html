@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantumFlow - Crypto Arbitrage & Market Making Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .live-dot {
+            animation: pulse-green 1.5s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 md:p-8">
+
+    <!-- TOP BAR -->
+    <header class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-slate-800">
+        <div>
+            <div class="flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-emerald-500 live-dot"></div>
+                <h1 class="text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                    QUANTUM<span class="text-emerald-400">FLOW</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded mono">LIVE ENGINE</span>
+                </h1>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">Scanner de Arbitragem Algorítmica Multi-Exchanges em Tempo Real</p>
+        </div>
+
+        <div class="flex items-center gap-4 w-full md:w-auto">
+            <!-- AUTO BOT TOGGLE -->
+            <button id="toggleBotBtn" onclick="toggleAutoBot()" class="w-full md:w-auto px-5 py-2.5 rounded-xl text-xs font-black mono flex items-center justify-center gap-2 transition-all bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">
+                <span id="botStatusDot" class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                <span id="botStatusText">AUTO-BOT: DESLIGADO</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- METRICS CARDS -->
+    <section class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+            <span class="text-[11px] uppercase tracking-wider text-slate-400 mono block mb-1">Saldo em Operação</span>
+            <div class="text-2xl font-black text-white mono" id="currentBalance">$1,000.00 <span class="text-xs text-slate-400">USDT</span></div>
+            <span class="text-[10px] text-slate-500 mt-1 block">Paper Trading (Simulação Real)</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+            <span class="text-[11px] uppercase tracking-wider text-slate-400 mono block mb-1">Lucro Líquido Acumulado</span>
+            <div class="text-2xl font-black text-emerald-400 mono" id="totalProfit">+$0.00</div>
+            <span class="text-[10px] text-slate-500 mt-1 block">Após taxas de 0.20%</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+            <span class="text-[11px] uppercase tracking-wider text-slate-400 mono block mb-1">Operações Executadas</span>
+            <div class="text-2xl font-black text-amber-400 mono" id="totalTrades">0</div>
+            <span class="text-[10px] text-slate-500 mt-1 block">Taxa de Acerto: <span id="winRate" class="text-emerald-400 font-bold">0%</span></span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+            <span class="text-[11px] uppercase tracking-wider text-slate-400 mono block mb-1">Exchanges Conectadas</span>
+            <div class="text-2xl font-black text-cyan-400 mono">5</div>
+            <span class="text-[10px] text-slate-500 mt-1 block">Binance, Bybit, Kraken, Coinbase, KuCoin</span>
+        </div>
+    </section>
+
+    <!-- MAIN GRID -->
+    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- OPPORTUNITIES RADAR (2 COLS) -->
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-5">
+                <div>
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <span>⚡ Radar de Oportunidades de Spread</span>
+                        <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded mono" id="oppCount">0 detectadas</span>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Diferenças de preço instantâneas entre livros de ofertas</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs mono">
+                    <thead class="text-[10px] uppercase text-slate-400 border-b border-slate-800">
+                        <tr>
+                            <th class="py-3 px-2">Par</th>
+                            <th class="py-3 px-2">Comprar em (Ask)</th>
+                            <th class="py-3 px-2">Vender em (Bid)</th>
+                            <th class="py-3 px-2">Spread Líquido</th>
+                            <th class="py-3 px-2 text-right">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="opportunitiesTable" class="divide-y divide-slate-800/60">
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-slate-500">
+                                Escaneando livros de ofertas em tempo real...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- EXECUTION LOG (1 COL) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col h-full">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                    <span>📜 Histórico de Execuções</span>
+                </h2>
+                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded mono">LIVE FILLS</span>
+            </div>
+
+            <div id="tradesLog" class="flex-1 overflow-y-auto space-y-2.5 max-h-[500px] pr-1 text-xs mono">
+                <div class="p-4 bg-slate-950/60 rounded-xl text-center text-slate-500">
+                    Nenhuma ordem executada ainda. Ligue o Auto-Bot ou execute manualmente no radar.
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const ws = new WebSocket(`ws://${window.location.host}`);
+        let currentOpportunities = [];
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'INIT' || data.type === 'UPDATE') {
+                renderStats(data.stats);
+                renderOpportunities(data.opportunities);
+                renderTrades(data.stats.recentTrades);
+                updateBotButton(data.autoTradingEnabled);
+            }
+        };
+
+        function renderStats(stats) {
+            document.getElementById('currentBalance').innerHTML = `$${stats.currentBalance.toFixed(2)} <span class="text-xs text-slate-400">USDT</span>`;
+            
+            const profitEl = document.getElementById('totalProfit');
+            profitEl.textContent = `${stats.totalProfit >= 0 ? '+' : ''}$${stats.totalProfit.toFixed(2)}`;
+            profitEl.className = `text-2xl font-black mono ${stats.totalProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+            document.getElementById('totalTrades').textContent = stats.totalTrades;
+            document.getElementById('winRate').textContent = `${stats.winRate}%`;
+        }
+
+        function renderOpportunities(opps) {
+            currentOpportunities = opps;
+            document.getElementById('oppCount').textContent = `${opps.length} detectadas`;
+
+            const tbody = document.getElementById('opportunitiesTable');
+            if (opps.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-500">Aguardando variações de spread nos livros de ofertas...</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = opps.map((opp, idx) => `
+                <tr class="hover:bg-slate-800/40 transition-colors ${opp.isProfitable ? 'bg-emerald-950/10' : ''}">
+                    <td class="py-3 px-2 font-bold text-white">${opp.symbol}</td>
+                    <td class="py-3 px-2">
+                        <span class="text-slate-300">${opp.buyExchange}</span>
+                        <span class="text-slate-500 block text-[10px]">$${opp.buyPrice.toFixed(2)}</span>
+                    </td>
+                    <td class="py-3 px-2">
+                        <span class="text-slate-300">${opp.sellExchange}</span>
+                        <span class="text-slate-500 block text-[10px]">$${opp.sellPrice.toFixed(2)}</span>
+                    </td>
+                    <td class="py-3 px-2">
+                        <span class="font-bold ${opp.netSpread > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                            ${opp.netSpread > 0 ? '+' : ''}${opp.netSpread}%
+                        </span>
+                        <span class="text-[10px] text-slate-500 block">Bruto: ${opp.grossSpread}%</span>
+                    </td>
+                    <td class="py-3 px-2 text-right">
+                        <button onclick="executeTrade(${idx})" class="px-3 py-1.5 rounded-lg font-bold text-[10px] transition-all ${opp.isProfitable ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg' : 'bg-slate-800 hover:bg-slate-700 text-slate-400'}">
+                            EXECUTAR
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTrades(trades) {
+            const container = document.getElementById('tradesLog');
+            if (!trades || trades.length === 0) return;
+
+            container.innerHTML = trades.map(t => `
+                <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex justify-between items-center">
+                    <div>
+                        <div class="flex items-center gap-1.5 font-bold text-white">
+                            <span>${t.symbol}</span>
+                            <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded">${t.buyExchange} ➔ ${t.sellExchange}</span>
+                        </div>
+                        <span class="text-[10px] text-slate-500">${t.timestamp} • $${t.tradeSize} USDT</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-black text-xs ${t.netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${t.netProfit >= 0 ? '+' : ''}$${t.netProfit.toFixed(4)}
+                        </span>
+                        <span class="text-[10px] text-slate-400 block">${t.profitPercent >= 0 ? '+' : ''}${t.profitPercent}%</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateBotButton(enabled) {
+            const btn = document.getElementById('toggleBotBtn');
+            const dot = document.getElementById('botStatusDot');
+            const txt = document.getElementById('botStatusText');
+
+            if (enabled) {
+                btn.className = "w-full md:w-auto px-5 py-2.5 rounded-xl text-xs font-black mono flex items-center justify-center gap-2 transition-all bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400 shadow-lg shadow-emerald-600/30";
+                dot.className = "w-2.5 h-2.5 rounded-full bg-white live-dot";
+                txt.textContent = "AUTO-BOT: LIGADO ⚡";
+            } else {
+                btn.className = "w-full md:w-auto px-5 py-2.5 rounded-xl text-xs font-black mono flex items-center justify-center gap-2 transition-all bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700";
+                dot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
+                txt.textContent = "AUTO-BOT: DESLIGADO";
+            }
+        }
+
+        async function toggleAutoBot() {
+            await fetch('/api/toggle-auto', { method: 'POST' });
+        }
+
+        async function executeTrade(index) {
+            const opp = currentOpportunities[index];
+            if (!opp) return;
+
+            await fetch('/api/trade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ opportunity: opp, tradeSize: 100 })
+            });
+        }
+    </script>
+</body>
+</html>

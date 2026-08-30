@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gringa Affiliate Tools - Escala & Automação</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js para reatividade simples sem precisar de build -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-20">
+  
+  <div class="max-w-4xl mx-auto p-6" x-data="gringaApp()">
+    
+    <!-- NOTIFICAÇÃO TOAST FLUTUANTE -->
+    <div x-show="toast" 
+         x-transition 
+         class="fixed top-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3 border border-slate-700 text-sm font-semibold"
+         style="display: none;">
+      <span class="text-emerald-400 text-lg">✓</span>
+      <span x-text="toast"></span>
+    </div>
+
+    <header class="mb-8 text-center">
+      <h1 class="text-4xl font-extrabold text-blue-700 tracking-tight">Gringa Tools</h1>
+      <p class="text-slate-500 mt-2 text-lg">Automação em Escala: Mineração, Presell Dinâmica & Google Ads em Lote</p>
+    </header>
+
+    <!-- TABS -->
+    <div class="flex space-x-1 bg-slate-200 p-1 rounded-xl mb-8 flex-wrap">
+      <button @click="tab = 'discover'" :class="tab === 'discover' ? 'bg-white shadow text-blue-700' : 'text-slate-600 hover:text-slate-800'" class="flex-1 py-2 px-3 rounded-lg font-medium transition-all min-w-[120px] text-sm">1. Espião</button>
+      <button @click="tab = 'trends'" :class="tab === 'trends' ? 'bg-white shadow text-blue-700' : 'text-slate-600 hover:text-slate-800'" class="flex-1 py-2 px-3 rounded-lg font-medium transition-all min-w-[120px] text-sm">2. Trends</button>
+      <button @click="tab = 'campaign'" :class="tab === 'campaign' ? 'bg-white shadow text-blue-700' : 'text-slate-600 hover:text-slate-800'" class="flex-1 py-2 px-3 rounded-lg font-medium transition-all min-w-[120px] text-sm">3. Campanha Única</button>
+      <button @click="tab = 'presell'" :class="tab === 'presell' ? 'bg-white shadow text-blue-700' : 'text-slate-600 hover:text-slate-800'" class="flex-1 py-2 px-3 rounded-lg font-medium transition-all min-w-[120px] text-sm">4. Presell Dinâmica</button>
+      <button @click="tab = 'batch'" :class="tab === 'batch' ? 'bg-white shadow text-blue-700' : 'text-slate-600 hover:text-slate-800'" class="flex-1 py-2 px-3 rounded-lg font-bold text-emerald-700 transition-all min-w-[140px] text-sm">⚡ 5. Subir em Massa (CSV)</button>
+    </div>
+
+    <!-- TAB 1: DISCOVER -->
+    <div x-show="tab === 'discover'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h2 class="text-2xl font-bold">🕵️ Espião de Produtos Ocultos</h2>
+          <p class="text-slate-600">Varre o mercado internacional e identifica produtos escalando com 1 clique para as plataformas.</p>
+        </div>
+      </div>
+      
+      <button @click="runDiscover()" :disabled="loadingDiscover" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg w-full transition-colors flex justify-center items-center shadow-md">
+        <span x-show="!loadingDiscover">🔍 Iniciar Varredura de Produtos</span>
+        <span x-show="loadingDiscover" class="animate-pulse">Minerando ofertas internacionais...</span>
+      </button>
+
+      <div x-show="discoverResults" class="mt-8 space-y-6">
+        <div>
+          <h3 class="font-bold text-lg border-b pb-2 mb-4 text-slate-800">🔥 Produtos Identificados & Plataformas</h3>
+          
+          <div class="space-y-4">
+            <template x-for="p in discoverResults?.products" :key="p.name">
+              <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-blue-300 transition-colors">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-extrabold text-blue-800 text-lg" x-text="p.name"></span>
+                    
+                    <span x-show="p.platform === 'ClickBank'" class="text-xs bg-red-100 text-red-700 font-bold px-2.5 py-0.5 rounded-full border border-red-200">
+                      🔴 ClickBank
+                    </span>
+                    <span x-show="p.platform === 'Digistore24'" class="text-xs bg-emerald-100 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      🟢 Digistore24
+                    </span>
+                    <span x-show="p.platform === 'BuyGoods'" class="text-xs bg-orange-100 text-orange-700 font-bold px-2.5 py-0.5 rounded-full border border-orange-200">
+                      🟠 BuyGoods
+                    </span>
+                    <span x-show="p.platform === 'MaxWeb'" class="text-xs bg-purple-100 text-purple-700 font-bold px-2.5 py-0.5 rounded-full border border-purple-200">
+                      🟣 MaxWeb
+                    </span>
+
+                    <span class="text-xs bg-slate-200 text-slate-700 font-medium px-2 py-0.5 rounded-full" x-text="p.count + ' vídeos'"></span>
+                  </div>
+
+                  <div x-show="p.sampleTitle" class="text-xs text-slate-500 mt-1.5 line-clamp-1">
+                    Exemplo no YT: "<span x-text="p.sampleTitle"></span>"
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                  <button @click="selectForTrends(p.name)" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-3 rounded-lg transition-colors shadow-sm" title="Ver no Google Trends">
+                    📈 Trends
+                  </button>
+                  
+                  <button @click="selectForCampaign(p.name)" class="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors shadow-sm" title="Montar Estrutura de Anúncio">
+                    ⚙️ Criar Anúncio
+                  </button>
+                  
+                  <button x-show="p.platform === 'ClickBank'" 
+                          @click="openClickbank(p.name)"
+                          class="text-xs bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm">
+                    🔴 Abrir no ClickBank ↗
+                  </button>
+
+                  <a x-show="p.platform === 'Digistore24'" 
+                     :href="'https://www.digistore24.com/en/marketplace?search=' + encodeURIComponent(p.name)" 
+                     target="_blank" 
+                     class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm">
+                    🟢 Abrir na Digistore ↗
+                  </a>
+
+                  <a x-show="p.platform === 'BuyGoods'" 
+                     href="https://www.buygoods.com/affiliates" 
+                     target="_blank" 
+                     @click="copyText(p.name, 'Nome ' + p.name + ' copiado!')"
+                     class="text-xs bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-3.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm">
+                    🟠 Abrir BuyGoods ↗
+                  </a>
+
+                  <button @click="copyText(p.name, 'Nome do produto copiado!')" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-2.5 rounded-lg transition-colors" title="Copiar Nome do Produto">
+                    📋 Copiar
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: TRENDS -->
+    <div x-show="tab === 'trends'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100" style="display: none;">
+      <h2 class="text-2xl font-bold mb-4">📈 Validador Google Trends (EUA)</h2>
+      <p class="text-slate-600 mb-6">Valide se as buscas no Google dos Estados Unidos estão subindo nos últimos 90 dias antes de gastar qualquer centavo.</p>
+      
+      <div class="flex space-x-3">
+        <input type="text" x-model="trendsKeyword" placeholder="Ex: Puravive, Sugar Harmony Drops" class="flex-1 border-2 border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
+        <button @click="runTrends()" :disabled="loadingTrends || !trendsKeyword" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors whitespace-nowrap">
+          <span x-show="!loadingTrends">Validar Demanda</span>
+          <span x-show="loadingTrends">Buscando na API...</span>
+        </button>
+      </div>
+
+      <div x-show="trendsResult" class="mt-8">
+        <div class="p-6 rounded-xl text-center" 
+             :class="{
+               'bg-green-100 text-green-800 border border-green-200': trendsResult?.status === 'ALTA',
+               'bg-red-100 text-red-800 border border-red-200': trendsResult?.status === 'QUEDA',
+               'bg-yellow-100 text-yellow-800 border border-yellow-200': trendsResult?.status === 'ESTÁVEL',
+               'bg-slate-100 text-slate-800 border border-slate-200': trendsResult?.status === 'NOT_ENOUGH_DATA'
+             }">
+          <div class="text-xs uppercase font-bold tracking-wider mb-1">Veredito de Demanda</div>
+          <div class="text-3xl font-black" x-text="trendsResult?.status"></div>
+          
+          <div class="mt-4 flex justify-center gap-6 text-sm text-slate-600" x-show="trendsResult?.avgFirstHalf">
+            <div>Média 1ª Metade: <strong x-text="trendsResult?.avgFirstHalf?.toFixed(1)"></strong></div>
+            <div>Média 2ª Metade: <strong x-text="trendsResult?.avgSecondHalf?.toFixed(1)"></strong></div>
+          </div>
+
+          <div x-show="trendsResult?.status === 'ALTA'" class="mt-4">
+            <button @click="selectForCampaign(trendsKeyword)" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">
+              🚀 Produto Aprovado! Montar Anúncio Agora
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CAMPAIGN -->
+    <div x-show="tab === 'campaign'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100" style="display: none;">
+      <h2 class="text-2xl font-bold mb-4">⚙️ Estrutura de Campanha (Padrão Sobral)</h2>
+      <p class="text-slate-600 mb-6">Preencha o nome do produto e seu link para gerar a campanha pronta para copiar e colar no Google Ads.</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Nome do Produto</label>
+          <input type="text" x-model="campaignProduct" placeholder="Ex: Puravive" class="w-full border-2 border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Link da sua Presell / Afiliado</label>
+          <input type="text" x-model="affiliateLink" placeholder="https://gringatools.vercel.app/presell.html?p=Puravive&link=..." class="w-full border-2 border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
+        </div>
+      </div>
+      <button @click="runCampaign()" :disabled="!campaignProduct" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+        Gerar Estrutura Completa
+      </button>
+
+      <div x-show="campaignResult" class="mt-8 space-y-8">
+        
+        <!-- Configurações de Campanha -->
+        <div class="bg-slate-800 text-white p-5 rounded-xl">
+          <h3 class="font-bold text-xl mb-4 text-blue-300 border-b border-slate-600 pb-2">1. Configurações da Campanha (Sobral)</h3>
+          <div class="space-y-3 text-sm">
+            <p><strong class="text-blue-200">Nome da Campanha:</strong> <span class="bg-slate-700 px-2 py-1 rounded select-all" x-text="campaignResult?.sobral?.campaignName"></span></p>
+            <p><strong class="text-blue-200">Orçamento Diário:</strong> <span x-text="campaignResult?.sobral?.budget"></span></p>
+            <p><strong class="text-blue-200">Estratégia de Lance:</strong> <span x-text="campaignResult?.sobral?.biddingStrategy"></span></p>
+            <p><strong class="text-blue-200">Locais (Geografia):</strong> <span x-text="campaignResult?.sobral?.locations"></span></p>
+            <p><strong class="text-blue-200">Idiomas:</strong> <span x-text="campaignResult?.sobral?.languages"></span></p>
+          </div>
+        </div>
+
+        <!-- Conjuntos de Anúncios -->
+        <div class="bg-white border-2 border-slate-200 p-5 rounded-xl">
+          <h3 class="font-bold text-xl mb-4 text-slate-800 border-b pb-2">2. Conjunto de Anúncios (CJ)</h3>
+          <div class="space-y-3 text-sm">
+            <p><strong>Nome do Conjunto:</strong> <span class="bg-slate-100 border px-2 py-1 rounded select-all" x-text="campaignResult?.sobral?.adGroup1"></span></p>
+          </div>
+          
+          <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h4 class="font-bold text-sm mb-1 text-green-700">Palavras Exatas (Cole no CJ 1)</h4>
+              <textarea readonly class="w-full h-32 bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-700 select-all" x-text="campaignResult?.exact?.join('\n')"></textarea>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm mb-1 text-red-600">Palavras Negativas (Cole na Campanha)</h4>
+              <textarea readonly class="w-full h-32 bg-red-50 border border-red-200 rounded-lg p-3 text-xs font-mono text-slate-700 select-all" x-text="campaignResult?.negatives?.join('\n')"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anúncios (Ads) -->
+        <div class="bg-white border-2 border-slate-200 p-5 rounded-xl">
+          <h3 class="font-bold text-xl mb-4 text-slate-800 border-b pb-2">3. O Anúncio (Criativo)</h3>
+          
+          <div class="grid grid-cols-1 gap-3 text-sm">
+            <div><strong>URL Final:</strong> <span class="text-blue-600 select-all bg-slate-100 px-2 py-1 rounded" x-text="campaignResult?.ads?.finalUrl"></span></div>
+            <div><strong>Caminho de Exibição (Path):</strong> <span class="bg-slate-100 px-2 py-1 rounded select-all" x-text="campaignResult?.ads?.displayPath1"></span> / <span class="bg-slate-100 px-2 py-1 rounded select-all" x-text="campaignResult?.ads?.displayPath2"></span></div>
+            
+            <div class="mt-3">
+              <strong>Títulos (Titles):</strong>
+              <ul class="list-disc ml-5 mt-1 text-slate-600">
+                <template x-for="title in campaignResult?.ads?.titles">
+                  <li class="select-all cursor-pointer hover:bg-slate-100 p-1 rounded" x-text="title"></li>
+                </template>
+              </ul>
+            </div>
+
+            <div class="mt-3">
+              <strong>Descrições (Descriptions):</strong>
+              <ul class="list-disc ml-5 mt-1 text-slate-600">
+                <template x-for="desc in campaignResult?.ads?.descriptions">
+                  <li class="select-all cursor-pointer hover:bg-slate-100 p-1 rounded" x-text="desc"></li>
+                </template>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 4: PRESELL DINÂMICA -->
+    <div x-show="tab === 'presell'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100" style="display: none;">
+      <h2 class="text-2xl font-bold mb-4">🚀 Presell Dinâmica Global (1 Link para Todos)</h2>
+      <p class="text-slate-600 mb-6">Você não precisa criar novas páginas. Sua Presell Dinâmica já está online na Vercel e se adapta automaticamente a qualquer produto.</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Nome do Produto</label>
+          <input type="text" x-model="campaignProduct" placeholder="Ex: Alpilean, Java Burn" class="w-full border-2 border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Seu Link de Afiliado (Hoplink)</label>
+          <input type="text" x-model="affiliateLink" placeholder="https://...hop.clickbank.net" class="w-full border-2 border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500">
+        </div>
+      </div>
+
+      <div x-show="campaignProduct && affiliateLink" class="bg-slate-100 p-4 rounded-xl border border-slate-300">
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Sua URL Final Gerada para o Google Ads:</label>
+        <div class="flex gap-2 items-center">
+          <input type="text" readonly :value="getDynamicPresellUrl()" class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-mono text-blue-700 font-bold">
+          <button @click="copyText(getDynamicPresellUrl(), 'URL da Presell Dinâmica copiada!')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors">
+            Copiar
+          </button>
+          <a :href="getDynamicPresellUrl()" target="_blank" class="bg-slate-700 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors">
+            Testar ↗
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: BATCH (SUBIR EM MASSA) -->
+    <div x-show="tab === 'batch'" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100" style="display: none;">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-2xl">⚡</span>
+        <h2 class="text-2xl font-black text-emerald-800">Subir em Massa no Google Ads (CSV / Editor)</h2>
+      </div>
+      <p class="text-slate-600 mb-6">Cole uma lista de produtos e links. O sistema gera a planilha oficial do <strong>Google Ads Editor</strong> para importar 10, 20 ou 50 campanhas completas de uma só vez!</p>
+
+      <div class="mb-4">
+        <label class="block text-sm font-bold text-slate-700 mb-1">Cole seus Produtos (1 por linha no formato: <code>Nome do Produto | Seu Link de Afiliado</code>):</label>
+        <textarea x-model="batchInput" 
+                  rows="6" 
+                  placeholder="Alpilean | https://6a811zpcze4wkp4jyan-wuwmj1.hop.clickbank.net&#10;Java Burn | https://seunickname.javaburn.hop.clickbank.net&#10;Teds Woodworking | https://seunickname.tedswood.hop.clickbank.net&#10;Dentabiome | https://seunickname.dentabiome.hop.clickbank.net"
+                  class="w-full font-mono text-xs border-2 border-slate-200 rounded-xl p-4 focus:outline-none focus:border-emerald-500 bg-slate-50"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Orçamento Diário por Campanha (R$):</label>
+          <input type="number" x-model="batchBudget" class="w-full border rounded-lg px-3 py-2 text-sm" value="30">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Limite Máx. de CPC (R$):</label>
+          <input type="number" x-model="batchCpc" class="w-full border rounded-lg px-3 py-2 text-sm" value="15">
+        </div>
+      </div>
+
+      <button @click="downloadBatchCsv()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 px-6 rounded-xl transition-colors text-lg flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+        Baixar Planilha CSV para Google Ads Editor
+      </button>
+
+      <div class="mt-6 bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-sm text-emerald-900">
+        <strong>Como importar no Google Ads em 10 segundos:</strong>
+        <ol class="list-decimal ml-5 mt-2 space-y-1.5">
+          <li>Baixe e instale o software gratuito <strong>Google Ads Editor</strong> no seu computador.</li>
+          <li>Clique no menu superior <strong>Conta ➔ Importar ➔ Do arquivo...</strong> e selecione o arquivo CSV que você acabou de baixar.</li>
+          <li>Clique em <strong>Processar</strong> e depois em <strong>Publicar</strong>.</li>
+          <li>Pronto! Todas as campanhas, grupos de anúncios, palavras exatas, negativas e criativos sobem simultaneamente para o Google Ads.</li>
+        </ol>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function gringaApp() {
+      return {
+        tab: 'discover',
+        toast: null,
+        
+        loadingDiscover: false,
+        discoverResults: null,
+        
+        trendsKeyword: '',
+        loadingTrends: false,
+        trendsResult: null,
+
+        campaignProduct: '',
+        affiliateLink: '',
+        campaignResult: null,
+
+        batchInput: `Alpilean | https://6a811zpcze4wkp4jyan-wuwmj1.hop.clickbank.net\nJava Burn | https://seunickname.javaburn.hop.clickbank.net\nTeds Woodworking | https://seunickname.tedswood.hop.clickbank.net\nDentabiome | https://seunickname.dentabiome.hop.clickbank.net`,
+        batchBudget: 30,
+        batchCpc: 15,
+
+        showToast(msg) {
+          this.toast = msg;
+          setTimeout(() => { this.toast = null; }, 4000);
+        },
+
+        copyText(text, successMsg) {
+          navigator.clipboard.writeText(text);
+          this.showToast(successMsg || 'Copiado para a área de transferência!');
+        },
+
+        getDynamicPresellUrl() {
+          const base = window.location.origin + '/presell.html';
+          return `${base}?p=${encodeURIComponent(this.campaignProduct)}&link=${encodeURIComponent(this.affiliateLink)}`;
+        },
+
+        openClickbank(productName) {
+          navigator.clipboard.writeText(productName);
+          this.showToast(`"${productName}" copiado! Cole na busca do Marketplace do ClickBank.`);
+          window.open('https://accounts.clickbank.com/marketplace.htm', '_blank');
+        },
+
+        selectForTrends(name) {
+          this.trendsKeyword = name;
+          this.tab = 'trends';
+          this.runTrends();
+        },
+
+        selectForCampaign(name) {
+          this.campaignProduct = name;
+          this.tab = 'campaign';
+          this.runCampaign();
+        },
+
+        async runDiscover() {
+          this.loadingDiscover = true;
+          this.discoverResults = null;
+          try {
+            const res = await fetch('/api/discover');
+            this.discoverResults = await res.json();
+          } catch(e) { alert('Erro ao buscar dados'); }
+          this.loadingDiscover = false;
+        },
+
+        async runTrends() {
+          this.loadingTrends = true;
+          this.trendsResult = null;
+          try {
+            const res = await fetch(`/api/trends?keyword=${encodeURIComponent(this.trendsKeyword)}`);
+            this.trendsResult = await res.json();
+          } catch(e) { alert('Erro ao buscar dados'); }
+          this.loadingTrends = false;
+        },
+
+        async runCampaign() {
+          try {
+            let finalPresell = this.affiliateLink ? this.getDynamicPresellUrl() : '';
+            let url = `/api/campaign?product=${encodeURIComponent(this.campaignProduct)}`;
+            if (finalPresell) url += `&link=${encodeURIComponent(finalPresell)}`;
+            
+            const res = await fetch(url);
+            this.campaignResult = await res.json();
+          } catch(e) { alert('Erro ao gerar campanha'); }
+        },
+
+        downloadBatchCsv() {
+          const lines = this.batchInput.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+          if (lines.length === 0) {
+            alert('Cole pelo menos 1 produto no formato: Nome | Link');
+            return;
+          }
+
+          // Cabeçalho oficial do Google Ads Editor
+          const headers = [
+            'Campaign',
+            'Campaign Daily Budget',
+            'Campaign Type',
+            'Networks',
+            'Languages',
+            'Ad Group',
+            'Keyword',
+            'Criterion Type',
+            'Headline 1',
+            'Headline 2',
+            'Headline 3',
+            'Description 1',
+            'Description 2',
+            'Final URL',
+            'Path 1',
+            'Path 2'
+          ];
+
+          const rows = [];
+          const negativeList = ['free', 'gratis', 'login', 'member', 'download', 'pdf', 'scam', 'fake', 'side effects', 'amazon', 'ebay', 'coupon', 'refund'];
+
+          lines.forEach((line, idx) => {
+            const parts = line.split('|');
+            const productName = (parts[0] || '').trim();
+            const rawLink = (parts[1] || '').trim();
+            
+            if (!productName) return;
+
+            const upperProduct = productName.toUpperCase();
+            const lowerProduct = productName.toLowerCase();
+            const campName = `[01] - GS - Fundo de Funil - ${upperProduct}`;
+            const adGroupName = `[01] - Nome Exato [Fundo de Funil]`;
+            const presellUrl = `https://gringatools.vercel.app/presell.html?p=${encodeURIComponent(productName)}&link=${encodeURIComponent(rawLink)}`;
+
+            // 1. Linha do Anúncio Responsivo
+            rows.push([
+              campName,
+              this.batchBudget,
+              'Search',
+              'Google search',
+              'en;pt',
+              adGroupName,
+              '', // Keyword vazio na linha do anúncio
+              '',
+              `${upperProduct}™ Official Website`,
+              `Buy ${upperProduct}™ (Save 80%)`,
+              `Order ${upperProduct}™ Today`,
+              `Get ${upperProduct} from the Official Website. 100% Genuine Formula. Order Now!`,
+              `Backed by a 60-Day 100% Money-Back Guarantee. Fast USA Shipping. Don't buy fakes!`,
+              presellUrl,
+              'Official',
+              'Discount'
+            ]);
+
+            // 2. Linhas de Palavras-Chave Exatas
+            const keywords = [
+              `[${lowerProduct}]`,
+              `[buy ${lowerProduct}]`,
+              `[order ${lowerProduct}]`,
+              `[${lowerProduct} official website]`,
+              `[where to buy ${lowerProduct}]`,
+              `[${lowerProduct} official store]`
+            ];
+
+            keywords.forEach(kw => {
+              rows.push([
+                campName,
+                '',
+                '',
+                '',
+                '',
+                adGroupName,
+                kw,
+                'Exact',
+                '', '', '', '', '', '', '', ''
+              ]);
+            });
+
+            // 3. Linhas de Palavras Negativas
+            negativeList.forEach(neg => {
+              rows.push([
+                campName,
+                '',
+                '',
+                '',
+                '',
+                '', // Nível campanha
+                neg,
+                'Negative Exact',
+                '', '', '', '', '', '', '', ''
+              ]);
+            });
+          });
+
+          // Converte para CSV com escape
+          const csvContent = [
+            headers.join(','),
+            ...rows.map(row => row.map(cell => `"${String(cell || '').replace(/"/g, '""')}"`).join(','))
+          ].join('\n');
+
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `campanhas_google_ads_em_massa.csv`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          this.showToast('Planilha CSV gerada e baixada com sucesso!');
+        }
+      }
+    }
+  </script>
+</body>
+</html>

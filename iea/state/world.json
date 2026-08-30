@@ -1,0 +1,12 @@
+{
+  "resources": [
+    "http_get",
+    "http_post_restricted"
+  ],
+  "permissions": [
+    "READ-ONLY",
+    "POST TO ALLOWLIST",
+    "NO MONEY",
+    "NO FAKE IDENTITY"
+  ]
+}
