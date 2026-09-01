@@ -1158,3 +1158,25 @@ export default function TaxManagers() {
   6. `public/manifest.json`: Atualizado para versão 1.1.0 e configurado `host_permissions` para `*.todeacordo.com.br` e `meet.google.com`.
   7. `src/sidepanel/index.tsx`: Interface polida e botões atualizados para geração imediata de consenso e compartilhamento.
   8. Build e deploy de produção na Vercel (`dpl_C1Hc81kpYHucRRw2UN9sgw82TbHa`) e empacotamento do zip da extensão (`todeacordo_extension_v1.1.0.zip`).
+
+### [01/09/2026] - Criação da Skill ladeira-sales-pages
+- **Local:** C:\Users\Alexandre\masterkey-frontend\.agents\skills\ladeira-sales-pages\SKILL.md
+- **O que foi feito:**
+  - Consolidado todo o conhecimento da Aula 3 de Páginas de Leandro Ladeira (VTSD / Mergulhando na IA).
+  - Mapeados os 4 Padrões de Headlines de Alta Conversão (Tangibilização com Números/Prazos, Ataque ao Status Quo / FOMO Temporal, Quebra de Objeção Emocional e Desafio Direto).
+  - Estruturada a Fórmula Universal dos 3 Tópicos da Mini-Aula / VSL.
+  - Sistematizado o Storytelling Visceral da Dor em 4 atos (Esforço, Vergonha/Frustração, Causa Raiz Externa, Mecanismo Contraintuitivo).
+  - Padronizado o Empacotamento Visual de Ferramentas / Low Ticket com mockups densos e verbos de posse.
+- **Motivo estratégico:**
+  - Padronizar a criação e reestruturação de páginas de vendas e ofertas diretas no ecossistema de infoprodutos e ferramentas.
+
+### [01/09/2026] - Reestruturação Completa da Copy de Vendas (guia.repesquisa.com.br)
+- **Local:** C:\Users\Alexandre\masterkey-frontend\public-ebook\index.html
+- **O que foi feito:**
+  - Aplicação integral da metodologia **Leandro Ladeira (VTSD / Mergulhando na IA)** via skill ladeira-sales-pages.
+  - **Headline de Ataque ao Risco Real:** Substituição do título genérico por gancho direto focado no perigo invisível do "Contrato de Gaveta".
+  - **Storytelling Visceral da Dor:** Injeção da narrativa em 4 atos (esforço, risco de penhora/inventário por dívida do antigo dono, desmistificação dos 10 anos na justiça e introdução do mecanismo rápido da Usucapião Extrajudicial no Cartório).
+  - **Hook dos 3 Tópicos:** Estruturação dos passos fundamentais (Diagnóstico de Matrícula, Cadeia Possessória e Requerimentos Oficiais).
+  - **Engenharia de Preço & Oferta Transparente:** Adicionada a seção de transparência radical do Ladeira explicando o aumento do custo de tráfego, ancorando o valor real em R$ 97,00 e justificando a liberação do lote de validação por **R$ 47,00** para destravar vendas e colher depoimentos antes do reajuste.
+- **Motivo estratégico:**
+  - Aumentar drasticamente o CTR, engajamento e a taxa de conversão direta da página, viabilizando o ROI positivo nas campanhas de Google Ads / Meta Ads.
