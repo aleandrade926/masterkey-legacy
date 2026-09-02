@@ -1180,3 +1180,23 @@ export default function TaxManagers() {
   - **Engenharia de Preço & Oferta Transparente:** Adicionada a seção de transparência radical do Ladeira explicando o aumento do custo de tráfego, ancorando o valor real em R$ 97,00 e justificando a liberação do lote de validação por **R$ 47,00** para destravar vendas e colher depoimentos antes do reajuste.
 - **Motivo estratégico:**
   - Aumentar drasticamente o CTR, engajamento e a taxa de conversão direta da página, viabilizando o ROI positivo nas campanhas de Google Ads / Meta Ads.
+
+### [02/09/2026] - Reestruturação de Copy com Foco na Dor Estratégica do CFO (TaxManagers & CfoTaxAi)
+- **Local:** C:\Users\Alexandre\taxmanagers-site\src\CfoTaxAi.tsx, C:\Users\Alexandre\taxmanagers-site\src\App.tsx
+- **O que foi feito:**
+  - Injeção da psicologia e dilema real do CFO identificado em interações com líderes financeiros ("Não matar o sonho do empreendedor, mas fazer o plano parar de pé no caixa").
+  - Reposicionamento do tributário não como cálculo contábil a posteriori, mas como variável pré-estratégica que define onde operar, onde investir e quanto sobra no EBITDA.
+  - Refinamento do Hero e das seções do programa /taxcfointelligence (Reforma Tributár.IA) sob a metodologia ormula-high-ticket e ladeira-sales-pages.
+  - Atualização do Hero principal da TaxManagers (	axmanagers.com.br) conectando a auditoria com IA à tomada de decisão executiva e proteção de margem.
+- **Motivo estratégico:**
+  - Elevar a taxa de conversão e atratividade para CFOs e acionistas de médias e grandes empresas em busca de clareza diante da Reforma Tributária.
+- **Deploy:** Publicação em produção na Vercel (	axmanagers.com.br).
+
+### [02/09/2026] - Ponte de Sincronização Google Drive (Antigravity_Sync) & Regra de Workspace
+- **Local:** G:\Meu Drive\Antigravity_Sync, C:\Users\Alexandre\masterkey-frontend\.agents\AGENTS.md, C:\Users\Alexandre\masterkey-frontend\.agents\scripts\sync_drive.ps1
+- **O que foi feito:**
+  - Localizada e configurada a pasta de sincronização do Google Drive em G:\Meu Drive\Antigravity_Sync.
+  - Criada a regra persistente de workspace em AGENTS.md para governança da ponte de comunicação com o Gemini na nuvem.
+  - Implementado o script de automação sync_drive.ps1 que espelha o GLOBAL_CHANGELOG.md e gera em tempo real o arquivo STATUS_ATUAL.md (projeto ativo, última ação, status de build/deploy, erros e decisões pendentes).
+- **Motivo estratégico:**
+  - Garantir visibilidade contínua e bidirecional do estado de desenvolvimento e contexto do ecossistema entre as instâncias do agente local (Antigravity) e na nuvem.
