@@ -39,23 +39,41 @@ function CinemaCrossfadeMedia({
     if (!video) return;
 
     let timer: NodeJS.Timeout;
+    let isFading = false;
 
-    const handleEnded = () => {
+    const doTransition = () => {
+      if (isFading) return;
+      isFading = true;
       setShowImage(true);
       timer = setTimeout(() => {
         setShowImage(false);
         setTimeout(() => {
           if (video) {
-            video.currentTime = 0;
-            video.play().catch(() => {});
+            try {
+              video.currentTime = 0;
+              video.play().catch(() => {});
+            } catch (e) {}
+            isFading = false;
           }
         }, 800);
       }, 3500);
     };
 
+    const handleEnded = () => {
+      doTransition();
+    };
+
+    const handleTimeUpdate = () => {
+      if (video.duration && video.duration > 1 && video.currentTime >= video.duration - 0.35) {
+        doTransition();
+      }
+    };
+
     video.addEventListener("ended", handleEnded);
+    video.addEventListener("timeupdate", handleTimeUpdate);
     return () => {
       video.removeEventListener("ended", handleEnded);
+      video.removeEventListener("timeupdate", handleTimeUpdate);
       clearTimeout(timer);
     };
   }, []);
@@ -361,7 +379,7 @@ export default function BarbaraBrownLanding() {
                 <span className="text-[10px] uppercase tracking-[0.22em] text-[#8c5e23] font-bold block mb-1">A Marca & Seu Propósito • Quiet Luxury</span>
                 <h4 className="text-base font-serif text-[#141210] font-bold mb-1.5">O Selo da Mulher que Constrói o Próprio Espaço</h4>
                 <p className="text-xs text-[#57514a] leading-relaxed">
-                  A Barbara Brown não foi criada para quem precisa de logotipos gigantes para se afirmar. Ela representa a mulher que lidera, decide e transita por ambientes de alta exigência com elegância silenciosa. O monograma BB simboliza a união da nobreza do couro artesanal com a engenharia funcional contemporânea — sofisticação que se impõe sem precisar gritar.
+                  A Barbara Brown representa a mulher que lidera, decide e transita por ambientes de alta exigência com elegância silenciosa. O monograma BB simboliza a união da nobreza do couro artesanal com a engenharia funcional contemporânea — sofisticação que se impõe sem precisar gritar.
                 </p>
               </div>
             </div>

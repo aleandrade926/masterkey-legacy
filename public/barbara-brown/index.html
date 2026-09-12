@@ -76,7 +76,7 @@
       </div>
 
       <!-- HERO VIDEO CONTAINER MAJESTOSO (SEM IMAGEM DUPLICADA) -->
-      <div class="relative rounded-3xl overflow-hidden border border-[#e5ded0] shadow-2xl bg-white p-2.5 sm:p-4 max-w-6xl mx-auto">
+      <div class="relative rounded-3xl overflow-hidden border border-[#e5ded0] shadow-2xl bg-white p-2.5 sm:p-4 max-w-6xl mx-auto aspect-[16/10] md:aspect-[16/9] max-h-[660px]">
           <video id="hero-video" autoplay muted playsinline poster="/barbara-brown/bb_hero_cognac.jpg" class="w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out">
             <source src="/barbara-brown/bb_hero_marble_video.mp4" type="video/mp4">
           </video>
@@ -100,7 +100,6 @@
               </div>
             </div>
           </div>
-        </div>
       </div>
 
     </div>
@@ -198,7 +197,7 @@
               <span class="text-[10px] uppercase tracking-[0.22em] text-[#8c5e23] font-bold block mb-1.5">A Marca & Seu Propósito • Quiet Luxury</span>
               <h4 class="text-lg font-serif text-[#141210] font-bold mb-2">O Selo da Mulher que Constrói o Próprio Espaço</h4>
               <p class="text-xs text-[#57514a] leading-relaxed">
-                A Barbara Brown não foi criada para quem precisa de logotipos gigantes para se afirmar. Ela representa a mulher que lidera, decide e transita por ambientes de alta exigência com elegância silenciosa. O monograma BB simboliza a união da nobreza do couro artesanal com a engenharia funcional contemporânea — sofisticação que se impõe sem precisar gritar.
+                A Barbara Brown representa a mulher que lidera, decide e transita por ambientes de alta exigência com elegância silenciosa. O monograma BB simboliza a união da nobreza do couro artesanal com a engenharia funcional contemporânea — sofisticação que se impõe sem precisar gritar.
               </p>
             </div>
           </div>
@@ -231,7 +230,7 @@
       </div>
 
       <!-- ENGENHARIA INVISÍVEL VÍDEO MAJESTOSO (SEM IMAGEM DUPLICADA) -->
-      <div class="rounded-3xl overflow-hidden border border-[#e5ded0] shadow-2xl bg-white p-2.5 sm:p-4 mb-14 max-w-5xl mx-auto">
+      <div class="relative rounded-3xl overflow-hidden border border-[#e5ded0] shadow-2xl bg-white p-2.5 sm:p-4 mb-14 max-w-5xl mx-auto aspect-[16/10] md:aspect-[16/9] max-h-[620px]">
           <video id="interior-video" autoplay muted playsinline poster="/barbara-brown/bb_interior_engineering.jpg" class="w-full h-full object-cover transition-opacity duration-1000 ease-in-out">
             <source src="/barbara-brown/bb_interior_video.mp4" type="video/mp4">
           </video>
@@ -251,7 +250,6 @@
               </div>
             </div>
           </div>
-        </div>
       </div>
 
       <!-- OS 8 DIFERENCIAIS -->
@@ -525,13 +523,20 @@
       }
     }
 
-    // Transição Suave Vídeo -> Foto Editorial Original
+    // Transição Suave Vídeo -> Foto Editorial Original com Fallback de Timeupdate
     function setupCrossfade(videoId, imageId) {
       const video = document.getElementById(videoId);
       const img = document.getElementById(imageId);
       if (!video || !img) return;
+      if (video.dataset.crossfadeInit === 'true') return;
+      video.dataset.crossfadeInit = 'true';
 
-      video.addEventListener('ended', function() {
+      let isFading = false;
+
+      function doTransition() {
+        if (isFading) return;
+        isFading = true;
+
         img.classList.remove('opacity-0');
         img.classList.add('opacity-100');
         video.classList.add('opacity-0');
@@ -541,20 +546,33 @@
           img.classList.add('opacity-0');
           video.classList.remove('opacity-0');
           setTimeout(function() {
-            video.currentTime = 0;
-            video.play().catch(function() {});
+            try {
+              video.currentTime = 0;
+              video.play().catch(function() {});
+            } catch (e) {}
+            isFading = false;
           }, 800);
         }, 3500);
+      }
+
+      video.addEventListener('ended', doTransition);
+      video.addEventListener('timeupdate', function() {
+        if (video.duration && video.duration > 1 && video.currentTime >= (video.duration - 0.35)) {
+          doTransition();
+        }
       });
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    function initAllCrossfades() {
       setupCrossfade('hero-video', 'hero-image');
       setupCrossfade('interior-video', 'interior-image');
-    });
-    // Executa imediatamente caso o DOM já esteja pronto
-    setupCrossfade('hero-video', 'hero-image');
-    setupCrossfade('interior-video', 'interior-image');
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAllCrossfades);
+    } else {
+      initAllCrossfades();
+    }
 
     // Formulário VIP Co-Creator via WhatsApp
     const form = document.querySelector('form');
