@@ -658,11 +658,12 @@ export default function BarbaraBrownLanding() {
       {/* 8. FOOTER EDITORIAL LUXO */}
       <footer className="py-14 px-6 border-t border-[#262422] bg-[#141312] text-center text-white/60 text-xs tracking-widest">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="text-left">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="font-serif tracking-[0.2em] font-semibold text-white text-base">BARBARA BROWN</span>
-              <span className="text-[#cbb086]">• BBB</span>
-            </div>
+          <div className="flex flex-col items-center sm:items-start gap-2 text-left">
+            <img 
+              src="/barbara-brown/bb_logo_official.jpg" 
+              alt="Barbara Brown" 
+              className="h-12 md:h-14 w-auto object-contain rounded-xl border border-white/15 shadow-md"
+            />
             <p className="text-white/40 text-[11px] tracking-normal">Design atemporal. Engenharia invisível.</p>
           </div>
           <p>© 2026 Barbara Brown Bags. Todos os direitos reservados.</p>
