@@ -132,7 +132,12 @@ function CinemaCrossfadeMedia({
             </p>
           )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-end gap-2.5 shrink-0">
+          <img
+            src="/barbara-brown/bb_logo_official.jpg"
+            alt="Barbara Brown"
+            className="h-11 md:h-13 w-auto rounded-xl shadow-2xl border border-[#d9ccb6]/90 object-contain ring-1 ring-black/20"
+          />
           {showMuteButton && (
             <button
               onClick={toggleMute}
@@ -141,11 +146,6 @@ function CinemaCrossfadeMedia({
               {isMuted ? "Ativar Áudio" : "Mutar Áudio"}
             </button>
           )}
-          <img
-            src="/barbara-brown/bb_logo_official.jpg"
-            alt="Barbara Brown"
-            className="h-10 md:h-11 w-auto rounded-xl shadow-xl border border-[#d9ccb6]/90 object-contain ring-1 ring-black/20 shrink-0"
-          />
         </div>
       </div>
     </div>
