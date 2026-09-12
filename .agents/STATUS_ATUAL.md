@@ -75,16 +75,18 @@
 - **Tese Central:** Marroquinaria feminina executiva de alto padrão (*The Barbara Brown Tech Tote*) integrando o método "Mala de Rodinhas" e a engenharia funcional de resolução de dores estilo Insider Store (Secret AirTag Vault, DWR C0 hidrofóbico à prova de café, forro com íons de prata champagne, laptop sleeve flutuante 14" e alívio de peso < 640g).
 - **Identidade Visual Oficial & Quiet Luxury:**
   - `bb_logo_official.jpg`: Logotipo definitivo com monograma "BB" chanfrado em ouro acetinado sobre papel marfim e tipografia gravada "BARBARA BROWN".
-  - Paleta Quiet Luxury: Fundo marfim `#fbf9f5`, tipografia nobre café/charcoal `#141210` e detalhes em ouro envelhecido `#8c5e23`.
-  - **Header Dinâmico Retrátil (Padrão Andrade & Florio):** Logotipo imponente no topo inicial (`h-16 md:h-20` / ~80px de altura com `py-5 md:py-6`) que encolhe suavemente ao rolar a página (`scrollY > 40px`) para formato compacto (`h-9 md:h-10` / ~40px e `py-2.5`), garantindo perfeita legibilidade da alta grife sem poluir a navegação.
-- **Ativos Visuais Oficiais Hospedados (`public/barbara-brown/`):**
-  - `bb_hero_cognac.jpg`: Peça hero em mesa de mármore travertino com monograma BB dourado.
+  - Paleta Quiet Luxury: Fundo marfim `#fbf9f5`, tipografia nobre café/charcoal `#1f1c1a` e detalhes em ouro envelhecido `#8c5e23`.
+  - **Header Dinâmico Retrátil Calibrado (Padrão Andrade & Florio):** Logotipo nobre e expandido no topo inicial (`h-20 md:h-24` / ~96px de altura com `py-5 md:py-6`) que encolhe suavemente ao rolar a página (`scrollY > 40px`) para formato compacto (`h-10 md:h-12` / ~44px e `py-2.5`), acompanhado por tipografia de links reforçada (`text-[13px] md:text-sm`, `font-semibold`) com alinhamento visual balanceado.
+- **Ativos Visuais & Vídeos Cinematográficos Hospedados (`public/barbara-brown/`):**
+  - `bb_hero_marble_video.mp4`: Vídeo Google Veo em alta resolução exibindo a Hero Tech Tote sobre mármore travertino (autoplay, loop, muted).
+  - `bb_interior_video.mp4`: Vídeo Google Veo revelando a engenharia de divisórias internas e o Secret AirTag Vault.
+  - `bb_hero_cognac.jpg`: Peça hero em mesa de mármore (poster / fallback de alta resolução).
   - `bb_lifestyle_executive.jpg`: Estilo corporativo com executiva elegante na Faria Lima.
-  - `bb_interior_engineering.jpg`: Raio-X do interior com divisórias técnicas e AirTag aberto.
+  - `bb_interior_engineering.jpg`: Raio-X do interior (poster / fallback).
 - **Rotas & Páginas em Produção:**
   - SPA React / Tailwind: `/barbara-brown`, `/bbb`, `/co-creator`.
   - Página Estática Ultra-Rápida: `/barbara-brown/index.html` (com caminhos absolutos e carregamento em 0.1s).
-  - Deploy ao vivo: `https://masterkey-frontend-czwx2n5c0-alexandre-s-projects-4e67015b.vercel.app/barbara-brown/index.html` e `https://app.taxmanagers.com.br/barbara-brown`.
+  - Deploy ao vivo: `https://app.taxmanagers.com.br/barbara-brown`.
 - **Células Autônomas de SDR Operacionais:**
   1. **Agente Clara (`CLARA_INFLUENCER_MASTER.md`):** Head de Creator Acquisition & Parcerias VIP. Foco em influenciadoras de elegância clássica e advogadas. Base inicial: 7 criadoras mapeadas com proposta de Co-Creator (bolsa com o nome da criadora + 20% comissão + 15% cross-sell).
   2. **Agente Victor (`VICTOR_OEM_MASTER.md`):** Head de Operações Fabris & Suprimentos Industriais. Foco em ateliês e indústrias nos polos do Vale dos Sinos (RS) e Franca/Jaú (SP). Base inicial: 7 indústrias OEM mapeadas para cotação de lote piloto e prototipagem.

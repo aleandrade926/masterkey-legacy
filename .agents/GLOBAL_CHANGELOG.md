@@ -1,6 +1,20 @@
 # Global Master Changelog
 *Memória contínua do ecossistema de Inteligência Artificial.*
 
+## [Data: 12/09/2026 - 13:12] - Barbara Brown Bags (BBB): Ativação de Vídeos Cinematográficos do Google Veo e Refino Tipográfico
+- **O que foi feito e entregue:**
+  1. **Assets em Vídeo Gerados via Google Veo Hospedados e Integrados:**
+     - `bb_hero_marble_video.mp4` (4.4MB): Animação cinematográfica suave da The Tech Tote sobre a mesa de mármore travertino, agora rodando como vídeo Hero autônomo com `autoplay`, `loop`, `muted`, `playsinline` e poster de fallback.
+     - `bb_interior_video.mp4` (4.7MB): Movimento de câmera imersivo no raio-x do interior revelando os compartimentos inteligentes, divisória de laptop e o Secret AirTag Vault.
+  2. **Calibração Tipográfica e Escala do Logo Expandido:**
+     - Logo expandido ampliado para `h-20 md:h-24` (~96px de altura), garantindo imponência máxima no primeiro impacto visual.
+     - Tipografia do menu fortalecida (`text-[13px] md:text-sm`, `font-semibold`, tracking nobre `[0.14em]` e cor café profundo `#1f1c1a`), com alinhamento vertical e espaçamento milimetricamente calibrados.
+     - Botão "Acesso Exclusivo" encorpado (`px-6 py-3 font-semibold`).
+  3. **Páginas & Produção:**
+     - Atualizados: `public/barbara-brown/index.html` e `src/pages/barbara-brown/index.tsx`.
+     - Build de produção testado e validado (`npm run build`, 0 erros).
+
+
 ## [Data: 12/09/2026 - 13:00] - Barbara Brown Bags (BBB): Header Dinâmico com Logo Retrátil (Padrão Andrade & Florio)
 - **O que foi feito e entregue:**
   1. **Solução de Logotipo Imponente no Topo e Compacto no Scroll (Shrink on Scroll):**

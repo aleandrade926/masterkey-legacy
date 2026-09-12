@@ -115,17 +115,27 @@ export default function BarbaraBrownLanding() {
             </div>
           </div>
 
-          {/* HERO IMAGE CONTAINER */}
+          {/* HERO VIDEO CONTAINER */}
           <div className="relative rounded-3xl overflow-hidden border border-[#e5ded0] shadow-2xl bg-white p-2 sm:p-4">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[16/10] max-h-[620px]">
-              <img 
-                src="/barbara-brown/bb_hero_cognac.jpg" 
-                alt="The Barbara Brown Tech Tote em couro nobre Cognac"
+              <video 
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                poster="/barbara-brown/bb_hero_cognac.jpg" 
                 className="w-full h-full object-cover object-center"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent"></div>
+              >
+                <source src="/barbara-brown/bb_hero_marble_video.mp4" type="video/mp4" />
+                <img 
+                  src="/barbara-brown/bb_hero_cognac.jpg" 
+                  alt="The Barbara Brown Tech Tote em couro nobre Cognac"
+                  className="w-full h-full object-cover object-center"
+                />
+              </video>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none"></div>
               
-              <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
+              <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row items-start md:items-end justify-between gap-4 pointer-events-none">
                 <div>
                   <span className="text-xs uppercase tracking-[0.2em] text-[#e8c55e] font-semibold">Peça Fundadora</span>
                   <h3 className="text-2xl md:text-3xl font-serif text-white">The Barbara Brown Tech Tote</h3>
@@ -252,11 +262,21 @@ export default function BarbaraBrownLanding() {
           </div>
 
           <div className="rounded-3xl overflow-hidden border border-[#e5ded0] shadow-2xl bg-white p-3 mb-14">
-            <img 
-              src="/barbara-brown/bb_interior_engineering.jpg" 
-              alt="Engenharia interna da Barbara Brown Tech Tote com AirTag e laptop" 
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              poster="/barbara-brown/bb_interior_engineering.jpg" 
               className="w-full h-auto rounded-2xl object-cover"
-            />
+            >
+              <source src="/barbara-brown/bb_interior_video.mp4" type="video/mp4" />
+              <img 
+                src="/barbara-brown/bb_interior_engineering.jpg" 
+                alt="Engenharia interna da Barbara Brown Tech Tote com AirTag e laptop" 
+                className="w-full h-auto rounded-2xl object-cover"
+              />
+            </video>
           </div>
 
           {/* OS 8 DIFERENCIAIS CARDS */}
