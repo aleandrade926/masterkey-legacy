@@ -230,6 +230,19 @@ export default function BarbaraBrownLanding() {
                 <p><strong className="text-[#141210]">Quiet Luxury:</strong> Nada de logotipo gigante. Nada de excesso. <span className="text-[#8c5e23] font-semibold">Luxo que se percebe de perto.</span></p>
               </div>
             </div>
+
+            {/* MONOGRAMA EM OURO GLINT SHOWCASE */}
+            <div className="mt-8 p-4 rounded-2xl bg-[#f5efe4] border border-[#d9cdba] flex items-center gap-4 shadow-sm">
+              <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden border border-[#d4c5ad] shadow-inner bg-white">
+                <video autoPlay loop muted playsInline className="w-full h-full object-cover">
+                  <source src="/barbara-brown/bb_monogram_glint_video.mp4" type="video/mp4" />
+                </video>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#8c5e23] font-bold block mb-0.5">Assinatura Chanfrada em Ouro Acetinado</span>
+                <p className="text-xs text-[#2a2622] leading-relaxed font-medium">O monograma BB foi esculpido para refletir a luz com sobriedade. Não para gritar uma marca, mas para assinar uma obra de arte funcional.</p>
+              </div>
+            </div>
           </div>
 
           <div className="lg:col-span-6 order-1 lg:order-2">
