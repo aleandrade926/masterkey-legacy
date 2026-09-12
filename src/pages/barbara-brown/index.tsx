@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Shield, 
   ArrowRight, 
@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 export default function BarbaraBrownLanding() {
+  const [scrolled, setScrolled] = useState(false);
   const [formSent, setFormSent] = useState(false);
   const [formData, setFormData] = useState({
     nome: "",
@@ -13,6 +14,13 @@ export default function BarbaraBrownLanding() {
     whatsapp: "",
     corEscolhida: "Cognac Heritage — Caramelo Nobre"
   });
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,13 +43,17 @@ export default function BarbaraBrownLanding() {
       </div>
 
       {/* 2. NAVIGATION BAR */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#fbf9f5]/95 border-b border-[#e8e2d8] px-6 py-3">
+      <header className={`sticky top-0 z-50 backdrop-blur-md bg-[#fbf9f5]/95 border-b border-[#e8e2d8] px-6 transition-all duration-300 ease-in-out ${
+        scrolled ? 'py-2.5 shadow-sm' : 'py-5 md:py-6'
+      }`}>
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <a href="#" className="flex items-center">
             <img 
               src="/barbara-brown/bb_logo_official.jpg" 
               alt="Barbara Brown" 
-              className="h-10 md:h-12 w-auto object-contain rounded-lg shadow-sm border border-[#e5ded0]/70 hover:opacity-95 transition-opacity" 
+              className={`w-auto object-contain rounded-xl shadow-sm border border-[#e5ded0]/80 hover:opacity-95 transition-all duration-300 ease-in-out ${
+                scrolled ? 'h-9 md:h-10' : 'h-16 md:h-20'
+              }`} 
             />
           </a>
           <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-xs tracking-[0.18em] uppercase text-[#5c554e] font-medium">

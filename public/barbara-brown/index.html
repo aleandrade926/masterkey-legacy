@@ -24,10 +24,10 @@
   </div>
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-50 backdrop-blur-md bg-[#fbf9f5]/95 border-b border-[#e8e2d8] px-6 py-3">
+  <header id="main-header" class="sticky top-0 z-50 backdrop-blur-md bg-[#fbf9f5]/95 border-b border-[#e8e2d8] px-6 transition-all duration-300 ease-in-out py-5 md:py-6">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <a href="#" class="flex items-center">
-        <img src="/barbara-brown/bb_logo_official.jpg" alt="Barbara Brown" class="h-10 md:h-12 w-auto object-contain rounded-lg shadow-sm border border-[#e5ded0]/70 hover:opacity-95 transition-opacity">
+        <img id="header-logo" src="/barbara-brown/bb_logo_official.jpg" alt="Barbara Brown" class="h-16 md:h-20 w-auto object-contain rounded-xl shadow-sm border border-[#e5ded0]/80 hover:opacity-95 transition-all duration-300 ease-in-out">
       </a>
       <nav class="hidden md:flex items-center gap-6 lg:gap-8 text-xs tracking-[0.18em] uppercase text-[#5c554e] font-medium">
         <a href="#diferenciais" class="hover:text-[#141210] transition-colors">A Tecnologia</a>
@@ -444,6 +444,42 @@
       </div>
     </div>
   </footer>
+ 
+  <script>
+    // Header dinâmico com logo retrátil no scroll (Padrão Andrade & Florio)
+    const header = document.getElementById('main-header');
+    const logo = document.getElementById('header-logo');
 
+    function handleScroll() {
+      if (window.scrollY > 40) {
+        header.classList.remove('py-5', 'md:py-6');
+        header.classList.add('py-2.5', 'shadow-sm');
+        logo.classList.remove('h-16', 'md:h-20');
+        logo.classList.add('h-9', 'md:h-10');
+      } else {
+        header.classList.remove('py-2.5', 'shadow-sm');
+        header.classList.add('py-5', 'md:py-6');
+        logo.classList.remove('h-9', 'md:h-10');
+        logo.classList.add('h-16', 'md:h-20');
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    // Formulário VIP Co-Creator via WhatsApp
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const nome = document.getElementById('nome').value;
+        const perfil = document.getElementById('perfil').value;
+        const whatsapp = document.getElementById('whatsapp').value;
+        const cor = document.getElementById('cor').value;
+        const msg = encodeURIComponent(`Olá, Clara! Sou a ${nome} (${perfil}, WhatsApp: ${whatsapp}). Recebi o convite exclusivo da Barbara Brown e gostaria de confirmar meu Kit Fundadora na cor ${cor} e conhecer os detalhes do Programa Co-Creator.`);
+        window.open(`https://wa.me/5511978671067?text=${msg}`, '_blank');
+      });
+    }
+  </script>
 </body>
 </html>

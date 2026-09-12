@@ -1,6 +1,19 @@
 # Global Master Changelog
 *Memória contínua do ecossistema de Inteligência Artificial.*
 
+## [Data: 12/09/2026 - 13:00] - Barbara Brown Bags (BBB): Header Dinâmico com Logo Retrátil (Padrão Andrade & Florio)
+- **O que foi feito e entregue:**
+  1. **Solução de Logotipo Imponente no Topo e Compacto no Scroll (Shrink on Scroll):**
+     - Inspirado e espelhado na solução validada da Andrade & Florio (`Shared.jsx`), o logotipo oficial da Barbara Brown (`bb_logo_official.jpg`) agora aparece com destaque nobre e generoso no topo inicial (`h-16 md:h-20` / ~80px de altura e padding `py-5 md:py-6`), tornando legível todo o monograma "BB" chanfrado em ouro e a gravação "BARBARA BROWN".
+     - Ao descer a página (`scrollY > 40px`), o header transita de forma fluida (`transition: all 0.3s ease-in-out`) para modo compacto (`py-2.5`, logo reduzido para `h-9 md:h-10` / ~40px e `shadow-sm`), mantendo a navegação limpa, elegante e funcional.
+  2. **Arquivos Atualizados:**
+     - `public/barbara-brown/index.html` (com Vanilla JS otimizado e listener passivo).
+     - `src/pages/barbara-brown/index.tsx` (com React hook `useEffect` e listener passivo).
+  3. **Build e Deploy de Produção:**
+     - `npm run build` executado com 0 erros.
+     - Deploy de produção ativo na Vercel: `https://masterkey-frontend-czwx2n5c0-alexandre-s-projects-4e67015b.vercel.app/barbara-brown/index.html` e `https://app.taxmanagers.com.br/barbara-brown`.
+
+
 ## [Data: 12/09/2026 - 12:12] - Barbara Brown Bags (BBB): Ativação das Imagens Oficiais e Deploy da Tech Tote
 - **O que foi feito e entregue:**
   1. **Assets Visuais de Alta Resolução Conectados e Hospedados:**
