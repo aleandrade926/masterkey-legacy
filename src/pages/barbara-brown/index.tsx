@@ -115,40 +115,63 @@ export default function BarbaraBrownLanding() {
             </div>
           </div>
 
-          {/* HERO VIDEO CONTAINER */}
-          <div className="relative rounded-3xl overflow-hidden border border-[#e5ded0] shadow-2xl bg-white p-2 sm:p-4">
-            <div className="relative rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[16/10] max-h-[620px]">
-              <video 
-                autoPlay 
-                loop 
-                muted 
-                playsInline 
-                poster="/barbara-brown/bb_hero_cognac.jpg" 
-                className="w-full h-full object-cover object-center"
-              >
-                <source src="/barbara-brown/bb_hero_marble_video.mp4" type="video/mp4" />
+          {/* HERO SHOWCASE: FOTO EDITORIAL + VÍDEO CINEMÁTICO (LADO A LADO) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* FOTO EDITORIAL NOBRE */}
+            <div className="relative rounded-3xl overflow-hidden border border-[#e5ded0] shadow-xl bg-white p-2.5 flex flex-col justify-between">
+              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full">
                 <img 
                   src="/barbara-brown/bb_hero_cognac.jpg" 
-                  alt="The Barbara Brown Tech Tote em couro nobre Cognac"
+                  alt="The Barbara Brown Tech Tote em couro nobre Cognac sobre mármore travertino" 
                   className="w-full h-full object-cover object-center"
                 />
-              </video>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none"></div>
-              
-              <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row items-start md:items-end justify-between gap-4 pointer-events-none">
-                <div>
-                  <span className="text-xs uppercase tracking-[0.2em] text-[#e8c55e] font-semibold">Peça Fundadora</span>
-                  <h3 className="text-2xl md:text-3xl font-serif text-white">The Barbara Brown Tech Tote</h3>
-                  <p className="text-xs md:text-sm text-white/80 mt-1 max-w-xl">
-                    Couro granulado nobre com proteção hidrorrepelente • Ferragens em ouro fosco • Estrutura interna inteligente • Compartimentos funcionais • Secret AirTag Vault integrado
-                  </p>
+                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#e8c55e] font-semibold">Fotografia Editorial</span>
                 </div>
-                <div className="flex items-center gap-3 bg-black/60 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/20 shrink-0">
-                  <Shield className="w-5 h-5 text-[#e8c55e]" />
-                  <span className="text-xs text-white/95 font-medium">Secret AirTag Vault Integrado</span>
+                <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
+                  <span className="text-[11px] text-white/95 font-medium">Mármore Travertino</span>
                 </div>
               </div>
+              <div className="p-4 pt-5">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-[#8c5e23] font-bold">The Heritage Cognac</span>
+                <h3 className="text-xl md:text-2xl font-serif text-[#141210] mt-1 font-semibold">Couro Granulado & Ouro Fosco</h3>
+                <p className="text-xs text-[#57514a] mt-1.5 leading-relaxed">
+                  Textura natural selecionada à mão com tratamento hidrorrepelente invisível para repelir café, chuva e respingos.
+                </p>
+              </div>
             </div>
+
+            {/* VÍDEO CINEMÁTICO GOOGLE VEO */}
+            <div className="relative rounded-3xl overflow-hidden border border-[#e5ded0] shadow-xl bg-white p-2.5 flex flex-col justify-between">
+              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full">
+                <video 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline 
+                  poster="/barbara-brown/bb_hero_cognac.jpg" 
+                  className="w-full h-full object-cover object-center"
+                >
+                  <source src="/barbara-brown/bb_hero_marble_video.mp4" type="video/mp4" />
+                </video>
+                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-white font-semibold">Movimento & Presença</span>
+                </div>
+                <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
+                  <span className="text-[11px] text-white/95 font-medium">🛡️ Secret AirTag Vault</span>
+                </div>
+              </div>
+              <div className="p-4 pt-5">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-[#8c5e23] font-bold">Cinemática de Alta Grife</span>
+                <h3 className="text-xl md:text-2xl font-serif text-[#141210] mt-1 font-semibold">Estrutura que Nunca Desaba</h3>
+                <p className="text-xs text-[#57514a] mt-1.5 leading-relaxed">
+                  Engenharia invisível que mantém a silhueta da bolsa firme e estruturada sobre qualquer mesa executiva ou poltrona.
+                </p>
+              </div>
+            </div>
+
           </div>
 
         </div>
@@ -274,22 +297,63 @@ export default function BarbaraBrownLanding() {
             </p>
           </div>
 
-          <div className="rounded-3xl overflow-hidden border border-[#e5ded0] shadow-2xl bg-white p-3 mb-14">
-            <video 
-              autoPlay 
-              loop 
-              muted 
-              playsInline 
-              poster="/barbara-brown/bb_interior_engineering.jpg" 
-              className="w-full h-auto rounded-2xl object-cover"
-            >
-              <source src="/barbara-brown/bb_interior_video.mp4" type="video/mp4" />
-              <img 
-                src="/barbara-brown/bb_interior_engineering.jpg" 
-                alt="Engenharia interna da Barbara Brown Tech Tote com AirTag e laptop" 
-                className="w-full h-auto rounded-2xl object-cover"
-              />
-            </video>
+          {/* ENGENHARIA INVISÍVEL: FOTO RAIO-X + VÍDEO IMERSIVO (LADO A LADO) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-14">
+            
+            {/* FOTO RAIO-X DE ENGENHARIA */}
+            <div className="rounded-3xl overflow-hidden border border-[#e5ded0] shadow-xl bg-white p-2.5 flex flex-col justify-between">
+              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full">
+                <img 
+                  src="/barbara-brown/bb_interior_engineering.jpg" 
+                  alt="Raio-X fotográfico de alta resolução do interior da Barbara Brown Tech Tote" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#e8c55e] font-semibold">Fotografia Técnica</span>
+                </div>
+                <div className="absolute bottom-4 left-4 right-4 bg-black/70 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/20">
+                  <span className="text-[11px] text-white/95 font-medium">MacBook 14" • Forro Champagne • Garrafa Térmica</span>
+                </div>
+              </div>
+              <div className="p-4 pt-5">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-[#8c5e23] font-bold">Visão Detalhada</span>
+                <h4 className="text-xl font-serif text-[#141210] mt-1 font-semibold">Arquitetura Interna & Divisórias</h4>
+                <p className="text-xs text-[#57514a] mt-1.5 leading-relaxed">
+                  Cada item essencial de trabalho tem seu lugar exclusivo, eliminando o caos de bolsas comuns onde tudo se perde no fundo.
+                </p>
+              </div>
+            </div>
+
+            {/* VÍDEO CINEMÁTICO GOOGLE VEO DO INTERIOR */}
+            <div className="rounded-3xl overflow-hidden border border-[#e5ded0] shadow-xl bg-white p-2.5 flex flex-col justify-between">
+              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full">
+                <video 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline 
+                  poster="/barbara-brown/bb_interior_engineering.jpg" 
+                  className="w-full h-full object-cover"
+                >
+                  <source src="/barbara-brown/bb_interior_video.mp4" type="video/mp4" />
+                </video>
+                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-white font-semibold">Animação Imersiva</span>
+                </div>
+                <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
+                  <span className="text-[11px] text-white/95 font-medium">🛡️ AirTag Integrado</span>
+                </div>
+              </div>
+              <div className="p-4 pt-5">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-[#8c5e23] font-bold">Cinemática Imersiva</span>
+                <h4 className="text-xl font-serif text-[#141210] mt-1 font-semibold">Profundidade & Secret AirTag Vault</h4>
+                <p className="text-xs text-[#57514a] mt-1.5 leading-relaxed">
+                  Movimento em slow-motion revelando como o rastreador fica camuflado em um compartimento secreto e seguro.
+                </p>
+              </div>
+            </div>
+
           </div>
 
           {/* OS 8 DIFERENCIAIS CARDS */}
