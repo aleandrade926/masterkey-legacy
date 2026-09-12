@@ -35,22 +35,16 @@ export default function BarbaraBrownLanding() {
       </div>
 
       {/* 2. NAVIGATION BAR */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#fbf9f5]/90 border-b border-[#e8e2d8] px-6 py-4">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#fbf9f5]/95 border-b border-[#e8e2d8] px-6 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <a href="#" className="flex items-center">
             <img 
               src="/barbara-brown/bb_logo_official.jpg" 
-              alt="Barbara Brown Monograma" 
-              className="h-8 md:h-9 w-auto rounded-md object-cover shadow-sm border border-[#e5ded0]" 
+              alt="Barbara Brown" 
+              className="h-10 md:h-12 w-auto object-contain rounded-lg shadow-sm border border-[#e5ded0]/70 hover:opacity-95 transition-opacity" 
             />
-            <span className="text-xl md:text-2xl font-serif tracking-[0.2em] font-semibold text-[#141210]">
-              BARBARA BROWN
-            </span>
-            <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded border border-[#a87a38]/40 text-[#8c6126] bg-[#f5ecdc] font-medium">
-              BBB
-            </span>
-          </div>
-          <nav className="hidden md:flex items-center gap-8 text-xs tracking-[0.18em] uppercase text-[#5c554e] font-medium">
+          </a>
+          <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-xs tracking-[0.18em] uppercase text-[#5c554e] font-medium">
             <a href="#diferenciais" className="hover:text-[#141210] transition-colors">A Tecnologia</a>
             <a href="#engenharia" className="hover:text-[#141210] transition-colors">O Interior</a>
             <a href="#co-creator" className="text-[#8c5e23] hover:text-[#5c3e14] transition-colors flex items-center gap-1.5 font-semibold">
@@ -67,18 +61,10 @@ export default function BarbaraBrownLanding() {
       </header>
 
       {/* 3. HERO SECTION */}
-      <section className="relative pt-16 pb-24 px-6 overflow-hidden">
+      <section className="relative pt-12 pb-24 px-6 overflow-hidden">
         <div className="max-w-6xl mx-auto">
           
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="mb-8">
-              <img 
-                src="/barbara-brown/bb_logo_official.jpg" 
-                alt="Barbara Brown Identidade Oficial" 
-                className="h-20 md:h-24 w-auto mx-auto rounded-2xl shadow-xl border border-[#e5ded0]/80" 
-              />
-            </div>
-            
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f3ede1] border border-[#ded4c3] text-[11px] tracking-[0.22em] uppercase text-[#7d561d] mb-8 font-semibold shadow-sm">
               Marroquinaria Inteligente D2C
             </div>
