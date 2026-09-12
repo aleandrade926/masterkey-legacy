@@ -1,9 +1,140 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   Shield, 
   ArrowRight, 
   CheckCircle
 } from "lucide-react";
+
+interface CinemaCrossfadeMediaProps {
+  videoSrc: string;
+  imageSrc: string;
+  alt: string;
+  id: string;
+  aspectClass?: string;
+  showMuteButton?: boolean;
+  badgeText?: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+}
+
+function CinemaCrossfadeMedia({
+  videoSrc,
+  imageSrc,
+  alt,
+  id,
+  aspectClass = "aspect-[16/10] md:aspect-[16/9] max-h-[660px]",
+  showMuteButton = true,
+  badgeText = "Secret AirTag Vault Integrado",
+  title = "",
+  subtitle = "",
+  description = ""
+}: CinemaCrossfadeMediaProps) {
+  const [showImage, setShowImage] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    let timer: NodeJS.Timeout;
+
+    const handleEnded = () => {
+      setShowImage(true);
+      timer = setTimeout(() => {
+        setShowImage(false);
+        setTimeout(() => {
+          if (video) {
+            video.currentTime = 0;
+            video.play().catch(() => {});
+          }
+        }, 800);
+      }, 3500);
+    };
+
+    video.addEventListener("ended", handleEnded);
+    return () => {
+      video.removeEventListener("ended", handleEnded);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
+
+  return (
+    <div className={`relative rounded-2xl overflow-hidden ${aspectClass} w-full bg-[#141210]`}>
+      {/* Moving Cinematic Video */}
+      <video
+        ref={videoRef}
+        id={id}
+        autoPlay
+        muted={isMuted}
+        playsInline
+        className={`w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+          showImage ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        <source src={videoSrc} type="video/mp4" />
+      </video>
+
+      {/* Crisp Editorial Photograph */}
+      <img
+        src={imageSrc}
+        alt={alt}
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out pointer-events-none ${
+          showImage ? "opacity-100" : "opacity-0"
+        }`}
+      />
+
+      {/* Luxury Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
+
+      {/* Overlay Information */}
+      <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
+        <div>
+          {subtitle && (
+            <span className="text-xs uppercase tracking-[0.22em] text-[#e8c55e] font-semibold">
+              {subtitle}
+            </span>
+          )}
+          {title && (
+            <h3 className="text-2xl md:text-4xl font-serif text-white mt-1 font-semibold">
+              {title}
+            </h3>
+          )}
+          {description && (
+            <p className="text-xs md:text-sm text-white/85 mt-2 max-w-2xl leading-relaxed font-normal">
+              {description}
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          {showMuteButton && (
+            <button
+              onClick={toggleMute}
+              className="px-4 py-2 bg-black/60 hover:bg-black/85 backdrop-blur-md rounded-xl border border-white/20 text-xs text-white/95 font-medium transition-all cursor-pointer"
+            >
+              {isMuted ? "Ativar Áudio" : "Mutar Áudio"}
+            </button>
+          )}
+          {badgeText && (
+            <div className="bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 shrink-0">
+              <span className="text-xs uppercase tracking-widest text-white/95 font-semibold">
+                {badgeText}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function BarbaraBrownLanding() {
   const [scrolled, setScrolled] = useState(false);
@@ -43,20 +174,26 @@ export default function BarbaraBrownLanding() {
       </div>
 
       {/* 2. NAVIGATION BAR */}
-      <header className={`sticky top-0 z-50 backdrop-blur-md bg-[#fbf9f5]/95 border-b border-[#e8e2d8] px-6 transition-all duration-300 ease-in-out ${
+      <header className={`sticky top-0 z-50 backdrop-blur-md bg-[#fbf9f5]/95 border-b border-[#e8e2d8] px-6 md:px-12 lg:px-16 transition-all duration-300 ease-in-out ${
         scrolled ? 'py-2.5 shadow-sm' : 'py-5 md:py-6'
       }`}>
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <a href="#" className="flex items-center">
-            <img 
-              src="/barbara-brown/bb_logo_official.jpg" 
-              alt="Barbara Brown" 
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              poster="/barbara-brown/bb_logo_official.jpg" 
               className={`w-auto object-contain rounded-xl shadow-sm border border-[#e5ded0]/80 hover:opacity-95 transition-all duration-300 ease-in-out ${
                 scrolled ? 'h-10 md:h-12' : 'h-20 md:h-24'
               }`} 
-            />
+            >
+              <source src="/barbara-brown/bb_monogram_glint_video.mp4" type="video/mp4" />
+              <img src="/barbara-brown/bb_logo_official.jpg" alt="Barbara Brown" className="h-full w-auto object-contain rounded-xl" />
+            </video>
           </a>
-          <nav className="hidden md:flex items-center gap-8 lg:gap-10 text-[13px] md:text-sm tracking-[0.14em] uppercase text-[#1f1c1a] font-semibold">
+          <nav className="hidden md:flex items-center gap-10 lg:gap-14 text-sm md:text-[15px] tracking-[0.14em] uppercase text-[#1a1715] font-semibold">
             <a href="#diferenciais" className="hover:text-[#8c5e23] transition-colors py-1">A Tecnologia</a>
             <a href="#engenharia" className="hover:text-[#8c5e23] transition-colors py-1">O Interior</a>
             <a href="#co-creator" className="text-[#8c5e23] hover:text-[#5c3e14] transition-colors py-1 font-bold">
@@ -65,7 +202,7 @@ export default function BarbaraBrownLanding() {
           </nav>
           <a 
             href="#vip-access"
-            className="text-xs md:text-[13px] uppercase tracking-widest bg-[#1a1715] hover:bg-[#332e29] text-white px-6 py-3 rounded-full font-semibold transition-all shadow-md"
+            className="text-xs md:text-sm uppercase tracking-widest bg-[#1a1715] hover:bg-[#332e29] text-white px-7 py-3.5 rounded-full font-semibold transition-all shadow-md"
           >
             Acesso Exclusivo
           </a>
@@ -73,28 +210,26 @@ export default function BarbaraBrownLanding() {
       </header>
 
       {/* 3. HERO SECTION */}
-      <section className="relative pt-12 pb-24 px-6 overflow-hidden">
-        <div className="max-w-6xl mx-auto">
+      <section className="relative pt-12 pb-24 px-6 md:px-12 lg:px-16 overflow-hidden">
+        <div className="max-w-[1600px] mx-auto">
           
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f3ede1] border border-[#ded4c3] text-[11px] tracking-[0.22em] uppercase text-[#7d561d] mb-8 font-semibold shadow-sm">
+          <div className="text-center max-w-6xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#f3ede1] border border-[#ded4c3] text-[11px] md:text-xs tracking-[0.22em] uppercase text-[#7d561d] mb-8 font-semibold shadow-sm">
               Marroquinaria Inteligente D2C
             </div>
             
-            <h1 className="text-4xl md:text-6xl font-serif tracking-tight leading-[1.18] text-[#141210] mb-6">
-              Por fora, uma bolsa que impõe presença.<br />
-              <span className="italic text-[#8c5e23]">Por dentro, uma bolsa que resolve a sua vida.</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif tracking-tight leading-[1.14] text-[#141210] mb-8 max-w-5xl mx-auto">
+              Por fora, uma bolsa que impõe presença. <span className="italic text-[#8c5e23] block md:inline">Por dentro, uma bolsa que resolve a sua vida.</span>
             </h1>
             
-            <div className="space-y-4 text-base md:text-lg text-[#57514a] font-normal leading-relaxed mb-10 max-w-2xl mx-auto">
-              <p>
-                A maioria das bolsas premium foi desenhada para ser bonita.<br />
-                A <strong className="text-[#141210] font-semibold">Barbara Brown Tech Tote</strong> foi desenhada para fazer mais.
+            <div className="space-y-4 text-base md:text-xl text-[#332e29] font-normal leading-relaxed mb-12 max-w-4xl mx-auto">
+              <p className="leading-relaxed">
+                A maioria das bolsas premium foi desenhada para ser bonita. A <strong className="text-[#141210] font-semibold">Barbara Brown Tech Tote</strong> foi desenhada para fazer mais.
               </p>
-              <p className="text-sm md:text-base text-[#665f56]">
+              <p className="text-sm md:text-lg text-[#47413a] leading-relaxed">
                 Couro nobre, estética de <em>Quiet Luxury</em> e uma arquitetura interna pensada para a mulher que passa o dia entre reuniões, aeroportos, restaurantes, escritórios, tribunais e compromissos que não cabem em uma bolsa convencional.
               </p>
-              <p className="text-[#141210] font-medium pt-2">
+              <p className="text-[#141210] font-medium pt-2 text-base md:text-lg">
                 Sofisticação por fora. Engenharia invisível por dentro.
               </p>
             </div>
@@ -102,76 +237,31 @@ export default function BarbaraBrownLanding() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a 
                 href="#co-creator" 
-                className="w-full sm:w-auto px-8 py-4 bg-[#1a1715] hover:bg-[#332e29] text-white text-xs uppercase tracking-[0.18em] font-semibold rounded-full shadow-xl shadow-black/15 transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-9 py-4 bg-[#1a1715] hover:bg-[#332e29] text-white text-xs md:text-sm uppercase tracking-[0.18em] font-semibold rounded-full shadow-xl shadow-black/15 transition-all flex items-center justify-center gap-2"
               >
-                Co-Criar Minha Bolsa Assinada <ArrowRight className="w-3.5 h-3.5" />
+                Co-Criar Minha Bolsa Assinada <ArrowRight className="w-4 h-4" />
               </a>
               <a 
                 href="#diferenciais" 
-                className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-[#f5efe6] border border-[#d8d0c2] text-[#2c2824] text-xs uppercase tracking-[0.18em] font-medium rounded-full shadow-sm transition-all"
+                className="w-full sm:w-auto px-9 py-4 bg-white hover:bg-[#f5efe6] border border-[#d8d0c2] text-[#2c2824] text-xs md:text-sm uppercase tracking-[0.18em] font-medium rounded-full shadow-sm transition-all"
               >
                 Conhecer os 8 Diferenciais
               </a>
             </div>
           </div>
 
-          {/* HERO SHOWCASE: FOTO EDITORIAL + VÍDEO CINEMÁTICO (LADO A LADO) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
-            {/* FOTO EDITORIAL NOBRE */}
-            <div className="relative rounded-3xl overflow-hidden border border-[#e5ded0] shadow-xl bg-white p-2.5 flex flex-col justify-between">
-              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full">
-                <img 
-                  src="/barbara-brown/bb_hero_cognac.jpg" 
-                  alt="The Barbara Brown Tech Tote em couro nobre Cognac sobre mármore travertino" 
-                  className="w-full h-full object-cover object-center"
-                />
-                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#e8c55e] font-semibold">Fotografia Editorial</span>
-                </div>
-                <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
-                  <span className="text-[11px] text-white/95 font-medium">Mármore Travertino</span>
-                </div>
-              </div>
-              <div className="p-4 pt-5">
-                <span className="text-[11px] uppercase tracking-[0.2em] text-[#8c5e23] font-bold">The Heritage Cognac</span>
-                <h3 className="text-xl md:text-2xl font-serif text-[#141210] mt-1 font-semibold">Couro Granulado & Ouro Fosco</h3>
-                <p className="text-xs text-[#57514a] mt-1.5 leading-relaxed">
-                  Textura natural selecionada à mão com tratamento hidrorrepelente invisível para repelir café, chuva e respingos.
-                </p>
-              </div>
-            </div>
-
-            {/* VÍDEO CINEMÁTICO GOOGLE VEO */}
-            <div className="relative rounded-3xl overflow-hidden border border-[#e5ded0] shadow-xl bg-white p-2.5 flex flex-col justify-between">
-              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full">
-                <video 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline 
-                  poster="/barbara-brown/bb_hero_cognac.jpg" 
-                  className="w-full h-full object-cover object-center"
-                >
-                  <source src="/barbara-brown/bb_hero_marble_video.mp4" type="video/mp4" />
-                </video>
-                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-white font-semibold">Movimento & Presença</span>
-                </div>
-                <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
-                  <span className="text-[11px] text-white/95 font-medium">🛡️ Secret AirTag Vault</span>
-                </div>
-              </div>
-              <div className="p-4 pt-5">
-                <span className="text-[11px] uppercase tracking-[0.2em] text-[#8c5e23] font-bold">Cinemática de Alta Grife</span>
-                <h3 className="text-xl md:text-2xl font-serif text-[#141210] mt-1 font-semibold">Estrutura que Nunca Desaba</h3>
-                <p className="text-xs text-[#57514a] mt-1.5 leading-relaxed">
-                  Engenharia invisível que mantém a silhueta da bolsa firme e estruturada sobre qualquer mesa executiva ou poltrona.
-                </p>
-              </div>
-            </div>
-
+          {/* HERO VIDEO CONTAINER MAJESTOSO COM TRANSIÇÃO PARA FOTO DE ALTA RESOLUÇÃO */}
+          <div className="relative rounded-3xl overflow-hidden border border-[#e5ded0] shadow-2xl bg-white p-2.5 sm:p-4 max-w-6xl mx-auto">
+            <CinemaCrossfadeMedia
+              videoSrc="/barbara-brown/bb_hero_marble_video.mp4"
+              imageSrc="/barbara-brown/bb_hero_cognac.jpg"
+              alt="Barbara Brown Tech Tote no Mármore - Visão Externa e Detalhes de Alta Resolução"
+              id="hero-video-react"
+              subtitle="Peça Fundadora • Edição 001"
+              title="The Barbara Brown Tech Tote"
+              description="Couro nobre granulado com acabamento hidrorrepelente invisível, ferragens em ouro fosco acetinado e arquitetura interna com compartimento secreto para rastreador."
+              badgeText="Secret AirTag Vault Integrado"
+            />
           </div>
 
         </div>
@@ -297,63 +387,18 @@ export default function BarbaraBrownLanding() {
             </p>
           </div>
 
-          {/* ENGENHARIA INVISÍVEL: FOTO RAIO-X + VÍDEO IMERSIVO (LADO A LADO) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-14">
-            
-            {/* FOTO RAIO-X DE ENGENHARIA */}
-            <div className="rounded-3xl overflow-hidden border border-[#e5ded0] shadow-xl bg-white p-2.5 flex flex-col justify-between">
-              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full">
-                <img 
-                  src="/barbara-brown/bb_interior_engineering.jpg" 
-                  alt="Raio-X fotográfico de alta resolução do interior da Barbara Brown Tech Tote" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#e8c55e] font-semibold">Fotografia Técnica</span>
-                </div>
-                <div className="absolute bottom-4 left-4 right-4 bg-black/70 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/20">
-                  <span className="text-[11px] text-white/95 font-medium">MacBook 14" • Forro Champagne • Garrafa Térmica</span>
-                </div>
-              </div>
-              <div className="p-4 pt-5">
-                <span className="text-[11px] uppercase tracking-[0.2em] text-[#8c5e23] font-bold">Visão Detalhada</span>
-                <h4 className="text-xl font-serif text-[#141210] mt-1 font-semibold">Arquitetura Interna & Divisórias</h4>
-                <p className="text-xs text-[#57514a] mt-1.5 leading-relaxed">
-                  Cada item essencial de trabalho tem seu lugar exclusivo, eliminando o caos de bolsas comuns onde tudo se perde no fundo.
-                </p>
-              </div>
-            </div>
-
-            {/* VÍDEO CINEMÁTICO GOOGLE VEO DO INTERIOR */}
-            <div className="rounded-3xl overflow-hidden border border-[#e5ded0] shadow-xl bg-white p-2.5 flex flex-col justify-between">
-              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full">
-                <video 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline 
-                  poster="/barbara-brown/bb_interior_engineering.jpg" 
-                  className="w-full h-full object-cover"
-                >
-                  <source src="/barbara-brown/bb_interior_video.mp4" type="video/mp4" />
-                </video>
-                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-white font-semibold">Animação Imersiva</span>
-                </div>
-                <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
-                  <span className="text-[11px] text-white/95 font-medium">🛡️ AirTag Integrado</span>
-                </div>
-              </div>
-              <div className="p-4 pt-5">
-                <span className="text-[11px] uppercase tracking-[0.2em] text-[#8c5e23] font-bold">Cinemática Imersiva</span>
-                <h4 className="text-xl font-serif text-[#141210] mt-1 font-semibold">Profundidade & Secret AirTag Vault</h4>
-                <p className="text-xs text-[#57514a] mt-1.5 leading-relaxed">
-                  Movimento em slow-motion revelando como o rastreador fica camuflado em um compartimento secreto e seguro.
-                </p>
-              </div>
-            </div>
-
+          {/* ENGENHARIA INVISÍVEL: VÍDEO EXCLUSIVO COM TRANSIÇÃO PARA FOTO DE ALTA DEFINIÇÃO */}
+          <div className="rounded-3xl overflow-hidden border border-[#e5ded0] shadow-2xl bg-white p-2.5 sm:p-4 mb-14 max-w-5xl mx-auto">
+            <CinemaCrossfadeMedia
+              videoSrc="/barbara-brown/bb_interior_video.mp4"
+              imageSrc="/barbara-brown/bb_interior_engineering.jpg"
+              alt="Arquitetura interna da Barbara Brown Tech Tote - Divisórias, MacBook e Secret AirTag Vault"
+              id="interior-video-react"
+              aspectClass="aspect-[16/10] md:aspect-[16/9] max-h-[600px]"
+              subtitle="Arquitetura de Precisão"
+              title="Cada Objeto com seu Espaço Exclusivo"
+              badgeText="MacBook 14&quot; • Forro Champagne • AirTag"
+            />
           </div>
 
           {/* OS 8 DIFERENCIAIS CARDS */}
@@ -434,21 +479,21 @@ export default function BarbaraBrownLanding() {
           
           <div className="relative z-10">
             <span className="text-xs uppercase tracking-[0.25em] text-[#8c5e23] font-bold block mb-2">
-              Projeto Manhattan
+              Programa Co-Creator • Parceria de Prestígio
             </span>
             
             <h2 className="text-3xl md:text-5xl font-serif text-[#141210] leading-tight mb-6">
-              Você não será apenas uma afiliada.<br />
-              <span className="text-[#8c5e23]">Você poderá criar uma bolsa com o seu nome.</span>
+              Exclusivo para Influencers de Autoridade.<br />
+              <span className="text-[#8c5e23]">Muito além de um publi: co-crie e assine sua própria bolsa de luxo.</span>
             </h2>
 
             <div className="space-y-4 text-base md:text-lg text-[#57514a] leading-relaxed mb-10">
               <p>
-                Imagine sua audiência vendo uma peça e sabendo imediatamente: <strong className="text-[#141210]">“Essa é a bolsa da [seu nome].”</strong>
+                Como influencer, sua audiência confia na sua curadoria e no seu padrão estético. Imagine sua comunidade reconhecendo na hora: <strong className="text-[#141210]">“Essa é a bolsa oficial assinada pela [seu nome].”</strong>
               </p>
               <p>
-                Não é um cupom. Não é apenas uma colaboração.<br />
-                É uma <strong className="text-[#141210]">peça assinada</strong>, criada a partir da sua autoridade, do seu estilo e do que sua comunidade realmente deseja.
+                Não se trata de divulgar cupons ou ações passageiras.<br />
+                Trata-se de uma <strong className="text-[#141210]">peça de alta grife assinada por você</strong>, desenhada em parceria com a marroquinaria inteligente da Barbara Brown para materializar a sua visão.
               </p>
             </div>
 

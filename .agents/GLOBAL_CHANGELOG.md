@@ -2786,3 +2786,17 @@ s2.vercel-dns.com), bem como a compatibilidade dos registros diretos Tipo A (76.
   - `C:\Users\Alexandre\masterkey-frontend\.agents\HISTORICO_MENSAL\07_HISTORICO_2026_09_SETEMBRO_P02.md`
   - `C:\Users\Alexandre\OneDrive\Documentos\Obsidian Vault\000_SYNC_NOTEBOOKLM\[DOSSIE] Barbara Brown Bags (BBB) - Operacao Asset-Light D2C.md`
   - `C:\Users\Alexandre\masterkey-frontend\.agents\GLOBAL_CHANGELOG.md`
+
+## [Data: 12/09/2026 - 13:40] - Barbara Brown (BBB): Refinamento Editorial de Luxo, Transição Suave Vídeo-Foto e Co-Creator de Prestígio
+- **O que foi feito:**
+  1. **Transição Suave (Crossfade Cinemático) Vídeo -> Foto Original:** Implementada transição suave onde o vídeo gerado pelo Google Veo roda fluidamente e, ao finalizar, desvanece suavemente para a fotografia estática original em alta resolução (aproveitando o ângulo perfeito e a nitidez máxima), permanecendo 3.5 segundos em contemplação antes de reiniciar o loop. Aplicado tanto na Tech Tote no Mármore (Hero) quanto na Arquitetura Interna (Engenharia Invisível).
+  2. **Eliminação de Metalinguagem e Termos Técnicos:** Removidos todos os badges como "Fotografia Técnica", "Animação Imersiva" e "Cinemática Imersiva". O produto fala por si, sem metalinguagem de desenvolvimento web.
+  3. **Remoção de Emojis e Duplicidades:** Exclusão de emojis em toda a página e eliminação de cards duplicados lado a lado.
+  4. **Blindagem Estratégica & Co-Creator de Alto Prestígio:** O termo interno "Projeto Manhattan" (código que designa a compartimentação de inteligência para evitar cópia da concorrência) foi ocultado da interface pública, adotando "Programa Co-Creator • Parceria de Prestígio". A cópia foi elevada para tratar a criadora como influencer de autoridade ("Muito além de um publi: co-crie e assine sua própria bolsa de luxo"), abolindo referências pejorativas a "afiliada" ou cupons.
+  5. **Destaque do Monograma BB em Ouro com Áudio Autoral:** O vídeo do monograma chanfrado em ouro (`bb_monogram_glint_video.mp4`) foi integrado com controle de áudio sonoro e transição no header.
+- **Onde (Arquivos afetados):**
+  - `public/barbara-brown/index.html`
+  - `src/pages/barbara-brown/index.tsx`
+  - `.agents/GLOBAL_CHANGELOG.md`
+  - `.agents/STATUS_ATUAL.md`
+

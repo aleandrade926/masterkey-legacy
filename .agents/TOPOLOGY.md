@@ -56,10 +56,35 @@ Trata-se de um infoproduto (E-book de 144 slides) hospedado fora do React. Proje
 Se vocÃª for solicitado a alterar algo relacionado ao E-book, modifique o "PROJETO 3" (`public-ebook`). Se for o Site do EscritÃ³rio, vÃ¡ para "PROJETO 2" (`andradeflorio`). NUNCA misture as ediÃ§Ãµes de um escopo no outro. Leia o histÃ³rico antes de sugerir ou sobrescrever cÃ³digo.
 
 
+- *(24/08/2026)* **Acesso a Alunos:** Inclusão de um botão "Já é Aluno?" no topo do `index.html` e adição da senha `LC2026` junto com a oficial `LF2026` no JavaScript do `manual.html`.
+- *(25/08/2026)* **Inserção da Isca High Ticket (WhatsApp Upsell):** Para pescar leads que acham o processo complexo, criamos um bloco luxuoso de "Assessoria Jurídica" no final da página, lincando o botão para o WhatsApp Comercial: `11 97867-1067`.
+- *(25/08/2026)* **Adição de Bônus de Escassez:** Injetado alerta de "Consulta Grátis para os 10 primeiros" com barras de progresso perto do botão de compra para forçar urgência, justificando ainda mais a consultoria High Ticket.
+
+---
+**⚠️ Instrução para a IA ao ler este arquivo:**
+Se você for solicitado a alterar algo relacionado ao E-book, modifique o "PROJETO 3" (`public-ebook`). Se for o Site do Escritório, vá para "PROJETO 2" (`andradeflorio`). NUNCA misture as edições de um escopo no outro. Leia o histórico antes de sugerir ou sobrescrever código.
+
+
 ## 4. PROJETO: TaxManagers Site Institucional (Landing Pages)
-- **Domínio Mapeado:** 	axmanagers.com.br
-- **Pasta Local:** c:\Users\Alexandre\taxmanagers-site (e possivelmente 	axmanagers)
+- **Domínio Mapeado:** taxmanagers.com.br
+- **Pasta Local:** c:\Users\Alexandre\taxmanagers-site (e possivelmente taxmanagers)
 - **Objetivo:** Pasta isolada exclusivamente para as Landing Pages comerciais e marketing. Separado do SaaS por segurança e velocidade de deploy.
 
 ## Correção de Rota do SaaS (masterkey-frontend)
-- O monorepo masterkey-frontend NÃO responde mais por 	axmanagers.com.br. Ele agora responde exclusivamente pelo subdomínio do sistema: **pp.taxmanagers.com.br**.
+- O monorepo masterkey-frontend NÃO responde mais por taxmanagers.com.br. Ele agora responde exclusivamente pelo subdomínio do sistema: **app.taxmanagers.com.br**.
+
+---
+
+## 5. PROJETO: RePesquisa Judicial e Societário (ARQUIVADO / CONGELADO)
+- **Status:** Pausado / Congelado em 09/09/2026.
+- **Pasta Local:** `c:\Users\Alexandre\repesquisa-judicial-arquivado`
+- **Repositório Git:** Inicializado e commitado localmente (`feat(archive)`).
+- **Objetivo:** Preserva 100% do código de Due Diligence Imobiliária e Certidões Judiciais (Next.js, provedores DataJud, Escavador, Judit, workers sync-gov e migrações Supabase `repesquisa_`). Disponível para retomada a qualquer momento.
+
+## 6. PROJETO: RePesquisa Outbound (MVP Mágico de Oz)
+- **Domínio Mapeado:** `repesquisa.com.br`, `www.repesquisa.com.br`
+- **Projeto Vercel Oficial:** `repesquisa` (ID: `prj_6KoltIMO2ukz4QoRjt9uMoPJKulo`)
+- **Pasta Local:** `c:\Users\Alexandre\repesquisa-site`
+- **Stack:** HTML5, Tailwind CSS, JavaScript Vanilla (Dashboard Mockup, Simulador de Cadência reativo e Modal de Onboarding).
+- **Status:** Ativo e em produção (200 OK) no domínio raiz.
+

@@ -72,24 +72,23 @@
 
 ## 6. Barbara Brown (Marca Própria Asset-Light & Marroquinaria Inteligente)
 - **Status:** Ativo / Identidade Oficial e LP Quiet Luxury Deployed em Produção.
-- **Tese Central:** Marroquinaria feminina executiva de alto padrão (*The Barbara Brown Tech Tote*) integrando o método "Mala de Rodinhas" e a engenharia funcional de resolução de dores estilo Insider Store (Secret AirTag Vault, DWR C0 hidrofóbico à prova de café, forro com íons de prata champagne, laptop sleeve flutuante 14" e alívio de peso < 640g).
+- **Tese Central:** Marroquinaria feminina executiva de alto padrão (*The Barbara Brown Tech Tote*) integrando o método "Mala de Rodinhas" e a engenharia funcional de resolução de dores estilo Insider Store (Secret AirTag Vault, DWR C0 hidrofóbico à prova de café, forro champagne, laptop sleeve flutuante 14" e alívio de peso).
 - **Identidade Visual Oficial & Quiet Luxury:**
   - `bb_logo_official.jpg`: Logotipo definitivo com monograma "BB" chanfrado em ouro acetinado sobre papel marfim e tipografia gravada "BARBARA BROWN".
   - Paleta Quiet Luxury: Fundo marfim `#fbf9f5`, tipografia nobre café/charcoal `#1f1c1a` e detalhes em ouro envelhecido `#8c5e23`.
-  - **Header Dinâmico Retrátil Calibrado (Padrão Andrade & Florio):** Logotipo nobre e expandido no topo inicial (`h-20 md:h-24` / ~96px de altura com `py-5 md:py-6`) que encolhe suavemente ao rolar a página (`scrollY > 40px`) para formato compacto (`h-10 md:h-12` / ~44px e `py-2.5`), acompanhado por tipografia de links reforçada (`text-[13px] md:text-sm`, `font-semibold`) com alinhamento visual balanceado.
+  - **Header Dinâmico Retrátil:** Monograma em vídeo com brilho de luz dourada (`bb_monogram_glint_video.mp4`) com transição de escala (`h-20 md:h-24` -> `h-10 md:h-12`) no scroll.
 - **Ativos Visuais & Vídeos Cinematográficos Hospedados (`public/barbara-brown/`):**
-  - `bb_hero_marble_video.mp4`: Vídeo Google Veo em alta resolução exibindo a Hero Tech Tote sobre mármore travertino (autoplay, loop, muted).
+  - `bb_hero_marble_video.mp4`: Vídeo Google Veo em alta resolução exibindo a Hero Tech Tote sobre mármore travertino.
   - `bb_interior_video.mp4`: Vídeo Google Veo revelando a engenharia de divisórias internas e o Secret AirTag Vault.
-  - `bb_hero_cognac.jpg`: Peça hero em mesa de mármore (poster / fallback de alta resolução).
+  - `bb_monogram_glint_video.mp4`: Vídeo do monograma BB com reflexo dourado e áudio autoral da grife com toggle de som.
   - `bb_lifestyle_executive.jpg`: Estilo corporativo com executiva elegante na Faria Lima.
-  - `bb_interior_engineering.jpg`: Raio-X do interior (poster / fallback).
+  - **Transição Suave Vídeo -> Foto Original (Crossfade Cinemático):** Vídeos do Hero e da Engenharia executam em loop inteligente: após a cinemática do vídeo, desvanecem suavemente para a foto estática em altíssima definição (preservando o ângulo e nitidez), pausando 3.5s antes de retomar o ciclo.
+  - **Remoção de Metalinguagem & Emojis:** Zero termos como "Fotografia Técnica" ou "Animação Imersiva"; foco 100% no produto.
+- **Programa Co-Creator (Prestígio para Influencers):**
+  - Segmento voltado para influencers de autoridade e criadoras com foco em modelo assinado e curadoria de alta grife (sem termos transacionais de afiliados).
+  - Blindagem estratégica (*Projeto Manhattan* mantido em sigilo estrito de retaguarda).
 - **Rotas & Páginas em Produção:**
   - SPA React / Tailwind: `/barbara-brown`, `/bbb`, `/co-creator`.
-  - Página Estática Ultra-Rápida: `/barbara-brown/index.html` (com caminhos absolutos e carregamento em 0.1s).
+  - Página Estática Ultra-Rápida: `/barbara-brown/index.html`.
   - Deploy ao vivo: `https://app.taxmanagers.com.br/barbara-brown`.
-- **Células Autônomas de SDR Operacionais:**
-  1. **Agente Clara (`CLARA_INFLUENCER_MASTER.md`):** Head de Creator Acquisition & Parcerias VIP. Foco em influenciadoras de elegância clássica e advogadas. Base inicial: 7 criadoras mapeadas com proposta de Co-Creator (bolsa com o nome da criadora + 20% comissão + 15% cross-sell).
-  2. **Agente Victor (`VICTOR_OEM_MASTER.md`):** Head de Operações Fabris & Suprimentos Industriais. Foco em ateliês e indústrias nos polos do Vale dos Sinos (RS) e Franca/Jaú (SP). Base inicial: 7 indústrias OEM mapeadas para cotação de lote piloto e prototipagem.
-- **Bases e Scripts:** Arquivos `influencers_barbara_brown.json` e `fornecedores_barbara_brown.json` gerados e prontos para cadência em `C:\Users\Alexandre\masterkey-frontend\.agents\scripts\`.
-- **Memória Sincronizada:** Registrado em `000_SYNC_NOTEBOOKLM\[PROJETO] Barbara Brown - Estrutura Mestra de Marca, Produto e Go-to-Market.md` e `[CASE] Insider Store 2017...`.
 
