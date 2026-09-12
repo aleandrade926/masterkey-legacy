@@ -141,13 +141,11 @@ function CinemaCrossfadeMedia({
               {isMuted ? "Ativar Áudio" : "Mutar Áudio"}
             </button>
           )}
-          {badgeText && (
-            <div className="bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 shrink-0">
-              <span className="text-xs uppercase tracking-widest text-white/95 font-semibold">
-                {badgeText}
-              </span>
-            </div>
-          )}
+          <img
+            src="/barbara-brown/bb_logo_official.jpg"
+            alt="Barbara Brown"
+            className="h-10 md:h-11 w-auto rounded-xl shadow-xl border border-[#d9ccb6]/90 object-contain ring-1 ring-black/20 shrink-0"
+          />
         </div>
       </div>
     </div>
