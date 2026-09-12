@@ -82,8 +82,9 @@
   - `bb_interior_video.mp4`: Vídeo Google Veo revelando a engenharia de divisórias internas e o Secret AirTag Vault.
   - `bb_monogram_glint_video.mp4`: Vídeo do monograma BB com reflexo dourado e áudio autoral da grife com toggle de som.
   - `bb_lifestyle_executive.jpg`: Estilo corporativo com executiva elegante na Faria Lima.
-  - **Transição Suave Vídeo -> Foto Original (Crossfade Cinemático):** Vídeos do Hero e da Engenharia executam em loop inteligente: após a cinemática do vídeo, desvanecem suavemente para a foto estática em altíssima definição (preservando o ângulo e nitidez), pausando 3.5s antes de retomar o ciclo.
-  - **Remoção de Metalinguagem & Emojis:** Zero termos como "Fotografia Técnica" ou "Animação Imersiva"; foco 100% no produto.
+  - **Transição Suave Vídeo -> Foto Original (Crossfade Cinemático com Fallback Timeupdate):** Vídeos do Hero e da Engenharia executam em loop inteligente com suporte duplo (evento `ended` + gatilho de segurança `timeupdate` aos `duration - 0.35s` com trava `isFading`): após a cinemática do vídeo, desvanecem suavemente para a foto estática em altíssima definição (preservando o ângulo e nitidez), pausando 3.5s antes de retomar o ciclo.
+  - **Eliminação Total de Sobreposições:** Containers com posicionamento relativo e tags balanceadas, garantindo que overlays de títulos permaneçam estritamente contidos em seus blocos funcionais.
+  - **Copy Lapidada:** Remoção de metalinguagem e alinhamento do propósito ("A Barbara Brown representa a mulher que lidera, decide e transita por ambientes de alta exigência com elegância silenciosa...").
 - **Programa Co-Creator (Prestígio para Influencers):**
   - Segmento voltado para influencers de autoridade e criadoras com foco em modelo assinado e curadoria de alta grife (sem termos transacionais de afiliados).
   - Blindagem estratégica (*Projeto Manhattan* mantido em sigilo estrito de retaguarda).
@@ -91,4 +92,3 @@
   - SPA React / Tailwind: `/barbara-brown`, `/bbb`, `/co-creator`.
   - Página Estática Ultra-Rápida: `/barbara-brown/index.html`.
   - Deploy ao vivo: `https://app.taxmanagers.com.br/barbara-brown`.
-

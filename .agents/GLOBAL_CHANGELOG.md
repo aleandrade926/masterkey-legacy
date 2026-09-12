@@ -2799,4 +2799,14 @@ s2.vercel-dns.com), bem como a compatibilidade dos registros diretos Tipo A (76.
   - `src/pages/barbara-brown/index.tsx`
   - `.agents/GLOBAL_CHANGELOG.md`
   - `.agents/STATUS_ATUAL.md`
-
+## [Data: 12/09/2026 - 16:35] - Barbara Brown (BBB): Correção de Sobreposição no Hero, Transição Suave do Vídeo do Interior e Ajuste na Copy do Propósito
+- **O que foi feito:**
+  1. **Resolução de Sobreposição de Elementos (Hero):** Identificado e corrigido o vazamento do overlay *"Arquitetura de Precisão / Cada Objeto com seu Espaço Exclusivo"*. O container pai da seção Engenharia Invisível estava sem a classe CSS `relative` e possuía tags de fechamento de `<div>` órfãs, fazendo com que o elemento com `position: absolute` escapasse e se posicionasse no rodapé da primeira dobra (Hero). A hierarquia de tags foi balanceada e o container ganhou `relative aspect-[16/10] md:aspect-[16/9] max-h-[620px]`, eliminando a sobreposição por completo.
+  2. **Transição Suave do Vídeo do Interior para Imagem de Alta Resolução:** Adicionado gatilho seguro baseado em `timeupdate` (`currentTime >= duration - 0.35`) com flag de bloqueio `isFading` na função `setupCrossfade` (HTML estático) e no componente `CinemaCrossfadeMedia` (React). Isso garante que discrepâncias de containers MP4 não impeçam o evento de transição (*crossfade*) suave para a foto de alta resolução e o retorno após 3.5 segundos.
+  3. **Ajuste na Copy da Seção "A Marca & Seu Propósito":** Removido o trecho intermediário *"não foi criada para quem precisa de logotipos gigantes para se afirmar. Ela"*, conectando o início diretamente à afirmação executiva: *"A Barbara Brown representa a mulher que lidera, decide e transita por ambientes de alta exigência com elegância silenciosa. O monograma BB simboliza a união da nobreza do couro artesanal com a engenharia funcional contemporânea — sofisticação que se impõe sem precisar gritar."*
+  4. **Deploy em Produção:** Compilação do build e publicação em produção na Vercel (`https://app.taxmanagers.com.br/barbara-brown`), com validação visual e técnica via Puppeteer.
+- **Onde (Arquivos afetados):**
+  - `public/barbara-brown/index.html`
+  - `src/pages/barbara-brown/index.tsx`
+  - `.agents/GLOBAL_CHANGELOG.md`
+  - `.agents/STATUS_ATUAL.md`
