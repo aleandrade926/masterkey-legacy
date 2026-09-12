@@ -52,20 +52,20 @@ export default function BarbaraBrownLanding() {
               src="/barbara-brown/bb_logo_official.jpg" 
               alt="Barbara Brown" 
               className={`w-auto object-contain rounded-xl shadow-sm border border-[#e5ded0]/80 hover:opacity-95 transition-all duration-300 ease-in-out ${
-                scrolled ? 'h-9 md:h-10' : 'h-16 md:h-20'
+                scrolled ? 'h-10 md:h-12' : 'h-20 md:h-24'
               }`} 
             />
           </a>
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-xs tracking-[0.18em] uppercase text-[#5c554e] font-medium">
-            <a href="#diferenciais" className="hover:text-[#141210] transition-colors">A Tecnologia</a>
-            <a href="#engenharia" className="hover:text-[#141210] transition-colors">O Interior</a>
-            <a href="#co-creator" className="text-[#8c5e23] hover:text-[#5c3e14] transition-colors flex items-center gap-1.5 font-semibold">
+          <nav className="hidden md:flex items-center gap-8 lg:gap-10 text-[13px] md:text-sm tracking-[0.14em] uppercase text-[#1f1c1a] font-semibold">
+            <a href="#diferenciais" className="hover:text-[#8c5e23] transition-colors py-1">A Tecnologia</a>
+            <a href="#engenharia" className="hover:text-[#8c5e23] transition-colors py-1">O Interior</a>
+            <a href="#co-creator" className="text-[#8c5e23] hover:text-[#5c3e14] transition-colors py-1 font-bold">
               Programa Co-Creator
             </a>
           </nav>
           <a 
             href="#vip-access"
-            className="text-xs uppercase tracking-widest bg-[#1a1715] hover:bg-[#332e29] text-white px-5 py-2.5 rounded-full font-medium transition-all shadow-md"
+            className="text-xs md:text-[13px] uppercase tracking-widest bg-[#1a1715] hover:bg-[#332e29] text-white px-6 py-3 rounded-full font-semibold transition-all shadow-md"
           >
             Acesso Exclusivo
           </a>

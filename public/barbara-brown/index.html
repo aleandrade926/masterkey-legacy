@@ -27,14 +27,14 @@
   <header id="main-header" class="sticky top-0 z-50 backdrop-blur-md bg-[#fbf9f5]/95 border-b border-[#e8e2d8] px-6 transition-all duration-300 ease-in-out py-5 md:py-6">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <a href="#" class="flex items-center">
-        <img id="header-logo" src="/barbara-brown/bb_logo_official.jpg" alt="Barbara Brown" class="h-16 md:h-20 w-auto object-contain rounded-xl shadow-sm border border-[#e5ded0]/80 hover:opacity-95 transition-all duration-300 ease-in-out">
+        <img id="header-logo" src="/barbara-brown/bb_logo_official.jpg" alt="Barbara Brown" class="h-20 md:h-24 w-auto object-contain rounded-xl shadow-sm border border-[#e5ded0]/80 hover:opacity-95 transition-all duration-300 ease-in-out">
       </a>
-      <nav class="hidden md:flex items-center gap-6 lg:gap-8 text-xs tracking-[0.18em] uppercase text-[#5c554e] font-medium">
-        <a href="#diferenciais" class="hover:text-[#141210] transition-colors">A Tecnologia</a>
-        <a href="#engenharia" class="hover:text-[#141210] transition-colors">O Interior</a>
-        <a href="#co-creator" class="text-[#8c5e23] hover:text-[#5c3e14] transition-colors flex items-center gap-1.5 font-semibold">Programa Co-Creator</a>
+      <nav class="hidden md:flex items-center gap-8 lg:gap-10 text-[13px] md:text-sm tracking-[0.14em] uppercase text-[#1f1c1a] font-semibold">
+        <a href="#diferenciais" class="hover:text-[#8c5e23] transition-colors py-1">A Tecnologia</a>
+        <a href="#engenharia" class="hover:text-[#8c5e23] transition-colors py-1">O Interior</a>
+        <a href="#co-creator" class="text-[#8c5e23] hover:text-[#5c3e14] transition-colors py-1 font-bold">Programa Co-Creator</a>
       </nav>
-      <a href="#vip-access" class="text-xs uppercase tracking-widest bg-[#1a1715] hover:bg-[#332e29] text-white px-5 py-2.5 rounded-full font-medium transition-all shadow-md">
+      <a href="#vip-access" class="text-xs md:text-[13px] uppercase tracking-widest bg-[#1a1715] hover:bg-[#332e29] text-white px-6 py-3 rounded-full font-semibold transition-all shadow-md">
         Acesso Exclusivo
       </a>
     </div>
@@ -454,13 +454,13 @@
       if (window.scrollY > 40) {
         header.classList.remove('py-5', 'md:py-6');
         header.classList.add('py-2.5', 'shadow-sm');
-        logo.classList.remove('h-16', 'md:h-20');
-        logo.classList.add('h-9', 'md:h-10');
+        logo.classList.remove('h-20', 'md:h-24');
+        logo.classList.add('h-10', 'md:h-12');
       } else {
         header.classList.remove('py-2.5', 'shadow-sm');
         header.classList.add('py-5', 'md:py-6');
-        logo.classList.remove('h-9', 'md:h-10');
-        logo.classList.add('h-16', 'md:h-20');
+        logo.classList.remove('h-10', 'md:h-12');
+        logo.classList.add('h-20', 'md:h-24');
       }
     }
 
