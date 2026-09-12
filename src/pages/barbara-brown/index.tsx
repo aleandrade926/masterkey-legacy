@@ -344,16 +344,28 @@ export default function BarbaraBrownLanding() {
               </div>
             </div>
 
-            {/* MONOGRAMA EM OURO GLINT SHOWCASE */}
-            <div className="mt-8 p-4 rounded-2xl bg-[#f5efe4] border border-[#d9cdba] flex items-center gap-4 shadow-sm">
-              <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden border border-[#d4c5ad] shadow-inner bg-white">
-                <video autoPlay loop muted playsInline className="w-full h-full object-cover">
+            {/* O PROPÓSITO DA MARCA BARBARA BROWN */}
+            <div className="mt-8 p-5 rounded-2xl bg-[#f5efe4] border border-[#d9cdba] flex flex-col sm:flex-row items-center gap-5 shadow-sm">
+              <div className="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden border border-[#d4c5ad] shadow-inner bg-white">
+                <video id="monogram-video-react" autoPlay loop muted playsInline className="w-full h-full object-cover">
                   <source src="/barbara-brown/bb_monogram_glint_video.mp4" type="video/mp4" />
                 </video>
+                <button 
+                  onClick={() => {
+                    const v = document.getElementById("monogram-video-react") as HTMLVideoElement;
+                    if (v) v.muted = !v.muted;
+                  }}
+                  className="absolute bottom-1 right-1 bg-black/70 hover:bg-black text-white text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded font-medium cursor-pointer"
+                >
+                  Som
+                </button>
               </div>
-              <div>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#8c5e23] font-bold block mb-0.5">Assinatura Chanfrada em Ouro Acetinado</span>
-                <p className="text-xs text-[#2a2622] leading-relaxed font-medium">O monograma BB foi esculpido para refletir a luz com sobriedade. Não para gritar uma marca, mas para assinar uma obra de arte funcional.</p>
+              <div className="text-center sm:text-left">
+                <span className="text-[10px] uppercase tracking-[0.22em] text-[#8c5e23] font-bold block mb-1">A Marca & Seu Propósito • Quiet Luxury</span>
+                <h4 className="text-base font-serif text-[#141210] font-bold mb-1.5">O Selo da Mulher que Constrói o Próprio Espaço</h4>
+                <p className="text-xs text-[#57514a] leading-relaxed">
+                  A Barbara Brown não foi criada para quem precisa de logotipos gigantes para se afirmar. Ela representa a mulher que lidera, decide e transita por ambientes de alta exigência com elegância silenciosa. O monograma BB simboliza a união da nobreza do couro artesanal com a engenharia funcional contemporânea — sofisticação que se impõe sem precisar gritar.
+                </p>
               </div>
             </div>
           </div>
