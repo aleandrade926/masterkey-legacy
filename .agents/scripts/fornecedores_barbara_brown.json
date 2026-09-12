@@ -1,0 +1,79 @@
+[
+  {
+    "id": "OEM-001",
+    "empresa": "Marroquinaria D'Rossi",
+    "cidade": "Campo Bom",
+    "uf": "RS",
+    "polo": "Vale dos Sinos",
+    "especialidade": "Bolsas de couro estruturadas e pesponto fino de alto padrão",
+    "contato_email": "comercial@drossiartefatos.com.br",
+    "status": "mapeado",
+    "moq_estimado": "30 a 50 unidades"
+  },
+  {
+    "id": "OEM-002",
+    "empresa": "Artefatos de Couro Belmonte",
+    "cidade": "Novo Hamburgo",
+    "uf": "RS",
+    "polo": "Vale dos Sinos",
+    "especialidade": "Private label para grandes marcas nacionais, linha feminina estruturada",
+    "contato_email": "desenvolvimento@belmontemarroquinaria.com.br",
+    "status": "mapeado",
+    "moq_estimado": "50 a 100 unidades"
+  },
+  {
+    "id": "OEM-003",
+    "empresa": "Couro & Cia Indústria",
+    "cidade": "Sapiranga",
+    "uf": "RS",
+    "polo": "Vale dos Sinos",
+    "especialidade": "Montagem de bolsas leves com alças reforçadas e forros técnicos",
+    "contato_email": "contato@courociaindustria.com.br",
+    "status": "mapeado",
+    "moq_estimado": "50 unidades"
+  },
+  {
+    "id": "OEM-004",
+    "empresa": "Kênia & Kátia Artefatos de Couro",
+    "cidade": "Franca",
+    "uf": "SP",
+    "polo": "Franca",
+    "especialidade": "Couro vacum legítimo, acabamento encerado e marroquinaria executiva",
+    "contato_email": "vendas@keniakatialp.com.br",
+    "status": "mapeado",
+    "moq_estimado": "30 a 50 unidades"
+  },
+  {
+    "id": "OEM-005",
+    "empresa": "Bolsas Relicário Fábrica OEM",
+    "cidade": "Jaú",
+    "uf": "SP",
+    "polo": "Jaú / Centro-Oeste Paulista",
+    "especialidade": "Bolsas femininas estruturadas, modelos tote, mochilas e divisórias para notebook",
+    "contato_email": "faccionamento@bolsasrelicario.com.br",
+    "status": "mapeado",
+    "moq_estimado": "30 unidades"
+  },
+  {
+    "id": "OEM-006",
+    "empresa": "Curtume e Marroquinaria Santa Lúcia",
+    "cidade": "Estância Velha",
+    "uf": "RS",
+    "polo": "Vale dos Sinos",
+    "especialidade": "Couros tratados hidrofóbicos (DWR) e marroquinaria sob encomenda",
+    "contato_email": "contato@santaluciacouro.com.br",
+    "status": "mapeado",
+    "moq_estimado": "50 unidades"
+  },
+  {
+    "id": "OEM-007",
+    "empresa": "Bellagotti Marroquinaria Fina",
+    "cidade": "Nova Serrana",
+    "uf": "MG",
+    "polo": "Centro-Oeste Mineiro",
+    "especialidade": "Bolsas executivas com ferragens de alto luxo em verniz cataforético",
+    "contato_email": "atendimento@bellagottiacessorios.com.br",
+    "status": "mapeado",
+    "moq_estimado": "40 a 60 unidades"
+  }
+]

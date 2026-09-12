@@ -1,0 +1,89 @@
+﻿import json
+import os
+
+BASE_DIR = r"C:\Users\Alexandre\masterkey-frontend\.agents\scripts"
+
+influencers = [
+    {
+        "id": "INF-001",
+        "nome": "Duda Lira",
+        "instagram": "@dudalira",
+        "youtube": "Duda Lira",
+        "canal_primario": "Instagram DM",
+        "cluster": "Elegância Clássica & Quiet Luxury",
+        "nicho": "Consumo consciente, cortes atemporais, alta alfaiataria",
+        "status": "pronto_para_dm",
+        "prioridade": "Alta"
+    },
+    {
+        "id": "INF-002",
+        "nome": "Juliana Christ",
+        "instagram": "@julianachrist",
+        "youtube": "Juliana Christ",
+        "canal_primario": "Instagram DM / Story Reply",
+        "cluster": "Imagem Corporativa & Advocacia",
+        "nicho": "Vestuário para executivas, advogadas, postura profissional",
+        "status": "pronto_para_dm",
+        "prioridade": "Alta"
+    },
+    {
+        "id": "INF-003",
+        "nome": "Vitória Portes",
+        "instagram": "@vitoriaportes",
+        "youtube": "Vitória Portes (Canal Oficial)",
+        "canal_primario": "YouTube Parcerias + IG DM",
+        "cluster": "Estilo Atemporal & Reviews de Peças",
+        "nicho": "Marroquinaria clássica, bolsas funcionais, elegância acessível",
+        "status": "pronto_para_dm",
+        "prioridade": "Alta"
+    },
+    {
+        "id": "INF-004",
+        "nome": "Maira Camargo",
+        "instagram": "@mairacamargo",
+        "youtube": "Maira Camargo",
+        "canal_primario": "Instagram DM",
+        "cluster": "Consultoria de Imagem Executiva",
+        "nicho": "Mulheres de negócios, guarda-roupa inteligente para trabalho",
+        "status": "pronto_para_dm",
+        "prioridade": "Média"
+    },
+    {
+        "id": "INF-005",
+        "nome": "Renata Meins",
+        "instagram": "@renatameins",
+        "youtube": "Renata Meins",
+        "canal_primario": "YouTube Parcerias + IG DM",
+        "cluster": "Autoridade Visual & Imagem",
+        "nicho": "Visagismo, elegância, psicologia das cores e peças-chave",
+        "status": "pronto_para_dm",
+        "prioridade": "Média"
+    },
+    {
+        "id": "INF-006",
+        "nome": "Camila Gaio",
+        "instagram": "@camila.gaio",
+        "youtube": "Camila Gaio",
+        "canal_primario": "Instagram DM",
+        "cluster": "Moda para o Trabalho & Estilo Real",
+        "nicho": "Jornalismo de moda, dicas práticas para ambiente corporativo",
+        "status": "pronto_para_dm",
+        "prioridade": "Média"
+    },
+    {
+        "id": "INF-007",
+        "nome": "Lu Tranchesi",
+        "instagram": "@lutranchesi",
+        "youtube": "Lu Tranchesi",
+        "canal_primario": "Instagram Story Reply / DM",
+        "cluster": "Alta Sociedade & Elegância Natural",
+        "nicho": "Lifestyle corporativo, maternidade elegante, moda clássica",
+        "status": "pronto_para_dm",
+        "prioridade": "Alta"
+    }
+]
+
+with open(os.path.join(BASE_DIR, "influencers_barbara_brown.json"), "w", encoding="utf-8") as f:
+    json.dump(influencers, f, ensure_ascii=False, indent=2)
+
+print("Base de influenciadoras atualizada com foco exclusivo em IG e YouTube!")
