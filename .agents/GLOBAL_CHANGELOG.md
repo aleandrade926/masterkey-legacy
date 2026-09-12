@@ -1,6 +1,19 @@
 # Global Master Changelog
 *Memória contínua do ecossistema de Inteligência Artificial.*
 
+## [Data: 12/09/2026 - 12:12] - Barbara Brown Bags (BBB): Ativação das Imagens Oficiais e Deploy da Tech Tote
+- **O que foi feito e entregue:**
+  1. **Assets Visuais de Alta Resolução Conectados e Hospedados:**
+     - `bb_hero_cognac.jpg`: Destaque Hero da The Tech Tote em mármore travertino com monograma BB.
+     - `bb_lifestyle_executive.jpg`: Executiva de casaco bege na frente de torre corporativa em SP (Quiet Luxury).
+     - `bb_interior_engineering.jpg`: Raio-X do interior com divisória para MacBook 14", forro champagne e bolso do Secret AirTag Vault aberto.
+  2. **Páginas de Conversão & Rotas:**
+     - Versão React/Tailwind em `src/pages/barbara-brown/index.tsx` (rotas `/barbara-brown`, `/bbb`, `/co-creator`).
+     - Versão autônoma estática em `public/barbara-brown/index.html` com carregamento em 0.1s e caminhos absolutos testados.
+  3. **Build e Deploy:**
+     - Build de produção validado (`npm run build`, 0 erros).
+     - Commit `5b16dc2` enviado com sucesso para `origin/master`.
+
 ## [Data: 12/09/2026 - 11:52] - Agente Marcos: Disparo do Lote Sábado +10 Comercial (10/10 Sucesso - ZERO FALHAS)
 - **O que foi feito e entregue:**
   1. **Disparo do Lote Comercial de Plantão (10 Imobiliárias):**

@@ -71,10 +71,18 @@
 
 
 ## 6. Barbara Brown (Marca Própria Asset-Light & Marroquinaria Inteligente)
-- **Status:** Ativo / Fase de Sourcing Industrial & Creator Acquisition.
-- **Tese Central:** Marroquinaria feminina executiva de alto padrão (*The Barbara Brown Tech Tote*) integrando o método "Mala de Rodinhas" e a engenharia têxtil da Insider Store (DWR C0 hidrofóbico, forro antibacteriano com íons de prata, bolsos acolchoados para laptop e fecho magnético).
+- **Status:** Ativo / Landing Page e Assets Oficiais 100% Deployed em Produção.
+- **Tese Central:** Marroquinaria feminina executiva de alto padrão (*The Barbara Brown Tech Tote*) integrando o método "Mala de Rodinhas" e a engenharia funcional de resolução de dores estilo Insider Store (Secret AirTag Vault, DWR C0 hidrofóbico à prova de café, forro com íons de prata champagne, laptop sleeve flutuante 14" e alívio de peso < 640g).
+- **Ativos Visuais Oficiais Hospedados (`public/barbara-brown/`):**
+  - `bb_hero_cognac.jpg`: Peça hero em mesa de mármore travertino com monograma BB dourado.
+  - `bb_lifestyle_executive.jpg`: Estilo corporativo com executiva elegante na Faria Lima.
+  - `bb_interior_engineering.jpg`: Raio-X do interior com divisórias técnicas e AirTag aberto.
+- **Rotas & Páginas em Produção:**
+  - SPA React / Tailwind: `/barbara-brown`, `/bbb`, `/co-creator`.
+  - Página Estática Ultra-Rápida: `/barbara-brown/index.html` (com caminhos absolutos e carregamento em 0.1s).
 - **Células Autônomas de SDR Operacionais:**
-  1. **Agente Clara (`CLARA_INFLUENCER_MASTER.md`):** Head de Creator Acquisition & Parcerias VIP. Foco em influenciadoras de elegância clássica e advogadas. Base inicial: 7 criadoras mapeadas com proposta de Seeding VIP + 15% a 20% de comissão de afiliada.
+  1. **Agente Clara (`CLARA_INFLUENCER_MASTER.md`):** Head de Creator Acquisition & Parcerias VIP. Foco em influenciadoras de elegância clássica e advogadas. Base inicial: 7 criadoras mapeadas com proposta de Co-Creator (bolsa com o nome da criadora + 20% comissão + 15% cross-sell).
   2. **Agente Victor (`VICTOR_OEM_MASTER.md`):** Head de Operações Fabris & Suprimentos Industriais. Foco em ateliês e indústrias nos polos do Vale dos Sinos (RS) e Franca/Jaú (SP). Base inicial: 7 indústrias OEM mapeadas para cotação de lote piloto e prototipagem.
 - **Bases e Scripts:** Arquivos `influencers_barbara_brown.json` e `fornecedores_barbara_brown.json` gerados e prontos para cadência em `C:\Users\Alexandre\masterkey-frontend\.agents\scripts\`.
 - **Memória Sincronizada:** Registrado em `000_SYNC_NOTEBOOKLM\[PROJETO] Barbara Brown - Estrutura Mestra de Marca, Produto e Go-to-Market.md` e `[CASE] Insider Store 2017...`.
+
