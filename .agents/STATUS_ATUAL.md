@@ -72,24 +72,16 @@
 
 
 ## 7. Barbara Brown (Marca Própria Asset-Light & Marroquinaria Inteligente)
-- **Status:** Ativo / Identidade Oficial e LP Quiet Luxury Deployed em Produção.
-- **Tese Central:** Marroquinaria feminina executiva de alto padrão (*The Barbara Brown Tech Tote*) integrando o método "Mala de Rodinhas" e a engenharia funcional de resolução de dores estilo Insider Store (Secret AirTag Vault, DWR C0 hidrofóbico à prova de café, forro champagne, laptop sleeve flutuante 14" e alívio de peso).
-- **Identidade Visual Oficial & Quiet Luxury:**
-  - `bb_logo_official.jpg`: Logotipo definitivo com monograma "BB" chanfrado em ouro acetinado sobre papel marfim e tipografia gravada "BARBARA BROWN".
-  - Paleta Quiet Luxury: Fundo marfim `#fbf9f5`, tipografia nobre café/charcoal `#1f1c1a` e detalhes em ouro envelhecido `#8c5e23`.
-  - **Header Dinâmico Retrátil:** Monograma em vídeo com brilho de luz dourada (`bb_monogram_glint_video.mp4`) com transição de escala (`h-20 md:h-24` -> `h-10 md:h-12`) no scroll.
-- **Ativos Visuais & Vídeos Cinematográficos Hospedados (`public/barbara-brown/`):**
-  - `bb_hero_marble_video.mp4`: Vídeo Google Veo em alta resolução exibindo a Hero Tech Tote sobre mármore travertino.
-  - `bb_interior_video.mp4`: Vídeo Google Veo revelando a engenharia de divisórias internas e o Secret AirTag Vault.
-  - `bb_monogram_glint_video.mp4`: Vídeo do monograma BB com reflexo dourado e áudio autoral da grife com toggle de som.
-  - `bb_lifestyle_executive.jpg`: Estilo corporativo com executiva elegante na Faria Lima.
-  - **Transição Suave Vídeo -> Foto Original (Crossfade Cinemático com Fallback Timeupdate):** Vídeos do Hero e da Engenharia executam em loop inteligente com suporte duplo (evento `ended` + gatilho de segurança `timeupdate` aos `duration - 0.35s` com trava `isFading`): após a cinemática do vídeo, desvanecem suavemente para a foto estática em altíssima definição (preservando o ângulo e nitidez), pausando 3.5s antes de retomar o ciclo.
-  - **Eliminação Total de Sobreposições:** Containers com posicionamento relativo e tags balanceadas, garantindo que overlays de títulos permaneçam estritamente contidos em seus blocos funcionais.
-  - **Copy Lapidada:** Remoção de metalinguagem e alinhamento do propósito ("A Barbara Brown representa a mulher que lidera, decide e transita por ambientes de alta exigência com elegância silenciosa...").
-- **Programa Co-Creator (Prestígio para Influencers):**
-  - Segmento voltado para influencers de autoridade e criadoras com foco em modelo assinado e curadoria de alta grife (sem termos transacionais de afiliados).
-  - Blindagem estratégica (*Projeto Manhattan* mantido em sigilo estrito de retaguarda).
-- **Rotas & Páginas em Produção:**
-  - SPA React / Tailwind: `/barbara-brown`, `/bbb`, `/co-creator`.
-  - Página Estática Ultra-Rápida: `/barbara-brown/index.html`.
-  - Deploy ao vivo: `https://app.taxmanagers.com.br/barbara-brown`.
+- **Status:** 100% ISOLADA EM DOMÍNIO E PROJETO PRÓPRIO / NO AR EM PRODUÇÃO.
+- **Domínio Oficial:** `https://barbarabrown.com.br` e `https://www.barbarabrown.com.br`
+- **Diretório Local Autônomo:** `C:\Users\Alexandre\barbarabrown-site` (Git local independente).
+- **Deploy Vercel:** Projeto `barbarabrown-site` conectado via Vercel CLI e DNS autoritativo no Registro.br (`ns1.vercel-dns.com` e `ns2.vercel-dns.com`).
+- **Saneamento do SaaS `masterkey-frontend`:**
+  - Todas as rotas (`/barbara-brown`), páginas React e assets pesados de vídeo (Veo) foram expurgados do SaaS.
+  - Configurado redirecionamento permanente 301 no `vercel.json` de `masterkey-frontend`: `/barbara-brown(.*)` -> `https://barbarabrown.com.br$1`.
+  - Push sincronizado com o GitHub (`origin/master`) de forma limpa.
+- **Tese Central & LP Quiet Luxury:**
+  - Marroquinaria feminina executiva de alto padrão (*The Barbara Brown Tech Tote*).
+  - Vídeos cinematográficos integrados, monograma em ouro acetinado gravado, logotipo sobreposto protegendo contra marcas d'água e crossfade suave para fotos 4K.
+  - Programa Co-Creator com canal direto para influencers e executivas.
+

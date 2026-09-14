@@ -1,6 +1,17 @@
 # Global Master Changelog
 *Memória contínua do ecossistema de Inteligência Artificial.*
 
+## [Data: 14/09/2026 - 16:10] - Infraestrutura & Marcas Próprias: Isolamento Autônomo da Barbara Brown (barbarabrown.com.br)
+- **O que foi feito e entregue:**
+  1. **Aquisição e Delegação de DNS no Registro.br:** Domínio `barbarabrown.com.br` e `www.barbarabrown.com.br` apontados com autoridade total para os nameservers Vercel (`ns1.vercel-dns.com` e `ns2.vercel-dns.com`).
+  2. **Criação da Pasta Oficial e Repositório Isolado:** Criado diretório `C:\Users\Alexandre\barbarabrown-site` com Git inicializado, Tailwind standalone e assets 4K locais.
+  3. **Deploy Autônomo em Produção:** Projeto `barbarabrown-site` deployado na Vercel com SSL ativo e vinculado diretamente ao domínio oficial `https://barbarabrown.com.br`.
+  4. **Higienização Total do SaaS `masterkey-frontend`:**
+     - Removidas rotas, páginas e assets pesados de vídeo da grife do repositório SaaS.
+     - Configurado redirecionamento permanente 301 no `vercel.json` (`/barbara-brown(.*)` -> `https://barbarabrown.com.br$1`).
+     - Sincronização limpa com o GitHub (`origin/master`).
+  5. **Atualização da Topologia Oficial:** Registrado o Projeto 7 no arquivo `.agents/TOPOLOGY.md`.
+
 ## [Data: 14/09/2026 - 15:20] - Célula Closer / RePesquisa: Reunião com Amerigo Manzato (Dynamics Parts) + Deploy da Apresentação Executiva
 - **O que foi feito e entregue:**
   1. **Reunião de Fechamento Realizada às 14h00 (Google Meet):**
