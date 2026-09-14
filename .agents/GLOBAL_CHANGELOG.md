@@ -1,6 +1,45 @@
 # Global Master Changelog
 *Memória contínua do ecossistema de Inteligência Artificial.*
 
+## [Data: 14/09/2026 - 10:10] - RePesquisa Outbound: Disparo do Touch 2 Matinal (10/10) + Bump Tatiane Dias + Preparação Reunião 14h00
+- **O que foi feito e entregue:**
+  1. **Disparo do Touch 2 Matinal (10/10 Sucesso - 0 Falhas):**
+     - 10 diretores industriais do Lote Executivo abordados com bump matinal de segunda-feira na mesma thread, oferecendo avaliação de contratos industriais com link blindado `https://repesquisa.com.br/agenda`:
+       1. Planind Engenharia (Edvaldo Paulino) -> `edvaldo.paulino@planind.com.br`
+       2. TecnoHard Metalúrgica (Gilmar) -> `gilmar@tecnohard.ind.br`
+       3. Maxi Parts Usinagem (Sergio Almeida) -> `sergio.almeida@maxiparts.ind.br`
+       4. Maebraz Usinagem (Gilson Narcizo) -> `gilson.narcizo@maebraz.com.br`
+       5. Tecbrás Usinagem (Ricardo) -> `ricardo@tecbrasusinagem.com.br`
+       6. Santa Maria Indústria (Emerson Meneses) -> `emerson.meneses@santamaria.ind.br`
+       7. IB Services Usinagem (Ricardo Ferraz) -> `diretoria@ibservices.ind.br`
+       8. Fenix Paper (Diretoria) -> `diretoria@fenixpaper.com.br`
+       9. Edymac Usinagem (Diretoria) -> `edymac@edymac.com.br`
+       10. Propel Embalagens (Diretoria) -> `propel@propelembalagens.com.br`
+     - Cópia de auditoria entregue com sucesso em `andradeflorio@gmail.com`.
+  2. **Bump Matinal Enviado para Tatiane Dias (Usimec Usinagem):**
+     - Mensagem de alinhamento enviada às 10h06 para `comercial@usimecusinagem.com.br` confirmando opções de horário (hoje às 15h30 ou amanhã às 10h00) ou agendamento direto via `https://repesquisa.com.br/agenda`.
+  3. **Preparação para Reunião das 14h00 (Dynamics Parts):**
+     - Sala Google Meet ativa (`https://meet.google.com/zmf-wocx-kyn`).
+     - Dossiê pré-call consolidado em `briefing_dynamics_parts.md`.
+  4. **Governança & Métricas:**
+     - 200 leads abordados na esteira inicial + 11 toques de follow-up em produção.
+     - `STATUS_ATUAL.md` sincronizado.
+
+
+## [Data: 14/09/2026 - 10:05] - Arquitetura de Agentes: Criação do "Agente Fred" (Investor Relations & Captação de Capital)
+- **O que foi feito e entregue:**
+  1. **Nascimento do Agente Fred:**
+     - Criado o dossiê operacional completo em `C:\Users\Alexandre\masterkey-frontend\.agents\FRED_INVESTOR_RELATIONS_MASTER.md`.
+     - Persona: Head of Investor Relations & Strategic Partnerships do ecossistema RePesquisa & Ventures.
+  2. **Teses de Captação Estruturadas:**
+     - Tese 1 (Smart Money Industrial): Captação com donos de indústrias e ex-diretores de suprimentos para alavancar a rede de compradores industriais.
+     - Tese 2 (Family Offices & Real Estate): Captação atrelada ao fluxo contínuo de originação de contratos e regularização imobiliária da Andrade & Florio.
+     - Tese 3 (Venture Capital Early Stage): Foco em Unit Economics com CAC R$ 0, 90%+ de margem bruta e tração comercial real comprovada (Dynamics Parts, Usimec e 70+ imobiliárias).
+  3. **Instrumento Jurídico Padrão:**
+     - Rodada Seed/Anjo de R$ 300k a R$ 600k estruturada via Mútuo Conversível (SAFE) com Valuation Cap de R$ 5M a R$ 8M e desconto de 15-20%.
+  4. **Atualização da Governança:** Espelhado em `STATUS_ATUAL.md`.
+
+
 ## [Data: 12/09/2026 - 13:12] - Barbara Brown Bags (BBB): Ativação de Vídeos Cinematográficos do Google Veo e Refino Tipográfico
 - **O que foi feito e entregue:**
   1. **Assets em Vídeo Gerados via Google Veo Hospedados e Integrados:**
@@ -2784,7 +2823,16 @@ s2.vercel-dns.com), bem como a compatibilidade dos registros diretos Tipo A (76.
 - **Onde (Arquivos afetados):**
   - `C:\Users\Alexandre\masterkey-frontend\.agents\DOSSIE_BARBARA_BROWN_BBB.md`
   - `C:\Users\Alexandre\masterkey-frontend\.agents\HISTORICO_MENSAL\07_HISTORICO_2026_09_SETEMBRO_P02.md`
-  - `C:\Users\Alexandre\OneDrive\Documentos\Obsidian Vault\000_SYNC_NOTEBOOKLM\[DOSSIE] Barbara Brown Bags (BBB) - Operacao Asset-Light D2C.md`
+  - `C:\Users\Alexandre\OneDrive\Documentos\Obsidian Vault\000_SYNC_NOTEBOOKLM\[DOSSIE] Barbara Brown Bags (BBB) - Operacao Asset-Light D2C.md`## [Data: 12/09/2026 - 17:40] - Barbara Brown (BBB): Remoção de Tarjas Pretas e Logo Oficial Posicionado Sobre o Botão de Áudio
+- **O que foi feito:**
+  1. **Remoção de Tarjas Pretas Intrusivas:** Eliminadas as tarjas pretas de especificações textuais (*"Secret AirTag Vault Integrado"* no Hero e *"MacBook 14 • Forro Champagne • AirTag"* no Interior) que poluíam o centro/rodapé dos vídeos cinematográficos.
+  2. **Posicionamento Exato do Logotipo sobre o Botão de Áudio:** O emblema oficial da Barbara Brown (`bb_logo_official.jpg`) foi empilhado verticalmente logo acima do botão discreto de *"Ativar Áudio"* em um container flex responsivo (`flex flex-col items-end gap-2.5`). Nessa posição, o logotipo cobre 100% da marca d'água em estrela do Google Veo/Gemini em qualquer resolução de tela (desktop e mobile), com estética de selo de autenticidade de luxo.
+  3. **Preservação Integral do Restante da Página:** Rigorosamente nenhuma outra linha de copy, código ou estrutura da landing page foi alterada.
+  4. **Deploy em Produção:** Compilado e deployado na Vercel (`https://app.taxmanagers.com.br/barbara-brown`).
+- **Onde (Arquivos afetados):**
+  - `public/barbara-brown/index.html`
+  - `src/pages/barbara-brown/index.tsx`
+  - `.agents/GLOBAL_CHANGELOG.md`
   - `C:\Users\Alexandre\masterkey-frontend\.agents\GLOBAL_CHANGELOG.md`
 
 ## [Data: 12/09/2026 - 13:40] - Barbara Brown (BBB): Refinamento Editorial de Luxo, Transição Suave Vídeo-Foto e Co-Creator de Prestígio
