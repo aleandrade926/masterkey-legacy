@@ -24,10 +24,17 @@ dist-ssr
 *.sw?
 
 .vercel
-.env*
 *.zip
 *.bat
 __pycache__/
 
 .vercel
 .env*
+.agents/ARQUIVAO_HISTORICO_COMPLETO.txt
+.agents/HISTORICO_MENSAL/01_*
+.agents/HISTORICO_MENSAL/02_*
+.agents/HISTORICO_MENSAL/03_*
+.agents/HISTORICO_MENSAL/04_*
+.agents/HISTORICO_MENSAL/05_*
+.agents/HISTORICO_MENSAL/06_*
+.agents/HISTORICO_MENSAL/07_HISTORICO_2026_09_SETEMBRO_P01.md

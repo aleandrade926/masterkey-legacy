@@ -1,4 +1,9 @@
 {
+  "redirects": [
+    { "source": "/barbara-brown(.*)", "destination": "https://barbarabrown.com.br$1", "permanent": true },
+    { "source": "/bbb(.*)", "destination": "https://barbarabrown.com.br$1", "permanent": true },
+    { "source": "/co-creator(.*)", "destination": "https://barbarabrown.com.br$1", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/((?!api/).*)" , "destination": "/index.html" }
   ],

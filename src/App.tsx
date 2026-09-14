@@ -41,8 +41,6 @@ import MarketCheckout from "./pages/market/MarketCheckout";
 import TamarcadoDashboard from "./pages/tamarcado/Dashboard";
 import PublicBooking from "./pages/tamarcado/PublicBooking";
 
-// Rota Oficial Barbara Brown Bags (BBB)
-import BarbaraBrownLanding from "./pages/barbara-brown";
 
 function Router() {
   return (
@@ -104,17 +102,6 @@ function App() {
     return <SintoniaMonitor />;
   }
 
-  // ==========================================
-  // ROTA INDEPENDENTE: Barbara Brown Bags (BBB)
-  // ==========================================
-  if (
-    location.startsWith("/barbara-brown") || 
-    location.startsWith("/barbarabrown") || 
-    location.startsWith("/bbb") || 
-    location.startsWith("/co-creator")
-  ) {
-    return <BarbaraBrownLanding />;
-  }
 
   // ==========================================
   // 2. ROTA INDEPENDENTE: TailorSpace Infra

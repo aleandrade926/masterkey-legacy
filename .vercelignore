@@ -1,0 +1,7 @@
+.agents
+.git
+*.log
+*.zip
+*.bat
+scratch
+__pycache__

@@ -88,3 +88,15 @@ Se você for solicitado a alterar algo relacionado ao E-book, modifique o "PROJE
 - **Stack:** HTML5, Tailwind CSS, JavaScript Vanilla (Dashboard Mockup, Simulador de Cadência reativo e Modal de Onboarding).
 - **Status:** Ativo e em produção (200 OK) no domínio raiz.
 
+---
+
+## 7. PROJETO: Barbara Brown Bags (D2C Asset-Light & Marroquinaria Inteligente)
+- **Domínios Mapeados:** `barbarabrown.com.br`, `www.barbarabrown.com.br`
+- **Projeto Vercel Oficial:** `barbarabrown-site`
+- **Pasta Local Única e Oficial:** `c:\Users\Alexandre\barbarabrown-site`
+- **Repositório Git:** Inicializado e isolado localmente em `c:\Users\Alexandre\barbarabrown-site`.
+- **Stack:** HTML5, Tailwind CSS, JavaScript Vanilla, Cinema Crossfade Media (Veo + Fotografias de Alta Resolução), formulário integrado WhatsApp VIP.
+- **Status:** Ativo e em produção no domínio raiz `https://barbarabrown.com.br`.
+- **Regra Crítica de Isolamento:** 100% isolado física e logicamente. NUNCA misturar ou fazer deploy da Barbara Brown a partir de `masterkey-frontend` ou de domínios da TaxManagers. O SaaS `app.taxmanagers.com.br` responde exclusivamente pelo software tributário/CRM.
+
+
