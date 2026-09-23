@@ -99,4 +99,16 @@ Se você for solicitado a alterar algo relacionado ao E-book, modifique o "PROJE
 - **Status:** Ativo e em produção no domínio raiz `https://barbarabrown.com.br`.
 - **Regra Crítica de Isolamento:** 100% isolado física e logicamente. NUNCA misturar ou fazer deploy da Barbara Brown a partir de `masterkey-frontend` ou de domínios da TaxManagers. O SaaS `app.taxmanagers.com.br` responde exclusivamente pelo software tributário/CRM.
 
+---
+
+## 8. PROJETO: Papirologo (Microlearning & Gamificação para Concursos)
+- **Domínios Mapeados:** `papirologo.com.br`, `www.papirologo.com.br`, `app.papirologo.com.br`
+- **Pasta Local Única e Oficial:** `c:\Users\Alexandre\papirologo`
+- **Projeto Vercel Oficial:** `papirologo`
+- **Repositório Git:** Inicializado e isolado localmente em `c:\Users\Alexandre\papirologo`.
+- **Stack:** React 19, Vite, Tailwind CSS, Lucide Icons, Web Audio API (Sons Nativos de Dopamina), Canvas Confetti.
+- **Status:** Ativo / Em Construção. Domínio registrado e apontado para Vercel (`ns1.vercel-dns.com` e `ns2.vercel-dns.com`).
+- **Regra Crítica de Isolamento:** 100% isolado física e logicamente. NUNCA misturar com `masterkey-frontend`, `taxmanagers`, `barbarabrown` ou `repesquisa`. Todos os módulos, gamificação e ativos existem exclusivamente dentro de `c:\Users\Alexandre\papirologo`.
+
+
 

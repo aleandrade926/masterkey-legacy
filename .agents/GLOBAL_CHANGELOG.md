@@ -3266,3 +3266,46 @@ s2.vercel-dns.com), bem como a compatibilidade dos registros diretos Tipo A (76.
 
 
 
+
+
+## [Data: 22/09/2026 - 18:50] - Papirologo: Ementa Completa dos 5 Cursos, Purificação da Marca e Remoção da Tarja Anti-Burla
+- **O que foi feito e entregue:**
+  1. **Purificação da Marca (100% Papirologo):**
+     - Expurgo completo de qualquer menção a marcas externas ('Andrade & Florio', 'TaxManagers') na interface pública, cópias, modais e mensagens do sistema. A marca é estrita e exclusivamente Papirologo.
+  2. **Ementa e Conteúdo Denso de Elite (17 Unidades, 57 Nós, 171 Desafios Práticos):**
+     - **Direito Tributário:** 6 seções, 24 lições (4 por unidade), 72 desafios com fundamentação exaustiva no CTN, CF/88, STF e STJ.
+     - **Direito Constitucional:** 3 seções, 9 lições (3 por unidade), 27 desafios dogmáticos.
+     - **Direito Administrativo & Licitações:** 3 seções, 9 lições (3 por unidade), 27 desafios (Lei 14.133/21 e Lei 14.230/21).
+     - **Processo Civil & Fazenda Pública:** 2 seções, 6 lições (3 por unidade), 18 desafios (CPC/15 e Lei 9.494/97).
+     - **Contabilidade Geral & Avançada:** 3 seções, 9 lições (3 por unidade), 27 desafios (CPC 00, CPC 16, CPC 27).
+     - **Regra de Ouro:** Veto absoluto a módulos com apenas 1 lição. Todas as seções possuem progressão pedagógica estruturada.
+  3. **Remoção Total da Tarja Amarela Anti-Burla:**
+     - A tarja amarela e os eventos invasivos de perda de foco (`visibilitychange`) que disparavam alertas e sons foram 100% eliminados, assegurando fluidez e foco total nos estudos.
+  4. **Deploy em Produção:**
+     - Projeto `papirologo` publicado com sucesso via Vercel CLI com alias ativo em `https://papirologo.com.br` e `https://papirologo.vercel.app`.
+- **Onde:**
+  - `C:\Users\Alexandre\papirologo\src\data\courses.ts`
+  - `C:\Users\Alexandre\papirologo\src\components\LessonModal.tsx`
+  - `C:\Users\Alexandre\papirologo\src\utils\antiCheat.ts`
+
+## [Data: 22/09/2026 - 19:15] - Papirologo: Governança de Expectativas & Painel de Desempenho do Aluno
+- **O que foi feito e entregue:**
+  1. **Blindagem de Expectativas:**
+     - Eliminadas quaisquer mensagens que prometiam bolsas de estudo ou monitoria remunerada imediata. O radar de talentos e o ranking funcionam estritamente como acompanhamento de rendimento acadêmico (IRA).
+  2. **Painel de Desempenho do Aluno Integrado (Aba Perfil):**
+     - Implementado grid 2x2 com métricas oficiais em tempo real:
+       * **IRA (Assertividade %):** Índice de precisão nas respostas (Alto Rendimento).
+       * **Domínio do Edital:** Tópicos dominados vs. total da disciplina selecionada.
+       * **Questões Feitas:** Total de casos práticos resolvidos.
+       * **XP & Ofensiva:** Pontos acumulados e dias consecutivos de estudo.
+       * **Barra de Cobertura da Disciplina:** Acompanhamento visual da evolução no curso ativo.
+  3. **Deploy em Produção:**
+     - Build e deploy validados em `https://papirologo.com.br`.
+
+## [Data: 23/09/2026 - 07:45] - Arquivão Histórico Mestre & Governança Sistêmica Atualizados
+- **O que foi feito e entregue:**
+  1. **Consolidação do Arquivão Histórico:**
+     - Executado `generate_final_arquivao.py`, unificando 70.816 eventos cronológicos de 25/03/2026 até 23/09/2026 (154.58 MB).
+     - Espelhado em `C:\Users\Alexandre\masterkey-frontend\.agents\ARQUIVAO_HISTORICO_COMPLETO.txt` e `C:\Users\Alexandre\.gemini\antigravity\scratch\ARQUIVAO_HISTORICO_COMPLETO.txt`.
+  2. **Atualização da Memória Global:**
+     - Sincronizados `GLOBAL_CHANGELOG.md`, `STATUS_ATUAL.md`, `DOSSIE_HISTORICO_ECOSSISTEMA_2026.md` e `07_HISTORICO_2026_09_SETEMBRO_P02.md`.

@@ -170,6 +170,12 @@
   - Conclusão dos disparos de 50 e-mails para fornecedores fabris B2B (Lotes 1 a 5), auditados ao vivo com cópias de controle.
   - Deploy da landing page institucional de agendamento em `https://repesquisa.com.br/demo` com Calendly embutido sem atrito.
   - Arquitetura da Célula Comercial Especializada "Agente Fábio" com governança mestre isolada em `.agents/FABIO_SDR_MASTER.md`, fundindo a metodologia de cold email de Marc Wayshak (4-6 frases, Whiteboard method) com a conversão de Leandro Ladeira.
+* **Agente Alexandre (SDR Tributário), Agente Closer & Motor de Cadência TaxManagers (15/09/2026):**
+  - Implantação da Arquitetura DOE em 3 camadas (`.agents/doe_framework/`) com `agente.md` como maestro central desacoplado de LLM.
+  - Criação da governança do **Agente Alexandre** (`.agents/ALEXANDRE_SDR_MASTER.md`): abordagem direta ao sócio no QSA com diplomacia inegociável em relação à contabilidade externa (reconhecendo a sobrecarga de obrigações acessórias) e prova social enterprise de autoridade (**Duratex, Nike, Electrolux e Riachuelo**).
+  - Criação da governança do **Agente Closer** (`.agents/CLOSER_MASTER.md`): condução do Diagnóstico Consultivo de 15 Minutos, fechamento no êxito (20-25%) e ativação sob demanda de especialistas técnicos (Fernanda Souza Santos).
+  - Implementação do motor de cadência autônoma resiliente (`taxmanagers_cadence_engine.py` e `taxmanagers_cadence_runner.py`) com 3 toques programados (Passo 1 D0, Follow-up 1 D+3, Follow-up 2 D+7) e persistência em `cadence_state.json`.
+  - Disparo e entrega bem-sucedida de 50 indústrias corporativas em produção via Google Relay TLS/SSL com remetente institucional `Alexandre Florio | TaxManagers Advisory <alexandre.florio@taxmanagers.com.br>`.
 
 ### Engenharia Financeira, Tributária e Teses de Negócio
 * **Tese do "Efeito Tesoura Contábil e Tributário" (TailorSpace /cfo):** Consolidada em código no dia **08/09/2026**. Consiste no mapeamento técnico de conversão de CAPEX (investimento financeiro de adequação imobiliária imobilizado com depreciação lenta e arrastada) em OPEX (despesa operacional pura de aluguel mensal), gerando dupla alavancagem de fluxo de caixa para empresas no Lucro Real:
@@ -204,4 +210,7 @@
 * 👉 `https://app.taxmanagers.com.br` *(Ambiente Logado do CRM de Prospecção e Banco Supabase)*
 * 👉 `https://repesquisa.com.br` *(Motor de Inteligência de Compras e Fornecedores B2B)*
 * 👉 `https://repesquisa.com.br/demo` *(Página Oficial de Agendamento SDR e Calendly Embutido)*
+* 👉 `https://papirologo.com.br` *(Papirologo - Microlearning Dogmático & Simulado para Concursos de Elite: Receita Federal, SEFAZ e PGE)*
+* 👉 `https://barbarabrown.com.br` *(Barbara Brown - Marroquinaria Inteligente & Curadoria de Afiliados)*
+
 

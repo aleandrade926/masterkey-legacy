@@ -246,3 +246,25 @@
   - Programa Co-Creator com canal direto para influencers e executivas.
 
 
+
+
+## 8. Papirologo (Microlearning Dogmático & Simulado para Carreiras de Elite)
+- **Status:** 100% NO AR EM PRODUÇÃO E ATIVO.
+- **Domínios Oficiais:** `https://papirologo.com.br` e `https://papirologo.vercel.app`
+- **Diretório Local Autônomo:** `C:\Users\Alexandre\papirologo` (Git isolado).
+- **Deploy Vercel:** Projeto `papirologo` (Produção Aliased para `papirologo.com.br`).
+- **Stack Tecnológica:** React 19, Vite, TypeScript, Tailwind CSS, Lucide Icons, Web Audio API, Canvas Confetti.
+- **Marca & Identidade:** 100% PAPIROLOGO. Proibição absoluta de misturar marcas externas ou de escritórios.
+- **Ementa Universitária Completa (Padrão MEC & Editais RFB, SEFAZ, PGE):**
+  - **17 Unidades Temáticas, 57 Nós e 171 Desafios Práticos:**
+    1. *Direito Tributário:* 6 seções, 24 lições (4 por seção), 72 desafios (CTN, CF/88, STF, STJ).
+    2. *Direito Constitucional:* 3 seções, 9 lições (3 por seção), 27 desafios.
+    3. *Direito Administrativo & Licitações:* 3 seções, 9 lições (3 por seção), 27 desafios (Lei 14.133/21 e Lei 14.230/21).
+    4. *Processo Civil & Fazenda Pública:* 2 seções, 6 lições (3 por seção), 18 desafios.
+    5. *Contabilidade Geral & Avançada:* 3 seções, 9 lições (3 por seção), 27 desafios.
+  - **Regra de Ouro:** Zero seções com apenas 1 lição. Todas as unidades possuem sequência progressiva de 3 a 4 lições.
+- **Experiência do Aluno & Usabilidade:**
+  - Remoção total da tarja amarela e de interrupções no foco de tela ao trocar de aba.
+  - Eliminação de expectativas precoces sobre bolsas e monitorias remuneradas.
+  - **Painel de Desempenho Oficial na Aba Perfil:** Monitoramento de IRA (Assertividade), Tópicos Dominados no Edital, Casos Práticos Resolvidos, XP e Ofensiva.
+- **Perfil Administrativo Homologado:** `admin@papirologo.com.br` / `sullivan@papirologo.com.br` (Sullivan • Auditor Fiscal).

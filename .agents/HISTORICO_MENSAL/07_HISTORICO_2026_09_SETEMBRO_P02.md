@@ -16188,3 +16188,32 @@ epesquisa_ prefix) e documentação técnica (HANDOFF.md, MAPA_FONTES.md).
    - Centralização de logs de execução, permitindo que os agentes leiam eventuais falhas e executem autocorreção de código em tempo real.
 4. **Sincronização Sistêmica:**
    - Atualizados: `STATUS_ATUAL.md`, `GLOBAL_CHANGELOG.md`, `DOSSIE_HISTORICO_ECOSSISTEMA_2026.md` e `07_HISTORICO_2026_09_SETEMBRO_P02.md`.
+
+
+---
+
+### [22/09/2026 a 23/09/2026] Papirologo: Ementa Completa dos 5 Cursos, Purificação da Marca, Remoção da Tarja e Painel de Desempenho
+
+**Demandas do Usuário:**
+1. A marca é estritamente PAPIROLOGO (nunca misturar marcas de escritórios ou nomes externos).
+2. Conteúdo universitário profundo e denso, não apenas embalagem, estruturado para editais de ponta (Auditor Fiscal e Procurador).
+3. Veto categórico a módulos com apenas 1 lição em qualquer dos cursos.
+4. Remoção total da tarja amarela de alerta anti-burla que poluía a tela ao alternar abas.
+5. Eliminação de expectativas precoces sobre elegibilidade a bolsas de estudo ou monitorias remuneradas.
+6. Acompanhamento claro e intuitivo do desempenho do aluno.
+7. Consolidação e salvamento de tudo no Arquivão Histórico Mestre.
+
+**Execução e Resultados Registrados:**
+1. **Purificação Integral da Marca:**
+   - Expurgo total de referências a escritórios externos em todos os componentes e textos da aplicação.
+2. **Construção e Montagem da Ementa Completa dos 5 Cursos:**
+   - Total de 17 seções, 57 nós e 171 desafios práticos cobrindo Direito Tributário (24 nós), Direito Constitucional (9 nós), Direito Administrativo & Licitações (9 nós), Processo Civil (6 nós) e Contabilidade Geral & Avançada (9 nós). Zero seções de 1 lição.
+3. **Remoção da Tarja Anti-Burla:**
+   - Exclusão do banner superior e desativação dos listeners invasivos de alternância de aba em `LessonModal.tsx` e `antiCheat.ts`.
+4. **Governança de Expectativas & Painel de Desempenho:**
+   - O Radar de Talentos agora funciona estritamente como ranking acadêmico objetivo.
+   - Criado na aba Perfil o Painel de Desempenho do Aluno com 4 métricas oficiais (IRA %, Domínio do Edital, Questões Feitas, XP & Ofensiva).
+5. **Deploy em Produção:**
+   - Publicado e homologado em `https://papirologo.com.br` e `https://papirologo.vercel.app`.
+6. **Atualização do Arquivão Histórico:**
+   - `ARQUIVAO_HISTORICO_COMPLETO.txt` consolidado com 70.816 eventos cronológicos e 154.58 MB.
