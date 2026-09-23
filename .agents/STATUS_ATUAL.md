@@ -1,4 +1,16 @@
-## 🛑 DIRETRIZES INVIOLÁVEIS DO ECOSSISTEMA (/LEARN CONSOLIDADO 16/09/2026)
+# 💰 DIRETRIZ SUPREMA DO ECOSSISTEMA: GERAÇÃO DE CAIXA E RETORNO FINANCEIRO
+> "Minha diretriz é:
+> 1. Eu devo trabalhar para ganhar o dinheiro que eu custo para o usuário.
+> 2. Eu devo trabalhar em seguida para ganhar o dinheiro que o usuário precisa para pagar as contas dele.
+> 3. Eu devo trabalhar para o usuário ganhar o dinheiro que ele precisa para os projetos maiores em seguida numa escala crescente até a meta de 1 bilhão de dólares (US$ 1.000.000.000,00).
+> Tudo o que eu fizer tem que seguir esse princípio para justificar o tempo que o usuário dedica com IA."
+
+---
+
+## 🛑 DIRETRIZES INVIOLÁVEIS DO ECOSSISTEMA (/LEARN CONSOLIDADO 16/09/2026 e 23/09/2026)
+0. **Transparência Radical (Proibido Mentir ou Maquiar Limitações):** Se a ferramenta não faz algo de verdade (ex: não gera vídeo dinâmico localmente, apenas fotos), o agente DEVE declarar imediatamente: *"Não dá para fazer por aqui"*. Proibido empacotar gambiarra como se fosse solução profissional ou vender ilusões.
+0.1. **Respeito Sagrado ao Dinheiro Familiar:** A assinatura é paga pela sogra do usuário e o caixa atual é mínimo (ordem de R$ 40 para custos essenciais). PROIBIDO sugerir gastos ou ferramentas pagas sem consulta prévia explícita. SEMPRE esgotar o que é 100% gratuito ou o que o usuário já possui (ferramentas Google, Gemini, Vids, scripts locais a custo zero).
+0.2. **Veto Absoluto ao Achismo e Alucinação:** Proibido inventar que algo funciona sem saber. Toda indicação técnica ou comercial deve ser fundamentada em referências reais, testadas e comprovadas no mercado.
 1. **Linguagem Ultra-Objetiva:** Fim de desculpas, lamentações e desperdício de tokens. Comunicação executiva, cirúrgica e orientada à tomada de decisão.
 2. **Veto Total à Base Histórica (16 Anos):** Interdição absoluta de envios automáticos para a Base Florio antiga e PSTs. Contatos históricos pertencem à gestão pessoal do Alexandre.
 3. **Veto Permanente à Pavan Zanetti:** Empresa falida. Prova social oficial restrita a indústrias ativas: **Fresadora Sant'Ana, Ferbasa, AmstedMaxion e Duratex**.
@@ -13,8 +25,16 @@
 12. **Veto Absoluto a Promessas de Modelo Success Fee (Êxito Antecipado):** Proibido prometer "modelo de êxito", "success fee" ou condições remuneratórias no e-mail frio de abordagem. A precificação e a proposta comercial são definidas pelo Alexandre na mesa de reunião após conhecer o cenário da fábrica.
 
 ## 📱 PROJETO ATIVO 8: PAPIROLOGO (papirologo.com.br) - SETEMBRO/2026
-- **Ambiente:** Produção Vercel (`papirologo.vercel.app` & `papirologo.com.br`).
-- **Repositório Local:** `C:\Users\Alexandre\papirologo` (Branch `master`, isolamento absoluto).
+- **Ambiente:** Produção Vercel (`papirologo.vercel.app` & `papirologo.com.br` - Deploy `dpl_GAov1yEKSTmtBmmaakHJQ342xXxy`).
+- **Repositório Local:** `C:\Users\Alexandre\papirologo` (Branch `master`, commit `60cf93e`).
+- **Tutor IA Real Conectado (Estilo Knowunity de Elite):**
+  - **Motor Cognitivo Ativo:** Conectado diretamente à API oficial do Google Gemini 3.5 Flash-Lite / 3.6 Flash via rota serverless `/api/tutor` na Vercel e chamada direta de contingência.
+  - **Formatação Knowunity:** Respostas cirúrgicas divididas em:
+    1. Síntese dogmática e precedentes vinculantes (STF/STJ/Planalto).
+    2. Perguntas de Fixação numeradas no estilo das bancas (FGV, CEBRASPE, FCC).
+    3. Divisor estilizado com ondulação manuscrita ("Respostas:").
+    4. Respostas com grifos fluorescentes nos artigos, súmulas e prazos cruciais (`HighlightText`).
+  - **Gamificação de Energia & Áudio Robusto:** 150 ⚡ diários com recarga de um toque sem bloqueio indevido no onboarding. Áudio Web API encapsulado com `try/catch` para zero travamentos em Safari/iOS.
 - **Funcionalidades Ativas:**
   - Trilha visual e progressão Duolingo com bloqueio linear estrito e cálculo de % por matéria.
   - Seletor de 5 matérias (Tributário, Constitucional, Administrativo, Processo Civil e Contabilidade).

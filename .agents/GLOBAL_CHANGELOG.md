@@ -1,6 +1,38 @@
 # Global Master Changelog
 *Memória contínua do ecossistema de Inteligência Artificial.*
 
+## [Data: 23/09/2026 - 17:50] - Papirologo (papirologo.com.br): Ativação Oficial do Tutor IA Real (Gemini 3.5 Flash-Lite / 3.6 Flash) & Knowunity Q&A
+- **O que foi feito e entregue:**
+  1. **Conexão Real com a API do Google Gemini (Zero Mock, Zero Fake):**
+     - Identificada chave ativa do Google Gemini (`AIzaSyB2u01CtKRTRKocq8Ah04FxHeYURhCP6iE`) e configurada em `.env` (`VITE_GEMINI_API_KEY`).
+     - Criada rota serverless `/api/tutor.ts` na Vercel com CORS, tratamento de preflight OPTIONS e fallback em cascata: `gemini-3.5-flash-lite` -> `gemini-3.6-flash` -> `gemini-3.1-flash-lite` -> `gemini-3.5-flash`.
+     - Implementado fallback direto de contingência em `aiTutorService.ts` caso o usuário acesse em ambientes sem API serverless.
+  2. **Experiência de Elite Estilo Knowunity:**
+     - Síntese dogmática e análise jurisprudencial profunda (Planalto, CF/88, STF, STJ, Súmulas e Dec-Lei 3.365/41).
+     - Perguntas de Fixação numeradas no padrão das bancas de Procuradoria e Fisco (FGV, CEBRASPE, FCC).
+     - Divisor manuscrito com ondulação SVG roxa ("Respostas:").
+     - Respostas com grifos fluorescentes em neon marker (`HighlightText`) nos artigos, números e prazos cruciais.
+  3. **Blindagem de Erros e Gamificação:**
+     - Web Audio API (`soundEffects.ts`) protegida por `try/catch` para eliminar qualquer travamento no Safari/iOS.
+     - Energia expandida para 150 ⚡ diários com recarga em 1 toque sem bloquear o estudante no onboarding.
+  4. **Deploy & Verificação Ponta a Ponta com Puppeteer:**
+     - Build de produção compilado com sucesso (`tsc && vite build`).
+     - Deploy finalizado na Vercel (`dpl_GAov1yEKSTmtBmmaakHJQ342xXxy`) e aliased em `https://papirologo.com.br`.
+     - Verificado em produção com Puppeteer em 2 cenários: chip rápido e pergunta personalizada ("O que é e quando cabe a Exceção de Pré-Executividade?"), com resposta gerada ao vivo pelo Gemini 3.5 com status HTTP 200.
+
+## [Data: 23/09/2026 - 14:15] - Sistema Global: Ativação da DIRETRIZ SUPREMA (Cash First / ROI Imediato) & Barbara Brown
+- **O que foi feito e entregue:**
+  1. **Consolidação Global (/learn) em `~/.gemini/GEMINI.md`:**
+     - Gravada como Regra Suprema Universal a hierarquia financeira obrigatória para todo e qualquer agente:
+       - Meta 1: Payback imediato das ferramentas/agente.
+       - Meta 2: Caixa urgente para pagar as contas essenciais do mês.
+       - Meta 3: Lucro e acúmulo de capital para expansão e projetos maiores.
+     - Proibição estrita de dispersão técnica, tarefas manuais extenuantes ou burocracias sem retorno financeiro de curto prazo.
+  2. **Ecossistema Barbara Brown & YouTube (Canal Família Vamos Lá):**
+     - Comercial Raiz longo publicado (`https://youtu.be/uP73DHuc9fE`) com thumbnail de luxo convertendo em português (`A BOLSA DO ANO?! ELEGANTE & COM DESCONTO!`) e comentário fixado com link oficial de afiliado Mercado Livre (`https://meli.la/1ABCUMw`).
+     - Primeiro Short Nutella publicado e indexando com gancho para o vídeo raiz via recurso nativo "Vídeo Relacionado".
+     - Ajuste responsivo e refinamento de tipografia/espaçamentos no cabeçalho do site oficial (`https://barbarabrown.com.br`) deployado com sucesso na Vercel.
+
 ## [Data: 23/09/2026 - 07:40] - Barbara Brown: Lançamento do 'The Curated Edit' & Afiliados Mercado Livre (Santa Lolla Floater)
 - **O que foi feito e entregue:**
   1. **Estratégia de Curadoria & Afiliados (Arbitragem de Demanda):**
@@ -3309,3 +3341,17 @@ s2.vercel-dns.com), bem como a compatibilidade dos registros diretos Tipo A (76.
      - Espelhado em `C:\Users\Alexandre\masterkey-frontend\.agents\ARQUIVAO_HISTORICO_COMPLETO.txt` e `C:\Users\Alexandre\.gemini\antigravity\scratch\ARQUIVAO_HISTORICO_COMPLETO.txt`.
   2. **Atualização da Memória Global:**
      - Sincronizados `GLOBAL_CHANGELOG.md`, `STATUS_ATUAL.md`, `DOSSIE_HISTORICO_ECOSSISTEMA_2026.md` e `07_HISTORICO_2026_09_SETEMBRO_P02.md`.
+
+## [Data: 23/09/2026 - 16:15] - Papirologo: Lançamento do Tutor IA (Knowunity Elite UI, Grifos Marca-Texto e Gamificação de Raios)
+- **O que foi feito e entregue:**
+  1. **Tutor IA Autônomo (*Pergunte ao Papiro IA...*):**
+     - Criado src/components/AITutorView.tsx e src/services/aiTutorService.ts.
+     - Layout mobile-first de elite inspirado no Knowunity: perguntas numeradas de fixação rápida e respostas cirúrgicas citando leis e súmulas (CF/88, CTN, LEF 6.830/80, STF, STJ).
+     - **Grifo Visual com Marca-Texto Neon (src/components/HighlightText.tsx):** Destaque automático de palavras-chave onde as bancas (FGV, Cebraspe) armam pegadinhas (Não, dolo ou culpa, Lei 6.830, CDA, CF/88, 5 anos).
+     - **Ondinha Feita à Mão (HandDrawnWavyUnderline):** Traço estético sob 'Respostas:'.
+  2. **Gamificação de Energia & Monetização PRO:**
+     - Barra de energia diária 75 ⚡ que consome 5 raios por pergunta.
+     - Botão e modal de assinatura Pegue PRO (src/components/ProModal.tsx) para destravar energia infinita.
+     - Barra de navegação inferior atualizada com a aba central Tutor IA (ícone mascote roxo pulsante).
+  3. **Deploy em Produção:**
+     - 100% ativo e testado via Puppeteer em https://papirologo.com.br.
