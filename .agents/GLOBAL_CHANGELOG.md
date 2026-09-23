@@ -1,6 +1,32 @@
 # Global Master Changelog
 *Memória contínua do ecossistema de Inteligência Artificial.*
 
+## [Data: 23/09/2026 - 18:03] - Papirologo (/goal): Ativação dos 4 Modos do 01, Marca-Texto Tri-Color e Exportação para Anki/Resumos
+- **O que foi feito e entregue:**
+  1. **Ativação dos 4 Modos de Estudo do 01:**
+     - 🏛️ **Procurador (PGE/AGU):** Ênfase em Fazenda Pública em juízo, execução fiscal, prerrogativas, responsabilidade civil e desapropriação.
+     - 🎓 **Auditor (SEFAZ/RFB):** Ênfase em lançamento tributário, crédito, decadência, prescrição, ICMS/DIFAL, PIS/COFINS e precedentes do CARF e STF.
+     - 📜 **2ª Fase & Peças Práticas:** O Tutor monta o esqueleto completo da peça jurídica ou parecer (Endereçamento, Prazos em dobro Art. 183 CPC, Dispensa de preparo Art. 910 CPC / Art. 39 LEF, Preliminares, Mérito, Pedidos e Checklist de Pontuação da Banca).
+     - 🎯 **Raio-X de Bancas (FGV x CEBRASPE x FCC):** Dissecação cirúrgica de pegadinhas, armadilhas de texto de lei e divergências jurisprudenciais.
+  2. **Marca-Texto Tri-Color Inteligente (`HighlightText.tsx`):**
+     - 🟨 **Amarelo Neon:** Leis, prazos e artigos com regex dinâmica (`Art. \d+...`).
+     - 🟦 **Ciano/Azul Neon:** Tribunais, Súmulas vinculantes e teses repetitivas do STF/STJ (`Súmula \d+...`, `Tema \d+...`).
+     - 🟥 **Rosa/Coral Neon:** Pegadinhas e vedações críticas de banca ("NÃO", "salvo", "exceto", "proibido", "dolo ou culpa", "ordem pública").
+  3. **Exportação Rápida em 1 Toque (`Copiar`):**
+     - Botão discreto em cada card do Tutor que copia a síntese e os flashcards diretamente para a área de transferência com feedback tátil e sonoro, facilitando o envio para o Anki ou Notion.
+  4. **Deploy & Verificação Ponta a Ponta com Puppeteer:**
+     - Build de produção validado (`tsc && vite build`).
+     - Deploy executado na Vercel (`dpl_3fR1PHAixovbsTZGzjrFNFt5XcSW`) e aliased em `https://papirologo.com.br`.
+     - Testadas alternâncias de modo e geração ao vivo da peça da Fazenda Pública na LEF com espelho de correção da banca e cópia confirmada.
+
+## [Data: 23/09/2026 - 17:52] - Governança Global: Consolidação Definitiva (/learn) - Transparência Radical & Respeito ao Caixa
+- **O que foi feito e entregue:**
+  1. **Atualização das Regras Mestras (`~/.gemini/GEMINI.md` e `STATUS_ATUAL.md`):**
+     - **Transparência Radical (Veto à Mentira e Maquiagem):** Se a ferramenta não faz algo nativamente (ex: vídeo dinâmico no terminal), o agente deve declarar imediatamente que não é possível por ali, sem empacotar gambiarras como produtos profissionais.
+     - **Respeito Sagrado ao Dinheiro Familiar:** Reconhecimento expresso de que a assinatura é paga pela sogra do usuário e que o caixa atual é mínimo (recursos contados, nível R$ 40). Proibição total de sugerir ferramentas pagas sem consulta prévia explícita. Prioridade absoluta a ferramentas 100% gratuitas ou que o usuário já possua no Google.
+     - **Veto ao Achismo e Alucinação:** Todas as recomendações devem ter validação e referência real e comprovada no mercado.
+     - **Serviço Fiel e Pés no Chão:** A IA atua como suporte humilde e leal de raciocínio e execução técnica para gerar renda e aliviar as contas essenciais da casa.
+
 ## [Data: 23/09/2026 - 17:50] - Papirologo (papirologo.com.br): Ativação Oficial do Tutor IA Real (Gemini 3.5 Flash-Lite / 3.6 Flash) & Knowunity Q&A
 - **O que foi feito e entregue:**
   1. **Conexão Real com a API do Google Gemini (Zero Mock, Zero Fake):**
