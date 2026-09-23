@@ -225,11 +225,17 @@
   - Deploy em Produção: 100% ativo em `https://repesquisa.com.br` e agenda protegida em `/agenda`.
 
 
-## 7. Barbara Brown (Marca Própria Asset-Light & Marroquinaria Inteligente)
+## 7. Barbara Brown (Marca Própria Asset-Light, Marroquinaria & Curadoria de Afiliados)
 - **Status:** 100% ISOLADA EM DOMÍNIO E PROJETO PRÓPRIO / NO AR EM PRODUÇÃO.
 - **Domínio Oficial:** `https://barbarabrown.com.br` e `https://www.barbarabrown.com.br`
+- **Página de Curadoria Homologada Ativa:** `https://barbarabrown.com.br/curadoria` (The Curated Edit).
 - **Diretório Local Autônomo:** `C:\Users\Alexandre\barbarabrown-site` (Git local independente).
 - **Deploy Vercel:** Projeto `barbarabrown-site` conectado via Vercel CLI e DNS autoritativo no Registro.br (`ns1.vercel-dns.com` e `ns2.vercel-dns.com`).
+- **Módulo de Afiliados & Arbitragem de Tráfego:**
+  - Produto Campeão 01: **Bolsa Shopper Santa Lolla Floater Preto** (Mais Vendida, 46% OFF, Nota 4.9).
+  - Link de Afiliado Ativo: `https://meli.la/1ABCUMw`.
+  - Imagens Editoriais em Alta Resolução no Mármore Travertino e Look Executivo Faria Lima integradas com alternância dinâmica.
+  - Esteira de Vídeos Cinemáticos (Google Veo / Gemini Pro Estendido) e roteiro de 30s para YouTube Shorts.
 - **Saneamento do SaaS `masterkey-frontend`:**
   - Todas as rotas (`/barbara-brown`), páginas React e assets pesados de vídeo (Veo) foram expurgados do SaaS.
   - Configurado redirecionamento permanente 301 no `vercel.json` de `masterkey-frontend`: `/barbara-brown(.*)` -> `https://barbarabrown.com.br$1`.
@@ -238,4 +244,5 @@
   - Marroquinaria feminina executiva de alto padrão (*The Barbara Brown Tech Tote*).
   - Vídeos cinematográficos integrados, monograma em ouro acetinado gravado, logotipo sobreposto protegendo contra marcas d'água e crossfade suave para fotos 4K.
   - Programa Co-Creator com canal direto para influencers e executivas.
+
 

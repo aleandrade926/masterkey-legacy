@@ -4,6 +4,50 @@
 
 ---
 
+## [2026-09-23 07:40:00-03:00] · CURADORIA BARBARA BROWN: AFILIADOS MERCADO LIVRE & IA DE VÍDEO (SANTA LOLLA SHOPPER)
+> **Tipo:** `FEATURE / GROWTH / D2C / AFFILIATE` | **Chat:** `47bb9e91-fd60-41fd-a413-f667c0ebe9be`
+
+1. **Estratégia de Monetização e Validação Ágil de Demanda:**
+   - Alexandre propôs testar venda de bolsas femininas como afiliado do Mercado Livre aproveitando o ecossistema e autoridade estética já construídos da Barbara Brown.
+   - Decisão de engenharia de produto: adotado o formato "The Curated Edit" (Curadoria Editorial / Achados Homologados) em rota dedicada (/curadoria), preservando o brand equity de Quiet Luxury da marca própria na Home (/) e monetizando o tráfego com produtos de alto giro do ML.
+2. **Seleção do Produto Campeão & Link de Afiliado:**
+   - Produto: Bolsa Shopper Santa Lolla Floater Preto (selo "Mais Vendido" no ML, R$ 237,28 com 46% OFF, nota 4.9 e +1.000 vendas).
+   - Link de Afiliado Oficial configurado: https://meli.la/1ABCUMw (Tag: andrelucascorradeandradee).
+3. **Produção Visual com Inteligência Artificial:**
+   - Foto do ML convertida e utilizada como referência de produto.
+   - Geradas fotos editoriais de altíssimo padrão:
+     - sl_shopper_marble.jpg: Bolsa Santa Lolla sobre pedestal de mármore travertino italiano com luz dourada de estúdio Vogue.
+     - sl_shopper_lifestyle.jpg: Executiva elegante em casaco de lã off-white caminhando na Faria Lima com a bolsa no ombro.
+4. **Deploy em Produção (barbarabrown-site):**
+   - Criada página curadoria.html com alternância interativa de fotos, especificações executivas, selo de frete Full e CTA para o link de afiliado.
+   - Configurado cleanUrls: true no vercel.json e integrado link no menu da Home index.html.
+   - Deploy realizado com sucesso no Vercel production: https://barbarabrown.com.br/curadoria (HTTP 200).
+5. **Geração de Vídeo & Roteiro de Tráfego Orgânico (YouTube Shorts):**
+   - Prompt de Image-to-Video estruturado para Google Veo / Gemini Pro Estendido no Gemini Web.
+   - Roteiro magnético de 30 segundos (Gancho, Problema/Solução, Prova Social e CTA para o link fixado) pronto para publicação.
+
+---
+
+## [2026-09-15 11:35:00-03:00] · AGENTE ALEXANDRE (SDR TRIBUTÁRIO), AGENTE CLOSER & CADÊNCIA CONTÍNUA
+> **Tipo:** `FEATURE / OUTBOUND / ARCHITECTURE` | **Chat:** `7bd4dff4-2d2d-4633-b0b9-76dc2b1ce6aa`
+
+1. **Ativação da Célula SDR Alexandre Florio (`ALEXANDRE_SDR_MASTER.md`):**
+   - Abordagem focada no Sócio no QSA de médias e pequenas indústrias via e-mail `alexandre.florio@taxmanagers.com.br` com relay Google TLS/SSL.
+   - Doutrina de Diplomacia com a Contabilidade: proibido criticar o contador ("só emite guias"); postura de apoio e respeito à sobrecarga de obrigações acessórias.
+   - Prova social enterprise incontestável: **Duratex, Nike, Electrolux e Riachuelo**.
+   - CTA para Diagnóstico Consultivo de 15 minutos com o sócio.
+2. **Ativação da Célula Agente Closer (`CLOSER_MASTER.md`):**
+   - Protocolo FHT para conduzir o Diagnóstico de 15 Minutos, mapeando as 4 Avenidas Tributárias (Classificação, Retenções, Créditos Operacionais e Reforma Tributária).
+   - Fechamento no Success Fee (20-25%) e ativação on-demand de especialistas (Fernanda Souza Santos).
+3. **Motor de Cadência Contínua e Follow-ups (`taxmanagers_cadence_engine.py` & `taxmanagers_cadence_runner.py`):**
+   - Cadência de 3 passos: Passo 1 (D0), Follow-up 1 Bump (D+3) e Follow-up 2 Break-up (D+7).
+   - Resiliência com auto-reconexão contra oscilações de rede e persistência em `cadence_state.json`.
+4. **Disparos em Produção:**
+   - 50 indústrias B2B entregues com 100% de sucesso (10 piloto + 15 lote cadência 1 + 25 lote cadência 2) e zero falhas/bounces.
+   - Auditorias ao vivo entregues instantaneamente em `andradeflorio@gmail.com`.
+
+---
+
 ## [2026-09-11 09:35:00-03:00] · TRANSIÇÃO INSTITUCIONAL B2B & BACKUP HISTÓRICO
 > **Tipo:** `REFACTORING` | **Chat:** `caffc2f0-35b5-484a-bd31-726983ed8866`
 
@@ -16115,3 +16159,32 @@ epesquisa_ prefix) e documentação técnica (HANDOFF.md, MAPA_FONTES.md).
 3. **Atualização Completa da Governança:**
    - Dossiê mestre de Fred (`FRED_INVESTOR_RELATIONS_MASTER.md`) expandido com a tese horizontal e o pitch de equity.
    - `STATUS_ATUAL.md` e `GLOBAL_CHANGELOG.md` sincronizados com o novo marco.
+
+---
+
+### [15/09/2026 - 09:30] Arquitetura de Fluxos Agênticos em 3 Camadas (DOE Framework) & Síntese de Aprendizados
+
+**Comandos do Usuário:**
+- Incorporação dos ensinamentos técnicos dos vídeos:
+  1. Enzo Barbatto (`/watch?v=Lsoci3HRD1A`): Arquitetura DOE (Directives, Orchestration, Execution), substituição de nós de n8n por Python puro e autocorreção ativa em `logs/automation.log`.
+  2. Tainara Shimite (`/watch?v=UiK9pl8tKao`): Fórmula do Contrato-Comando em 4 dimensões (Objetivo/Finish line, Limites/Guardrails, Formato e Output).
+  3. Case SDR IA Anti-No-Show (`/watch?v=E14fHPpnHe4`): Esteira de confirmação pré-reunião D-1 e H-1 aumentando o show rate de 21% para 80%+.
+- Execução com /learn e /goal ativo.
+
+**Execução e Resultados Registrados:**
+1. **Estruturação do Diretório Mestre DOE (`.agents/doe_framework/`):**
+   - Criado `agente.md` como maestro orquestrador de decisões e fluxos.
+   - Criadas as diretivas declarativas em `directives/`:
+     * `pipeline_outbound_b2b.md`: Critérios de qualificação, alvos industriais e cadências (Fábio).
+     * `real_estate_contracts.md`: Parcerias imobiliárias, para-raios legal e honorários embutidos (Marcos).
+     * `investor_relations.md`: Teses de captação de capital Seed/Anjo e unit economics (Fred).
+     * `comando_contrato_framework.md`: Padrão de governança dos 4 parâmetros de comando.
+     * `show_rate_pre_reuniao.md`: Régua de 3 toques pré-reunião para blindar a presença dos tomadores de decisão.
+2. **Scripts Determinísticos na Camada Execution (`execution/`):**
+   - `pipeline_manager.py`: Auditoria e gestão do pipeline de leads locais com logs estruturados.
+   - `zero_cost_sanitizer.py`: Motor de validação profunda em 5 camadas com logs em arquivo.
+   - `show_rate_engine.py`: Auditoria e acompanhamento de reuniões ativas (como Dynamics Parts e Usimec).
+3. **Observabilidade e Autocorreção (`logs/automation.log`):**
+   - Centralização de logs de execução, permitindo que os agentes leiam eventuais falhas e executem autocorreção de código em tempo real.
+4. **Sincronização Sistêmica:**
+   - Atualizados: `STATUS_ATUAL.md`, `GLOBAL_CHANGELOG.md`, `DOSSIE_HISTORICO_ECOSSISTEMA_2026.md` e `07_HISTORICO_2026_09_SETEMBRO_P02.md`.

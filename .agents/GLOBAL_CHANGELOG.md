@@ -1,6 +1,20 @@
 # Global Master Changelog
 *Memória contínua do ecossistema de Inteligência Artificial.*
 
+## [Data: 23/09/2026 - 07:40] - Barbara Brown: Lançamento do 'The Curated Edit' & Afiliados Mercado Livre (Santa Lolla Floater)
+- **O que foi feito e entregue:**
+  1. **Estratégia de Curadoria & Afiliados (Arbitragem de Demanda):**
+     - Criação da esteira editorial *"The Curated Edit"* para monetizar tráfego com bolsas femininas campeãs de vendas do Mercado Livre, preservando a identidade Quiet Luxury da marca própria na Home.
+  2. **Integração do Link de Afiliado Oficial:**
+     - Produto: **Bolsa Shopper Santa Lolla Floater Preto** (selo "Mais Vendido", R$ 237,28 com 46% OFF, nota 4.9).
+     - Link de Afiliado Oficial ativo: `https://meli.la/1ABCUMw`.
+  3. **Produção Visual com Inteligência Artificial (Google Veo / Imagen):**
+     - Geradas fotos editoriais de alto padrão a partir do produto real: `sl_shopper_marble.jpg` (estúdio em mármore travertino) e `sl_shopper_lifestyle.jpg` (executiva na Faria Lima).
+     - Roteiro magnético de 30 segundos estruturado para YouTube Shorts / Reels.
+  4. **Deploy em Produção:**
+     - Criada e deployada a página `https://barbarabrown.com.br/curadoria` com alternância dinâmica de fotos, especificações executivas e botão de compra direta no Mercado Livre.
+     - Navegação da Home atualizada com acesso direto à curadoria.
+
 ## [Data: 22/09/2026 - 17:05] - Papirologo (papirologo.com.br): Lançamento, Ativação do Baú de Jurisprudência e Expansão Multidisciplinar
 - **O que foi feito e entregue:**
   1. **Lançamento do Projeto Papirologo (`C:\Users\Alexandre\papirologo`):**
