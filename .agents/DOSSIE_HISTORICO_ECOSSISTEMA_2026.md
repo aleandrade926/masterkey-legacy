@@ -620,3 +620,38 @@ A Central das Cotações consolidou sua tese definitiva como uma plataforma univ
   - `253f946`: Reajuste de preço de tripwire para R$ 29,90 sincronizado com a Kiwify.
 
 ====================================================================================================
+
+
+---
+
+## 11. OUTUBRO DE 2026 (PARTE 4 - 24/10/2026): AÇÃO DE DESPEJO POR FALTA DE PAGAMENTO — LANDING PAGE DE ALTA CONVERSÃO PARA PROPRIETÁRIOS (/despejo e /espejo)
+
+### Decisões Arquiteturais e de Código
+* **Repositório:** `C:\Users\Alexandre\andrade-florio-web-recuperado` (deploy contínuo na Vercel para o domínio `andradeflorio.com.br`).
+* **Nova Página e Roteamento SPA (`src/pages/Despejo.jsx` e `src/App.jsx`):**
+  - Mapeadas rotas `/despejo`, `/espejo`, `/acao-de-despejo` e `/defesa-despejo`.
+  - Rewrite universal configurado em `vercel.json` (`/(.*) -> /index.html`) garantindo carregamento direto sem erro 404 em acessos de campanhas do Google Ads.
+* **Refinamento Visual "Quiet Luxury" Alinhado com `/inventario`:**
+  - *Hero Nobre:* Proporção vertical imponente para a foto oficial da **Dra. Líbia Florio** com moldura de offset em fio dourado (`top: -20px, right: -20px`), descartando miniaturas circulares ou cards colapsados.
+  - *Prova Visual com Lightbox Nativo:* Miniatura oficial do diploma de mestrado da Faculdade de Direito da USP (Largo de São Francisco) com modal fullscreen em `rgba(0, 0, 0, 0.92)` e `backdrop-filter: blur(6px)`. Eliminação de vazamento de tráfego (*Funnel Leakage*): o prospect inspeciona o diploma sem ser jogado para a home institucional (`/`), permanecendo focado na conversão de despejo.
+* **Ferramenta Interativa: Calculadora de Prejuízo do Locador:**
+  - Simulador reativo com campos de aluguel, encargos condominiais, IPTU e meses de atraso, calculando o rombo acumulado e permitindo o envio do relatório prévio mastigado diretamente para o WhatsApp comercial.
+* **SEO e Rich Snippets:** Schema JSON-LD `LegalService` e `FAQPage` injetados dinamicamente na `head` com desmonte limpo no `useEffect`.
+
+### Engenharia Financeira e Teses de Negócio
+* **O Princípio do Caixa e o Filtro de Inadimplência do Alê:**
+  - Pivô cirúrgico de posicionamento: descarte da oferta para inquilinos e foco exclusivo no **Proprietário / Locador**. Inquilinos inadimplentes não possuem liquidez para pagar honorários à vista e geram risco de inadimplência dupla; os proprietários possuem patrimônio líquido, sofrem com a iminência de penhora do próprio imóvel pelas cotas condominiais (*obrigação propter rem*) e pagam honorários com agilidade para estancar o prejuízo.
+* **Tese da Caução no Próprio Crédito Inadimplido:**
+  - Construção argumentativa baseada em jurisprudência do TJSP que admite a oferta dos próprios aluguéis vencidos e não pagos como caução idônea exigida pelo art. 59, § 1º da Lei 8.245/91, desonerando o locador de depositar em juízo o equivalente a 3 meses de aluguel para ter a liminar de desocupação em 15 dias.
+* **Execução Cumulada e Penhora do Imóvel Residencial do Fiador:**
+  - Estratégia de ataque financeiro com inclusão do fiador no polo passivo para penhora do seu bem de família residencial, com lastro na Súmula 549 do STJ e Tema 1127 do STF.
+
+### Campanhas e Rastreamento
+* **Google Ads:** Rastreamento unificado de conversão via tag `AW-822096588` acionada em todos os pontos de contato do WhatsApp (`5511978671067`).
+* **Commits em Produção:**
+  - `12496e8`: Implementação da LP de alta conversão de despejo.
+  - `f93e211`: Integração do diploma USP com Lightbox e seção de autoridade.
+  - `c155461`: Harmonização visual do Hero com retrato oficial da Dra. Líbia idêntico à página de inventário.
+  - **Status:** Ativo e em produção (200 OK) em `https://www.andradeflorio.com.br/despejo`.
+
+====================================================================================================

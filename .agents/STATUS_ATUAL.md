@@ -504,3 +504,19 @@ epesquisa.com.br)
 - **Correção Crítica de UI/Lifecycle [24/10/2026 - 12:05]:** Identificada e corrigida a causa raiz da tela preta que ocorria após digitar a senha no Gatekeeper. Havia um retorno antecipado (`if (!isAuthenticated) return <Gatekeeper />`) posicionado antes dos hooks `useEffect` e `useMemo` de montagem da minuta. Quando o usuário liberava o acesso, o React disparava a exceção de ciclo de vida (*Rendered more hooks than during the previous render*), desmontando a tela e exigindo F5 para recarregar do sessionStorage. A condicional foi reposicionada após todos os hooks, garantindo transição instantânea e fluida da tela de bloqueio para o portal sem recarregamento manual (Commit `7c835a7`).
 
 - **Reajuste de Preço Tripwire [24/10/2026 - 12:10]:** Alinhado o preço na landing page `/kit-contratos` de R$ 19,90 para **R$ 29,90** no Pix, cobrindo o investimento em tráfego do Google Ads e mantendo paridade exata com o novo valor configurado no checkout da Kiwify (Commit `253f946`).
+
+
+====================================================================================================
+## 🚀 REGISTRO OPERACIONAL [24/10/2026 - 16:00] — ANDRADE & FLORIO: LANDING PAGE DE AÇÃO DE DESPEJO POR FALTA DE PAGAMENTO (FOCO EM PROPRIETÁRIOS)
+====================================================================================================
+
+- **Página de Produção:** `https://www.andradeflorio.com.br/despejo` (e alias `https://www.andradeflorio.com.br/espejo`).
+- **Pivô Comercial:** Foco 100% voltado para o **Proprietário / Locador**. O inquilino inadimplente foi sumariamente descartado da esteira de atração por não possuir liquidez para pagamento de honorários à vista.
+- **Estrutura Técnica e Persuasiva:**
+  - **Hero Nobre e Imponente:** Retrato oficial em alta definição da **Dra. Líbia Florio** com moldura deslocada em ouro fosco idêntica ao design system de `/inventario`, eliminando cards laterais e botões forçados de "ver diploma".
+  - **As 4 Armas Jurídicas:** Liminar em 15 dias (art. 59 § 1º IX), caução no próprio crédito inadimplido (jurisprudência TJSP), execução cumulada de condomínio/IPTU com bloqueio SISBAJUD/RENAJUD e penhora do imóvel residencial do fiador (Súmula 549/STJ).
+  - **Calculadora Interativa de Prejuízo:** O proprietário simula a sangria mensal de condomínio + IPTU acumulados e dispara o relatório para o WhatsApp do escritório (`11 97867-1067`).
+  - **Autoridade e Prova Visual:** Seção de bio com link do LinkedIn, indicadores acadêmicos (USP, 30+ Anos, OAB/SP) e miniatura oficial do **Diploma da USP** com Lightbox em tela cheia sem saída de página (zero vazamento de tráfego / *funnel leakage*).
+  - **Tracking Google Ads:** Configurado no botão de conversão (`AW-822096588`).
+- **Commits em Produção:** `12496e8`, `f93e211` e `c155461` na branch `main` do repositório `andrade-florio-web`.
+====================================================================================================

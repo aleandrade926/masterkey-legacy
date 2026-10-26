@@ -29,9 +29,10 @@
 ### 2.1 Arquitetura
 Esta pasta Ã© um "Fork FÃ­sico" do `masterkey-frontend`. Ela foi separada para que deploys massivos no SaaS nÃ£o derrubem o site institucional do escritÃ³rio. O site consome o componente `<AndradeFlorioHome />`. **Nota crÃ­tica:** Todo o cÃ³digo do SaaS (TaxManagers) existe latente nesta pasta, mas a rota raiz obriga a renderizaÃ§Ã£o da Landing Page do escritÃ³rio de advocacia.
 
-### 2.2 Cronologia de MudanÃ§as (Changelog)
-- *(HistÃ³rico)* **SeparaÃ§Ã£o de RepositÃ³rio:** A pasta foi clonada para isolamento de build na Vercel (Projeto: `andrade-florio-web`).
-- *(25/08/2026)* **Triagem Comercial:** DefiniÃ§Ã£o da lÃ³gica onde advogados parceiros (Dra. LÃ­bia) sÃ£o preservados como "autoridade tÃ©cnica", enquanto Alexandre atua como "Diretor Comercial". O contato na Landing Page nÃ£o deve ser o celular da especialista diretamente, mas sim um link de e-mail ou nÃºmero de triagem.
+### 2.2 Cronologia de Mudanças (Changelog)
+- *(Histórico)* **Separação de Repositório:** A pasta foi clonada para isolamento de build na Vercel (Projeto: `andrade-florio-web`).
+- *(25/08/2026)* **Triagem Comercial:** Definição da lógica onde advogados parceiros (Dra. Líbia) são preservados como "autoridade técnica", enquanto Alexandre atua como "Diretor Comercial". O contato na Landing Page não deve ser o celular da especialista diretamente, mas sim um link de e-mail ou número de triagem.
+- *(24/10/2026)* **Ação de Despejo por Falta de Pagamento:** Nova Landing Page `src/pages/Despejo.jsx` com rotas `/despejo`, `/espejo`, `/acao-de-despejo` e `/defesa-despejo`. Foco 100% no proprietário/locador com pedido de liminar em 15 dias (art. 59 § 1º IX da Lei 8.245/91), penhora do imóvel residencial do fiador (Súmula 549/STJ), calculadora interativa de prejuízo do locador e Lightbox nativo em tela cheia do Diploma de Mestrado da USP sem fuga de funil.
 
 ---
 

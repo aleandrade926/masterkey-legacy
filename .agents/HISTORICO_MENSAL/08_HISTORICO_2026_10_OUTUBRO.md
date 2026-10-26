@@ -573,3 +573,48 @@ edis_data para blindar sessÃµes criptogrÃ¡ficas do Baileys contra reboots.
    - Commit `7c835a7`: Correção definitiva de Rules of Hooks no Gatekeeper eliminando tela preta pós-login.
    - Commit `253f946`: Reajuste de preço de tripwire de R$ 19,90 para R$ 29,90 na landing page sincronizado com o checkout Kiwify.
 ====================================================================================================
+
+
+====================================================================================================
+## [24/10/2026 - 16:00] — ANDRADE & FLORIO: LANÇAMENTO DA LANDING PAGE DE AÇÃO DE DESPEJO POR FALTA DE PAGAMENTO (/despejo e /espejo)
+====================================================================================================
+
+### 1. GÊNESE DA DEMANDA & O PIVÔ ESTRATÉGICO DO ALÊ:
+   - **Solicitação Inicial:** Criação de uma Landing Page em `andradeflorio.com.br/espejo` para oferecer ação de despejo por falta de pagamento e também ação ou defesa.
+   - **O Filtro de Caixa do Alê (Diretriz Suprema):** Logo após o desenho inicial com opções para locador e inquilino, o usuário determinou o pivô cirúrgico de conversão e proteção de honorários:
+     > *"Ou melhor. só pelo proprietário mesmo. o inquilino não tem dinheiro."*
+   - **Fundamentação de Negócios:** No contencioso imobiliário, inquilino inadimplente não possui liquidez, apresenta altíssimo risco de inadimplência de honorários contratuais e gera desgaste processual improdutivo. Quem possui liquidez, patrimônio a defender, urgência crítica e capacidade de pagamento à vista de honorários é o **PROPRIETÁRIO / LOCADOR / ADMINISTRADOR DE IMÓVEIS**, que vê o condomínio e o IPTU acumulando em seu próprio CPF e corre o risco de penhora/leilão do imóvel.
+
+### 2. ARQUITETURA TÉCNICA E DE CONVERSÃO (`src/pages/Despejo.jsx`):
+   - **Mapeamento de Rotas no SPA (`App.jsx`):**
+     - `/despejo`: Rota principal institucional.
+     - `/espejo`: Rota espelho/alias para garantir tráfego sem 404 em caso de digitação direta ou campanhas.
+     - `/acao-de-despejo` e `/defesa-despejo`: Aliases adicionais para indexação orgânica e variações do Google Ads.
+   - **Headline e Proposta de Valor:**
+     - *"Ação de Despejo por Falta de Pagamento: Retome seu Imóvel e Estanque o Prejuízo em até 15 Dias."*
+     - Foco no perigo real da obrigação *propter rem*: se o inquilino não paga o condomínio, o próprio apartamento ou casa pode ser penhorado e levado a leilão judicial.
+   - **Arsenal Jurídico Destacado (Lei nº 8.245/1991 e Jurisprudência):**
+     1. *Liminar em 15 Dias (Art. 59, § 1º, IX da Lei do Inquilinato):* Mandado de desocupação imediata sem oitiva prévia do inquilino para contratos sem garantia ativa ou com caução já consumida pelo débito.
+     2. *Tese da Caução no Próprio Crédito Inadimplido:* Uso de precedentes modernos do TJSP que admitem os aluguéis vencidos e não pagos como caução idônea, desonerando o proprietário de desembolsar 3 meses em juízo.
+     3. *Execução Cumulada com Bloqueio Eletrônico:* Cobrança dos aluguéis, condomínio, IPTU e multas com penhora via SISBAJUD (contas correntes) e RENAJUD (veículos).
+     4. *Penhora do Bem de Família do Fiador:* Aplicação imediata da Súmula 549 do STJ e Tema 1127 do STF para assegurar a liquidação da dívida sobre o patrimônio do fiador.
+   - **Calculadora / Simulador de Prejuízo do Locador:**
+     - Ferramenta interativa no frontend: o locador insere valor do aluguel, encargos (condomínio/IPTU) e meses de atraso.
+     - O sistema calcula a sangria mensal e o rombo financeiro acumulado total e permite enviar o diagnóstico completo diretamente para o WhatsApp comercial da banca em 1 clique.
+   - **Rastreamento de Conversão:**
+     - Integração com a tag global do Google Ads (`AW-822096588`) com disparo de evento de conversão no clique do WhatsApp (`handleWhatsAppClick`).
+     - Estruturação de dados Schema.org (`LegalService` e `FAQPage`) para obtenção de rich snippets e otimização do índice de qualidade das campanhas de tráfego pago.
+
+### 3. REFINAMENTO ESTÉTICO E AUTORIDADE (HARMONIZAÇÃO COM `/inventario`):
+   - **Diagnóstico do Usuário:** O usuário apontou que botões forçados de "Ver Diploma ↗" no Hero soavam artificiais e que uma foto pequena em card lateral de 75px ficava descontextualizada.
+   - **Correção Fiel ao Estilo Consagrado de `/inventario`:**
+     - *Hero:* Substituição do card pelo retrato vertical oficial em alta definição da **Dra. Líbia Florio** com a moldura dourada deslocada (`top: -20px, right: -20px`), mantendo proporção de retrato nobre e eliminando textos forçados.
+     - *Seção de Autoridade Institucional:* Bloco elegante com biografia oficial, link do **LinkedIn** (`LinkedinIcon`), destaques acadêmicos (**USP - Mestrado em Direito**, **30+ Anos de Prática Forense**, **OAB/SP - Membro de Comissão Especial**) e miniatura emoldurada do **Diploma de Mestrado da USP** (Largo de São Francisco).
+     - *Lightbox sem Fuga de Funil:* Ao passar o mouse sobre o diploma, surge o overlay sutil "Ampliar", abrindo o documento em alta resolução em tela cheia com fundo blur escuro. Ao fechar no "X", o proprietário permanece 100% retido dentro da página de despejo, de frente para o botão de fechamento no WhatsApp.
+
+### 4. COMMITS EM PRODUÇÃO NA VERCEL (`main`):
+   - `12496e8`: `feat(despejo): LP de alta conversao focada em proprietarios e locadores (/despejo e /espejo)`.
+   - `f93e211`: `feat(despejo): integracao do diploma USP com Lightbox e secao de autoridade forense`.
+   - `c155461`: `fix(despejo): hero com retrato nobre da Dra Libia e autoridade institucional identica a /inventario`.
+   - **Validação de Produção:** Testada via Puppeteer e requisições HTTP retornando `200 OK` em `https://www.andradeflorio.com.br/despejo` e `https://www.andradeflorio.com.br/espejo`.
+====================================================================================================
